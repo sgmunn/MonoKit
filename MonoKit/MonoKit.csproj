@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7BA35695-77B9-4237-AE28-396B0E5DDF7F}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MonoKit</RootNamespace>
+    <AssemblyName>MonoKit</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Core\" />
+    <Folder Include="DataBinding\" />
+    <Folder Include="Interactivity\" />
+    <Folder Include="UI\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DataBinding\Binding.cs" />
+    <Compile Include="DataBinding\BindingOperations.cs" />
+    <Compile Include="DataBinding\BindingExpression.cs" />
+    <Compile Include="DataBinding\IValueConverter.cs" />
+    <Compile Include="DataBinding\BooleanToStringConverter.cs" />
+    <Compile Include="DataBinding\BindingDefinition.cs" />
+    <Compile Include="DataBinding\BindingTemplate.cs" />
+    <Compile Include="Interactivity\Behaviour.cs" />
+    <Compile Include="DataBinding\AttachedProperty.cs" />
+    <Compile Include="Data\SQLite.cs" />
+    <Compile Include="Data\Repository.cs" />
+    <Compile Include="Data\IRepository.cs" />
+    <Compile Include="DataBinding\DataContextAttachedProperty.cs" />
+    <Compile Include="DataBinding\AttachedPropertyChangedEventArgs.cs" />
+    <Compile Include="DataBinding\PropertyChangedCallback.cs" />
+    <Compile Include="DataBinding\AttachedPropertyMetadata.cs" />
+    <Compile Include="DataBinding\AttachedPropertyExtensions.cs" />
+    <Compile Include="ICommand.cs" />
+    <Compile Include="IEdit.cs" />
+    <Compile Include="KeyValueWeakReference.cs" />
+    <Compile Include="ReflectionExtensions.cs" />
+    <Compile Include="UI\ViewDefinition.cs" />
+    <Compile Include="UI\IViewDefinition.cs" />
+    <Compile Include="UI\IDataViewWrapper.cs" />
+    <Compile Include="EventProxy.cs" />
+  </ItemGroup>
+</Project>

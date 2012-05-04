@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ABE22D63-B716-4C58-9A59-5915F47968D4}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MonoKit.UI</RootNamespace>
+    <AssemblyName>MonoKit.UI</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="PageControl.cs" />
+    <Compile Include="SizingTableViewSource.cs" />
+    <Compile Include="TableViewController.cs" />
+    <Compile Include="TableViewSection.cs" />
+    <Compile Include="TableViewSection_T.cs" />
+    <Compile Include="TableViewSectionBase.cs" />
+    <Compile Include="TableViewSectionBevhavior.cs" />
+    <Compile Include="TableViewSource.cs" />
+    <Compile Include="TextInputBehaviour.cs" />
+    <Compile Include="PagedViews\PagingTitle.cs" />
+    <Compile Include="PagedViews\TitleView.cs" />
+    <Compile Include="PagedViews\MetroPageView.cs" />
+    <Compile Include="PagedViews\ScrollingPageView.cs" />
+    <Compile Include="PagedViews\IScrollingPageViewDelegate.cs" />
+    <Compile Include="UIViewControllerExtensions.cs" />
+    <Compile Include="ViewDefinition.cs" />
+    <Compile Include="Elements\IElement.cs" />
+    <Compile Include="Elements\Element.cs" />
+    <Compile Include="Elements\ElementDataViewWrapper.cs" />
+    <Compile Include="Controls\UIDateField.cs" />
+    <Compile Include="Controls\TableViewCell.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MonoKit\MonoKit.csproj">
+      <Project>{7BA35695-77B9-4237-AE28-396B0E5DDF7F}</Project>
+      <Name>MonoKit</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controls\" />
+  </ItemGroup>
+</Project>
