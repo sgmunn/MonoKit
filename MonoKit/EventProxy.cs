@@ -10,11 +10,6 @@ namespace MonoKit
         {
             this.target = new WeakReference(target);
         }
-
-        ~EventProxy()
-        {
-            Console.WriteLine("~EventProxy");
-        }
         
         public void Dispose()
         {

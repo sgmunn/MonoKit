@@ -260,7 +260,12 @@ namespace MonoKit.UI.Controls
                 this.textField.BecomeFirstResponder();
             }
         }
-        
+                
+        public override bool BecomeFirstResponder()
+        {
+            return this.textField.BecomeFirstResponder();
+        }
+
         protected override void ValueUpdated(string newValue)
         {
             base.ValueUpdated(newValue);
