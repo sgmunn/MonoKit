@@ -36,7 +36,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="Core\" />
     <Folder Include="DataBinding\" />
     <Folder Include="Interactivity\" />
     <Folder Include="UI\" />
