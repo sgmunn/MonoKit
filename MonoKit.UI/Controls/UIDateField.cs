@@ -25,7 +25,7 @@ namespace MonoKit.UI.Controls
             
             this.label = new UILabel(this.Bounds);
             this.label.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleLeftMargin;
-            this.label.BackgroundColor = UIColor.Green;
+            this.label.BackgroundColor = UIColor.Clear;
             this.label.UserInteractionEnabled = false;
             this.AddSubview(this.label);
             
