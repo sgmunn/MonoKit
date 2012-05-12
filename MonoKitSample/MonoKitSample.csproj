@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Samples.cs" />
     <Compile Include="Person.cs" />
+    <Compile Include="SampleDB.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKit\MonoKit.csproj">

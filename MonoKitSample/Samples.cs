@@ -4,6 +4,9 @@ using MonoKit.UI.Controls;
 using MonoKit.UI.Elements;
 using MonoTouch.UIKit;
 using MonoKit.DataBinding;
+using MonoKit.Domain;
+using System.Linq;
+using MonoKit.Domain.Data;
 
 namespace MonoKitSample
 {
@@ -42,6 +45,7 @@ namespace MonoKitSample
             
             section2.Add(new DisclosureElement("Custom Control") { Command = this.GotoCustomControl });
             section2.Add(new DisclosureElement("GC Tests") { Command = this.GotoGCTests });
+            section2.Add(new DisclosureElement("Domain Test") { Command = this.DoDomainTest });
             
             var section3 = new TableViewSection(source);
             
@@ -168,6 +172,37 @@ namespace MonoKitSample
         {
         }
 
+        
+        private void DoDomainTest(Element element)
+        {
+            var id = Guid.NewGuid();
+
+            var storage = new InMemoryDomainEventRepository<DomainEventContract>();
+
+            var es = new AggregateRepository<TestRoot>(new DefaultSerializer<DomainEvent>(), storage);
+
+            var scope = new DefaultScope();
+
+            // command executor needs to be passed in an AggregateRepository / DomainRepository which itself takes both the event store and state store
+
+            // scope is meant to be newed up for each call to the command executor
+
+
+            var cmd = new CommandExecutor<TestRoot>(scope, es);
+            cmd.Execute(new CreateCommand() { AggregateId = id }, 0);
+
+            scope.Commit(); // sql one should throw if you try to do this twice
+
+            // new ES.
+
+            //es = new AggregateRepository<TestRoot>(new JsonSerializer<DomainEvent>(), storage);
+            cmd = new CommandExecutor<TestRoot>(scope, es);
+            cmd.Execute(new TestCommand2() { AggregateId = id }, 2);
+
+
+            scope.Commit();
+
+        }
     }
 }
 

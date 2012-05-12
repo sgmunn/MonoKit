@@ -884,7 +884,12 @@ namespace MonoKit.Data.SQLite
 				return "integer";
 			} else if (clrType == typeof(byte[])) {
 				return "blob";
-			} else {
+			} 
+            else if (clrType == typeof(Guid))
+            {
+                return "varchar(36)";
+            }
+            else {
 				throw new NotSupportedException ("Don't know about " + clrType);
 			}
 		}
@@ -1107,7 +1112,13 @@ namespace MonoKit.Data.SQLite
 					SQLite3.BindInt (stmt, index, Convert.ToInt32 (value));
 				} else if (value is byte[]) {
 					SQLite3.BindBlob (stmt, index, (byte[])value, ((byte[])value).Length, NegativePointer);
-				} else {
+				} 
+                else
+                if (value is Guid)
+                {
+                    SQLite3.BindText (stmt, index, ((Guid)value).ToString(), -1, NegativePointer);
+                }
+                else {
 					throw new NotSupportedException ("Cannot store type: " + value.GetType ());
 				}
 			}
@@ -1158,7 +1169,12 @@ namespace MonoKit.Data.SQLite
 					return (sbyte)SQLite3.ColumnInt (stmt, index);
 				} else if (clrType == typeof(byte[])) {
 					return SQLite3.ColumnByteArray (stmt, index);
-				} else {
+				} 
+                else if (clrType == typeof(Guid))
+                {
+                    return new Guid(SQLite3.ColumnString (stmt, index));
+                }
+                else {
 					throw new NotSupportedException ("Don't know how to read " + clrType);
 				}
 			}

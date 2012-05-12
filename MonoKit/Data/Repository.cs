@@ -5,7 +5,7 @@ namespace MonoKit.Data
     using System.Threading;
     using MonoKit.Data.SQLite;
     
-    public class SQLiteRepository<T> : IRepository<T> where T: new()
+    public class SQLiteRepository<T> : ISQLiteRepository<T> where T: new()
     {
         private bool isDisposed;
         

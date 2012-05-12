@@ -33,12 +33,15 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="DataBinding\" />
     <Folder Include="Interactivity\" />
     <Folder Include="UI\" />
+    <Folder Include="Domain\" />
+    <Folder Include="Domain\Data\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBinding\Binding.cs" />
@@ -52,7 +55,6 @@
     <Compile Include="DataBinding\AttachedProperty.cs" />
     <Compile Include="Data\SQLite.cs" />
     <Compile Include="Data\Repository.cs" />
-    <Compile Include="Data\IRepository.cs" />
     <Compile Include="DataBinding\DataContextAttachedProperty.cs" />
     <Compile Include="DataBinding\AttachedPropertyChangedEventArgs.cs" />
     <Compile Include="DataBinding\PropertyChangedCallback.cs" />
@@ -66,5 +68,36 @@
     <Compile Include="UI\IViewDefinition.cs" />
     <Compile Include="UI\IDataViewWrapper.cs" />
     <Compile Include="EventProxy.cs" />
+    <Compile Include="Domain\AggregateRoot.cs" />
+    <Compile Include="Domain\DomainCommand.cs" />
+    <Compile Include="Domain\DomainEvent.cs" />
+    <Compile Include="Domain\EventStore.cs" />
+    <Compile Include="Domain\IAggregateRoot.cs" />
+    <Compile Include="Domain\IDomainCommand.cs" />
+    <Compile Include="Domain\IDomainEvent.cs" />
+    <Compile Include="Domain\MethodExecutor.cs" />
+    <Compile Include="Domain\Sample.cs" />
+    <Compile Include="Data\ISQLiteRepository.cs" />
+    <Compile Include="Data\IRepository_T.cs" />
+    <Compile Include="Data\IUnitOfWork.cs" />
+    <Compile Include="Data\IUnitOfWorkScope.cs" />
+    <Compile Include="Data\IUnitOfWork_T.cs" />
+    <Compile Include="Domain\UnitOfWork_T.cs" />
+    <Compile Include="Domain\DefaultScope.cs" />
+    <Compile Include="Domain\ICommandExecutor_T.cs" />
+    <Compile Include="Domain\IEventSourced.cs" />
+    <Compile Include="Domain\ISnapshot.cs" />
+    <Compile Include="Domain\CommandExecutor_T.cs" />
+    <Compile Include="Domain\Data\IDomainEventContract.cs" />
+    <Compile Include="Domain\Data\DomainEventContract.cs" />
+    <Compile Include="Domain\Data\IAggregateRepository_T.cs" />
+    <Compile Include="Domain\Data\AggregateRepository_T.cs" />
+    <Compile Include="Domain\Data\DefaultSerializer.cs" />
+    <Compile Include="Domain\Data\ISerializer.cs" />
+    <Compile Include="Domain\Data\IEventStoreRepository.cs" />
+    <Compile Include="Domain\Data\ConcurrencyException.cs" />
+    <Compile Include="Domain\Data\InMemoryDomainEventRepository_T.cs" />
+    <Compile Include="Domain\Data\DictionaryRepository.cs" />
+    <Compile Include="Domain\DomainNamespace.cs" />
   </ItemGroup>
 </Project>

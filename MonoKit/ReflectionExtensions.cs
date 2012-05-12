@@ -37,6 +37,11 @@ namespace MonoKit
             // todo: cache property info
             return instance.GetType().GetProperty(propertyName);
         }
+        
+        public static IEnumerable<T> GetAttributes<T>(this MemberInfo member, bool inherit)
+        {
+            return Attribute.GetCustomAttributes(member, inherit).OfType<T>();
+        }
 
 
     }
