@@ -7,6 +7,7 @@ using MonoKit.DataBinding;
 using MonoKit.Domain;
 using System.Linq;
 using MonoKit.Domain.Data;
+using MonoKit.Data;
 
 namespace MonoKitSample
 {
@@ -176,32 +177,83 @@ namespace MonoKitSample
         private void DoDomainTest(Element element)
         {
             var id = Guid.NewGuid();
-
+   
+            // storage is not specific to an aggregate type
             var storage = new InMemoryDomainEventRepository<DomainEventContract>();
+   
+            // specific to aggregate type, should be able to reuse accross scopes - it is the underlying storage that needs to be able to interact 
+            // with scope and transactions
+            // attach event bus here if we want to have a global bus 
+            var testRootRepo = new AggregateRepository<TestRoot>(new DefaultSerializer<DomainEvent>(), storage);
 
-            var es = new AggregateRepository<TestRoot>(new DefaultSerializer<DomainEvent>(), storage);
-
+            
+            // not specific to aggregate type, must be newed up for each command 'batch'
             var scope = new DefaultScope();
+            
+            // should we pass in a scope here ?
+            // yes if we need to new it up each time, or no if we intend to use the same one
+            // if we new one up each time, we could possibly be able to have what if type scenarios work more easily??
+            var bus = new EventBus<TestRoot>();
+            
+            // not sure if this makes sense or it we should put that back to the commandexecutor or if
+            // we should have some sort of DomainContext that does this for us.
+            var uow = new UnitOfWork<TestRoot>(scope, testRootRepo);
+            
 
-            // command executor needs to be passed in an AggregateRepository / DomainRepository which itself takes both the event store and state store
-
-            // scope is meant to be newed up for each call to the command executor
-
-
-            var cmd = new CommandExecutor<TestRoot>(scope, es);
+            // specific to aggregate type
+            // attach event bus here to be able to choose what kind of event bus (publishing or otherwise)
+            var cmd = new CommandExecutor<TestRoot>(uow);
             cmd.Execute(new CreateCommand() { AggregateId = id }, 0);
-
+   
+            // test, wouldn't normally be able to re-use a scope after commit.
             scope.Commit(); // sql one should throw if you try to do this twice
 
-            // new ES.
-
-            //es = new AggregateRepository<TestRoot>(new JsonSerializer<DomainEvent>(), storage);
-            cmd = new CommandExecutor<TestRoot>(scope, es);
+            
+            cmd = new CommandExecutor<TestRoot>(uow);
             cmd.Execute(new TestCommand2() { AggregateId = id }, 2);
-
-
             scope.Commit();
 
+            
+            
+        }
+    }
+    
+    // implement sqlite connection and repository next.  
+    
+    public class DomainContext
+    {
+        public IEventStoreRepository EventStore { get; private set; }
+        
+        public IAggregateRepository<T> GetOrResolveAggregateRepo<T>() where T : IAggregateRoot, new()
+        {
+            return new AggregateRepository<T>(new DefaultSerializer<DomainEvent>(), this.EventStore);
+        }
+        
+        public IUnitOfWorkScope NewScope()
+        {
+            return new DefaultScope();
+        }
+        
+        public IUnitOfWork<T> NewUnitOfWork<T>(IUnitOfWorkScope scope) where T: IAggregateRoot, new()
+        {
+            return new UnitOfWork<T>(scope, this.GetOrResolveAggregateRepo<T>());
+        }
+        
+        public void Execute<T>(IDomainCommand command) where T: class, IAggregateRoot, new()
+        {
+            var scope = this.NewScope();
+            var uow = this.NewUnitOfWork<T>(scope);
+            
+            var cmd = new CommandExecutor<T>(uow);
+            cmd.Execute(command, 0);
+            
+            scope.Commit();
+        }
+        
+        public void Execute<T>(IUnitOfWork<T> unitOfWork, IDomainCommand command) where T: class, IAggregateRoot, new()
+        {
+            var cmd = new CommandExecutor<T>(unitOfWork);
+            cmd.Execute(command, 0);
         }
     }
 }

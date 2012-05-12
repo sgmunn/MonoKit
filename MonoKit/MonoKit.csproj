@@ -71,7 +71,6 @@
     <Compile Include="Domain\AggregateRoot.cs" />
     <Compile Include="Domain\DomainCommand.cs" />
     <Compile Include="Domain\DomainEvent.cs" />
-    <Compile Include="Domain\EventStore.cs" />
     <Compile Include="Domain\IAggregateRoot.cs" />
     <Compile Include="Domain\IDomainCommand.cs" />
     <Compile Include="Domain\IDomainEvent.cs" />
@@ -99,5 +98,6 @@
     <Compile Include="Domain\Data\InMemoryDomainEventRepository_T.cs" />
     <Compile Include="Domain\Data\DictionaryRepository.cs" />
     <Compile Include="Domain\DomainNamespace.cs" />
+    <Compile Include="Domain\IEventBus.cs" />
   </ItemGroup>
 </Project>

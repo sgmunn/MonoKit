@@ -13,8 +13,9 @@ namespace MonoKit.Domain
         
         private readonly List<object> deletedItemKeys;
 
-        public UnitOfWork(IRepository<T> repository)
+        public UnitOfWork(IUnitOfWorkScope scope, IRepository<T> repository)
         {
+            scope.Add(this);
             this.repository = repository;
 
             this.savedItems = new Dictionary<object, T>();
@@ -32,6 +33,8 @@ namespace MonoKit.Domain
         public void Dispose()
         {
             this.Repository.Dispose();
+            this.savedItems.Clear();
+            this.deletedItemKeys.Clear();
         }
 
         public T New()

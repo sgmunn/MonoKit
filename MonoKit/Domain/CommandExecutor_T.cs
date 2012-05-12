@@ -13,23 +13,23 @@ namespace MonoKit.Domain
 
     public class CommandExecutor<T> : MethodExecutor, ICommandExecutor<T> where T : class, IAggregateRoot, new()
     {
-        private readonly IUnitOfWork<T> unitOfWork;
+        private readonly IRepository<T> repository;
 
         private readonly Dictionary<Guid, int> versions;
 
-        public CommandExecutor(IUnitOfWorkScope scope, IRepository<T> repository)
+        public CommandExecutor(IRepository<T> repository)
         {
-            this.unitOfWork = new UnitOfWork<T>(repository);
+            this.repository = repository;
             this.versions = new Dictionary<Guid, int>();
-
-            scope.Add(this.unitOfWork);
         }
 
         public void Execute(IDomainCommand command, int expectedVersion)
         {
-            var root = this.unitOfWork.GetById(command.AggregateId) ?? this.unitOfWork.New();
+            var root = this.repository.GetById(command.AggregateId) ?? this.repository.New();
 
             // we need to compare the expected version with the "original" expected version
+            // we could drop this and assume that the version we get from the repo is going to be our expected version
+            //
             var rootVersion = root.Version;
             if (this.versions.ContainsKey(root.AggregateId))
             {
@@ -42,8 +42,8 @@ namespace MonoKit.Domain
             }
 
             this.Execute(root, command);
-
-            this.unitOfWork.Save(root);
+   
+            this.repository.Save(root);
 
             if (!this.versions.ContainsKey(root.AggregateId))
             {
