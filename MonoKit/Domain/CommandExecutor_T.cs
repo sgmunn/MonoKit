@@ -27,25 +27,25 @@ namespace MonoKit.Domain
         {
             var root = this.repository.GetById(command.AggregateId) ?? this.repository.New();
 
-            // we need to compare the expected version with the "original" expected version
-            // we could drop this and assume that the version we get from the repo is going to be our expected version
-            //
-            var rootVersion = root.Version;
-            if (this.versions.ContainsKey(root.AggregateId))
+            if (expectedVersion != 0)
             {
-                rootVersion = this.versions[root.AggregateId];
-            }
-
-            if (rootVersion != expectedVersion)
-            {
-                throw new InvalidOperationException(string.Format("Not Expected Version {0}, {1}", expectedVersion, root.Version));
+                var rootVersion = root.Version;
+                if (this.versions.ContainsKey(root.AggregateId))
+                {
+                    rootVersion = this.versions[root.AggregateId];
+                }
+    
+                if (rootVersion != expectedVersion)
+                {
+                    throw new InvalidOperationException(string.Format("Not Expected Version {0}, {1}", expectedVersion, root.Version));
+                }
             }
 
             this.Execute(root, command);
    
             this.repository.Save(root);
 
-            if (!this.versions.ContainsKey(root.AggregateId))
+            if (expectedVersion != 0 && !this.versions.ContainsKey(root.AggregateId))
             {
                 this.versions[root.AggregateId] = expectedVersion;
             }

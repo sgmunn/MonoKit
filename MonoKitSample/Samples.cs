@@ -191,56 +191,12 @@ namespace MonoKitSample
             cmd.Execute(new CreateCommand() { AggregateId = id });
  
             var scope = context.GetScope();
+            
             using (scope)
             {
-            cmd.Execute(scope, new TestCommand2() { AggregateId = id });
+                cmd.Execute(scope, new TestCommand2() { AggregateId = id });
                 scope.Commit();
             }
-            
-//            // specific to type, can be shared across scopes because we'll new up the repositories of T that we need when an event comes in
-//            var bus = new EventBus<TestRoot>(null);
-//
-//            
-//            
-//            // specific to aggregate type, should be able to reuse accross scopes - it is the underlying storage that needs to be able to interact 
-//            // with scope and transactions
-//            // attach event bus here if we want to have a global bus 
-//            // use bus here or hook up a unit of work bus?
-//            var testRootRepo = new AggregateRepository<TestRoot>(new DefaultSerializer<EventBase>(), storage, bus);
-//
-//            
-//            // not specific to aggregate type, must be newed up for each command 'batch'
-//            var scope = new DefaultScope();
-//            
-//            // should we pass in a scope here ?
-//            // yes if we need to new it up each time, or no if we intend to use the same one
-//            // if we new one up each time, we could possibly be able to have what if type scenarios work more easily??
-//            // if we use this, then we pass this into the aggregaterepo, otherwise not.  in either case it won't matter because
-//            // the publish will still occur during the scope's commit, just that all the events from all command executions will be
-//            // published at once rather than one event at a time
-//            // we might want this behaviour
-//            //var uowBus = new UnitOfWorkEventBus<TestRoot>(scope, bus);
-//            
-//            // not sure if this makes sense or it we should put that back to the commandexecutor or if
-//            // we should have some sort of DomainContext that does this for us.
-//            var uow = new UnitOfWork<TestRoot>(scope, testRootRepo);
-//            
-//
-//            // specific to aggregate type
-//            // attach event bus here to be able to choose what kind of event bus (publishing or otherwise)
-//            var cmd = new CommandExecutor<TestRoot>(uow);
-//            cmd.Execute(new CreateCommand() { AggregateId = id }, 0);
-//   
-//            // test, wouldn't normally be able to re-use a scope after commit.
-//            scope.Commit(); // sql one should throw if you try to do this twice
-//
-//            
-//            cmd = new CommandExecutor<TestRoot>(uow);
-//            cmd.Execute(new TestCommand2() { AggregateId = id }, 2);
-//            scope.Commit();
-
-            
-            
         }
     }
     
@@ -293,6 +249,7 @@ namespace MonoKitSample
         
         public IList<IDenormalizer> GetDenormalizers(Type aggregateType)
         {
+            // todo: need an actual repository here to store data in
             return new List<IDenormalizer>() { new TestDenormalizer(null) };
         }
         

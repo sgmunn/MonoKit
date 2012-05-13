@@ -33,6 +33,8 @@ namespace MonoKit.Domain
                         AggregateType = typeof(T),
                         Event = @event,
                     };
+                    
+                    domainEvents.Add(domainEvent);
                 }
                 
                 this.context.EventBus.Publish(domainEvents);

@@ -42,6 +42,8 @@
     <Folder Include="UI\" />
     <Folder Include="Domain\" />
     <Folder Include="Domain\Data\" />
+    <Folder Include="Data\SQLite\" />
+    <Folder Include="Tasks\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBinding\Binding.cs" />
@@ -53,8 +55,6 @@
     <Compile Include="DataBinding\BindingTemplate.cs" />
     <Compile Include="Interactivity\Behaviour.cs" />
     <Compile Include="DataBinding\AttachedProperty.cs" />
-    <Compile Include="Data\SQLite.cs" />
-    <Compile Include="Data\Repository.cs" />
     <Compile Include="DataBinding\DataContextAttachedProperty.cs" />
     <Compile Include="DataBinding\AttachedPropertyChangedEventArgs.cs" />
     <Compile Include="DataBinding\PropertyChangedCallback.cs" />
@@ -72,7 +72,6 @@
     <Compile Include="Domain\IAggregateRoot.cs" />
     <Compile Include="Domain\MethodExecutor.cs" />
     <Compile Include="Domain\Sample.cs" />
-    <Compile Include="Data\ISQLiteRepository.cs" />
     <Compile Include="Data\IRepository_T.cs" />
     <Compile Include="Data\IUnitOfWork.cs" />
     <Compile Include="Data\IUnitOfWorkScope.cs" />
@@ -108,5 +107,11 @@
     <Compile Include="Domain\IDomainEventBus.cs" />
     <Compile Include="Domain\IEventBus_T.cs" />
     <Compile Include="Domain\EventBus_T.cs" />
+    <Compile Include="Data\SQLite\SQLite.cs" />
+    <Compile Include="Data\SQLite\ISQLiteRepository.cs" />
+    <Compile Include="Tasks\LimitedConcurrencyLevelTaskScheduler.cs" />
+    <Compile Include="Tasks\SyncTaskScheduler.cs" />
+    <Compile Include="Data\SQLite\SQLiteRepository_T.cs" />
+    <Compile Include="Data\SQLite\SQLiteUnitOfWorkScope.cs" />
   </ItemGroup>
 </Project>

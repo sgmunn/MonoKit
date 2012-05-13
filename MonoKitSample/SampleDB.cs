@@ -27,9 +27,9 @@ namespace MonoKitSample
         {
         }
 
-        public ISQLiteRepository<T> NewRepository<T>() where T: class, new()
+        public IRepository<T> NewRepository<T>() where T: class, new()
         {
-            return new SQLiteRepository<T>(this, false);
+            return new SQLiteRepository<T>(this);
         }
     }
 }
