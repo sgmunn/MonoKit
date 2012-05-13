@@ -11,6 +11,6 @@ namespace MonoKit.Domain
     public interface ICommandExecutor<T> where T : IAggregateRoot, new()
     {
         // todo: can we drop the expected version
-        void Execute(IDomainCommand command, int expectedVersion);
+        void Execute(ICommand command, int expectedVersion);
     }
 }

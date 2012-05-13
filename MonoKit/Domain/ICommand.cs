@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IAggregateRoot.cs" company="sgmunn">
+// <copyright file="ICommand.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,17 +7,11 @@
 namespace MonoKit.Domain
 {
     using System;
-    using System.Collections.Generic;
 
-    public interface IAggregateRoot
+    public interface ICommand
     {
-        Guid AggregateId { get; }
+        Guid CommandId { get; }
         
-        int Version { get; }
-
-        IEnumerable<IEvent> UncommittedEvents { get; }
-
-        void Commit();
+        Guid AggregateId { get; }
     }
 }
-

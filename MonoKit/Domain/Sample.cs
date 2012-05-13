@@ -6,12 +6,12 @@ namespace MonoKit.Domain
 {
     using System.Runtime.Serialization;
 
-    public class CreateCommand : DomainCommand
+    public class CreateCommand : CommandBase
     {
 
     }
 
-    public class TestCommand2 : DomainCommand
+    public class TestCommand2 : CommandBase
     {
 
     }
@@ -61,26 +61,26 @@ namespace MonoKit.Domain
             Console.WriteLine("Test event {0}", domainEvent.Version);
         }
 
-        public void LoadFromEvents(System.Collections.Generic.IList<IDomainEvent> events)
+        public void LoadFromEvents(System.Collections.Generic.IList<IEvent> events)
         {
             base.ApplyEvents(events);
         }
     }
 
     [DataContract(Name="Created", Namespace="http://sgmunn.com/MonoKit/Domain")]
-    public class CreatedEvent : DomainEvent
+    public class CreatedEvent : EventBase
     {
         [DataMember]
         public string Test { get; set; }
     }
 
     [DataContract(Name="Next", Namespace="http://sgmunn.com/MonoKit/Domain")]
-    public class NextEvent : DomainEvent
+    public class NextEvent : EventBase
     {
     }
 
     [DataContract(Name="Test", Namespace="http://sgmunn.com/MonoKit/Domain")]
-    public class TestEvent2 : DomainEvent
+    public class TestEvent2 : EventBase
     {
     }
     

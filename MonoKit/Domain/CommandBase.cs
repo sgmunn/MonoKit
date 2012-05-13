@@ -4,9 +4,9 @@ namespace MonoKit.Domain
     using System.Runtime.Serialization;
 
     [DataContract(Name="CommandBase", Namespace=DomainNamespace.Namespace)]
-    public abstract class DomainCommand : IDomainCommand
+    public abstract class CommandBase : ICommand
     {
-        public DomainCommand()
+        public CommandBase()
         {
             this.CommandId = Guid.NewGuid();
         }

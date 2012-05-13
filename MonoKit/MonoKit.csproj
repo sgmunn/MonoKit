@@ -69,11 +69,7 @@
     <Compile Include="UI\IDataViewWrapper.cs" />
     <Compile Include="EventProxy.cs" />
     <Compile Include="Domain\AggregateRoot.cs" />
-    <Compile Include="Domain\DomainCommand.cs" />
-    <Compile Include="Domain\DomainEvent.cs" />
     <Compile Include="Domain\IAggregateRoot.cs" />
-    <Compile Include="Domain\IDomainCommand.cs" />
-    <Compile Include="Domain\IDomainEvent.cs" />
     <Compile Include="Domain\MethodExecutor.cs" />
     <Compile Include="Domain\Sample.cs" />
     <Compile Include="Data\ISQLiteRepository.cs" />
@@ -87,19 +83,26 @@
     <Compile Include="Domain\IEventSourced.cs" />
     <Compile Include="Domain\ISnapshot.cs" />
     <Compile Include="Domain\CommandExecutor_T.cs" />
-    <Compile Include="Domain\Data\IDomainEventContract.cs" />
-    <Compile Include="Domain\Data\DomainEventContract.cs" />
     <Compile Include="Domain\Data\IAggregateRepository_T.cs" />
     <Compile Include="Domain\Data\AggregateRepository_T.cs" />
     <Compile Include="Domain\Data\DefaultSerializer.cs" />
     <Compile Include="Domain\Data\ISerializer.cs" />
     <Compile Include="Domain\Data\IEventStoreRepository.cs" />
     <Compile Include="Domain\Data\ConcurrencyException.cs" />
-    <Compile Include="Domain\Data\InMemoryDomainEventRepository_T.cs" />
     <Compile Include="Domain\Data\DictionaryRepository.cs" />
     <Compile Include="Domain\DomainNamespace.cs" />
     <Compile Include="Domain\IEventBus.cs" />
     <Compile Include="Domain\Data\IDenormalizer_T.cs" />
     <Compile Include="Domain\IDenormalizer.cs" />
+    <Compile Include="Domain\IEvent.cs" />
+    <Compile Include="Domain\EventBase.cs" />
+    <Compile Include="Domain\ICommand.cs" />
+    <Compile Include="Domain\CommandBase.cs" />
+    <Compile Include="Domain\Data\IEventStoreContract.cs" />
+    <Compile Include="Domain\Data\StoredEvent.cs" />
+    <Compile Include="Domain\Data\InMemoryEventStoreRepository_T.cs" />
+    <Compile Include="Domain\IDomainContext.cs" />
+    <Compile Include="Domain\IDomainCommandExecutor_T.cs" />
+    <Compile Include="Domain\DomainCommandExecutor_T.cs" />
   </ItemGroup>
 </Project>

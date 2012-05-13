@@ -4,9 +4,9 @@ namespace MonoKit.Domain
     using System.Runtime.Serialization;
 
     [DataContract(Name="EventBase", Namespace=DomainNamespace.Namespace)]
-    public abstract class DomainEvent : IDomainEvent
+    public abstract class EventBase : IEvent
     {
-        public DomainEvent()
+        public EventBase()
         {
             this.EventId = Guid.NewGuid();
             this.Timestamp = DateTime.UtcNow;

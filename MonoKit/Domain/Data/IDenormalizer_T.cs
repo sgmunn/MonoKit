@@ -21,12 +21,12 @@ namespace MonoKit.Domain.Data
             }
         }
         
-        public void Handle(IList<IDomainEvent> events)
+        public void Handle(IList<IEvent> events)
         {
             // now, for each domain event, call a method that takes the event and call it
-            foreach (var domainEvent in events)
+            foreach (var @event in events)
             {
-                this.ExecuteMethodForSingleParam(this, domainEvent);
+                this.ExecuteMethodForSingleParam(this, @event);
             }
         }
     }

@@ -14,7 +14,7 @@
         {
             singletonInstance = new DataContractSerializer(
                 typeof(T),
-                new List<Type> {  typeof(DomainEvent), typeof(CreatedEvent), typeof(TestEvent2), typeof(NextEvent)}
+                new List<Type> {  typeof(EventBase), typeof(CreatedEvent), typeof(TestEvent2), typeof(NextEvent)}
                 );
         }
 

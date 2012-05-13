@@ -16,18 +16,18 @@ namespace MonoKit.Domain
     {
         private static MethodExecutor Executor = new MethodExecutor();
 
-        private readonly List<IDomainEvent> uncommittedEvents;
+        private readonly List<IEvent> uncommittedEvents;
 
         public AggregateRoot()
         {
-            this.uncommittedEvents = new List<IDomainEvent>();
+            this.uncommittedEvents = new List<IEvent>();
         }
 
         public Guid AggregateId { get; protected set; }
 
         public int Version { get; protected set; }
 
-        public IEnumerable<IDomainEvent> UncommittedEvents
+        public IEnumerable<IEvent> UncommittedEvents
         {
             get
             {
@@ -41,30 +41,30 @@ namespace MonoKit.Domain
         }
 
 
-        protected void ApplyEvents(IList<IDomainEvent> domainEvents)
+        protected void ApplyEvents(IList<IEvent> events)
         {
-            foreach (var domainEvent in domainEvents)
+            foreach (var @event in events)
             {
-                this.ApplyEvent(domainEvent);
-                this.Version = domainEvent.Version;
+                this.ApplyEvent(@event);
+                this.Version = @event.Version;
             }
         }
 
-        protected void NewEvent(DomainEvent domainEvent)
+        protected void NewEvent(EventBase @event)
         {
             this.Version++;
 
-            domainEvent.AggregateId = this.AggregateId;
-            domainEvent.Version = this.Version;
-            this.ApplyEvent(domainEvent);
-            this.uncommittedEvents.Add(domainEvent);
+            @event.AggregateId = this.AggregateId;
+            @event.Version = this.Version;
+            this.ApplyEvent(@event);
+            this.uncommittedEvents.Add(@event);
         }
 
-        private void ApplyEvent(IDomainEvent domainEvent)
+        private void ApplyEvent(IEvent @event)
         {
-            if (!Executor.ExecuteMethodForSingleParam(this, domainEvent))
+            if (!Executor.ExecuteMethodForSingleParam(this, @event))
             {
-                throw new MissingMethodException(string.Format("Aggregate {0} does not support a method that can be called with {1}", this, domainEvent));
+                throw new MissingMethodException(string.Format("Aggregate {0} does not support a method that can be called with {1}", this, @event));
             }
         }
     }

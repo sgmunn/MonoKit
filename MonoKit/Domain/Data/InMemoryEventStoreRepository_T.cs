@@ -4,19 +4,19 @@ namespace MonoKit.Domain.Data
     using System.Collections.Generic;
     using System.Linq;
     
-    public class InMemoryDomainEventRepository<T> : DictionaryRepository<IDomainEventContract>, IEventStoreRepository where T : IDomainEventContract, new() 
+    public class InMemoryEventStoreRepository<T> : DictionaryRepository<IEventStoreContract>, IEventStoreRepository where T : IEventStoreContract, new() 
     {
-        protected override IDomainEventContract InternalNew()
+        protected override IEventStoreContract InternalNew()
         {
             return new T(); 
         }
 
-        protected override void InternalSave(IDomainEventContract instance)
+        protected override void InternalSave(IEventStoreContract instance)
         {
             this.Storage[instance.EventId] = instance;
         }
 
-        protected override void InternalDelete(IDomainEventContract instance)
+        protected override void InternalDelete(IEventStoreContract instance)
         {
             if (this.Storage.ContainsKey(instance.EventId))
             {
@@ -24,7 +24,7 @@ namespace MonoKit.Domain.Data
             }
         }
 
-        public IEnumerable<IDomainEventContract> GetAllAggregateEvents(Guid rootId)
+        public IEnumerable<IEventStoreContract> GetAllAggregateEvents(Guid rootId)
         {
             return this.GetAll().Where(x => x.AggregateId == rootId).OrderBy(x => x.Version);
         }

@@ -2,7 +2,7 @@ namespace MonoKit.Domain.Data
 {
     using System;
 
-    public interface IDomainEventContract
+    public interface IEventStoreContract
     {
         Guid EventId { get; set; }
 

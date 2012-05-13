@@ -4,9 +4,9 @@ namespace MonoKit.Domain.Data
     using System.Collections.Generic;
     using MonoKit.Data;
 
-    public interface IEventStoreRepository : IRepository<IDomainEventContract>
+    public interface IEventStoreRepository : IRepository<IEventStoreContract>
     {
-        IEnumerable<IDomainEventContract> GetAllAggregateEvents(Guid rootId);
+        IEnumerable<IEventStoreContract> GetAllAggregateEvents(Guid rootId);
     }
 }
 

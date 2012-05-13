@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IDomainEvent.cs" company="sgmunn">
+// <copyright file="IEvent.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -8,7 +8,7 @@ namespace MonoKit.Domain
 {
     using System;
 
-    public interface IDomainEvent
+    public interface IEvent
     {
         Guid AggregateId { get; }
 

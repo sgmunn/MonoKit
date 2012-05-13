@@ -23,7 +23,7 @@ namespace MonoKit.Domain
             this.versions = new Dictionary<Guid, int>();
         }
 
-        public void Execute(IDomainCommand command, int expectedVersion)
+        public void Execute(ICommand command, int expectedVersion)
         {
             var root = this.repository.GetById(command.AggregateId) ?? this.repository.New();
 
@@ -51,7 +51,7 @@ namespace MonoKit.Domain
             }
         }
 
-        private void Execute(IAggregateRoot aggregate, IDomainCommand command)
+        private void Execute(IAggregateRoot aggregate, ICommand command)
         {
             try
             {

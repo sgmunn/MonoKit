@@ -34,11 +34,11 @@ namespace MonoKit.Domain.Data
                 return default(T);
             }
 
-            var history = new List<IDomainEvent>();
+            var history = new List<IEvent>();
 
             foreach (var storedEvent in allEvents)
             {
-                history.Add(this.serializer.DeserializeFromString(storedEvent.Event) as IDomainEvent);
+                history.Add(this.serializer.DeserializeFromString(storedEvent.Event) as IEvent);
             }
 
             var result = this.New();
@@ -62,8 +62,7 @@ namespace MonoKit.Domain.Data
 
             int expectedVersion = instance.UncommittedEvents.First().Version - 1;
 
-            // todo: we need to be able to pass this query back to the repo
-            var allEvents = this.repository.GetAll().Where(x => x.AggregateId == instance.AggregateId).OrderBy(x => x.Version).ToList();
+            var allEvents = this.repository.GetAllAggregateEvents(instance.AggregateId).ToList();
 
             var lastEvent = allEvents.LastOrDefault();
             if ((lastEvent == null && expectedVersion != 0) || (lastEvent != null && lastEvent.Version != expectedVersion))
@@ -71,18 +70,21 @@ namespace MonoKit.Domain.Data
                 throw new ConcurrencyException();
             }
 
-            foreach (var domainEvent in instance.UncommittedEvents.ToList())
+            foreach (var @event in instance.UncommittedEvents.ToList())
             {
                 var storedEvent = this.repository.New();
                 storedEvent.AggregateId = instance.AggregateId;
-                storedEvent.EventId = domainEvent.EventId;
-                storedEvent.Version = domainEvent.Version;
-                storedEvent.Event = this.serializer.SerializeToString(domainEvent);
+                storedEvent.EventId = @event.EventId;
+                storedEvent.Version = @event.Version;
+                storedEvent.Event = this.serializer.SerializeToString(@event);
 
                 this.repository.Save(storedEvent);
             }
-
-            this.eventBus.Publish(instance.UncommittedEvents.ToList());
+   
+            if (this.eventBus != null)
+            {
+                this.eventBus.Publish(instance.UncommittedEvents.ToList());
+            }
             
             instance.Commit();
         }

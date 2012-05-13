@@ -5,7 +5,7 @@ namespace MonoKit.Domain
 
     public interface IDenormalizer
     {
-        void Handle(IList<IDomainEvent> events);
+        void Handle(IList<IEvent> events);
     }
 }
 
