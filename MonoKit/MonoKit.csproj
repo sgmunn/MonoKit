@@ -91,8 +91,6 @@
     <Compile Include="Domain\Data\ConcurrencyException.cs" />
     <Compile Include="Domain\Data\DictionaryRepository.cs" />
     <Compile Include="Domain\DomainNamespace.cs" />
-    <Compile Include="Domain\IEventBus.cs" />
-    <Compile Include="Domain\Data\IDenormalizer_T.cs" />
     <Compile Include="Domain\IDenormalizer.cs" />
     <Compile Include="Domain\IEvent.cs" />
     <Compile Include="Domain\EventBase.cs" />
@@ -104,5 +102,11 @@
     <Compile Include="Domain\IDomainContext.cs" />
     <Compile Include="Domain\IDomainCommandExecutor_T.cs" />
     <Compile Include="Domain\DomainCommandExecutor_T.cs" />
+    <Compile Include="Domain\Data\Denormalizer_T.cs" />
+    <Compile Include="Domain\IDomainEvent.cs" />
+    <Compile Include="Domain\DomainEvent.cs" />
+    <Compile Include="Domain\IDomainEventBus.cs" />
+    <Compile Include="Domain\IEventBus_T.cs" />
+    <Compile Include="Domain\EventBus_T.cs" />
   </ItemGroup>
 </Project>

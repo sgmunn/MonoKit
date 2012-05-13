@@ -13,7 +13,7 @@ namespace MonoKit.Domain
         public DomainCommandExecutor(IDomainContext context)
         {
             this.context = context;
-            this.bus = new EventBus<T>(context.EventBus);
+            this.bus = new EventBus<T>(context);
         }
         
         public IAggregateRepository<T> GetOrResolveAggregateRepo()
@@ -47,13 +47,11 @@ namespace MonoKit.Domain
         // overload to execute multiple commands
         public void Execute(IUnitOfWorkScope scope, ICommand command)
         {
+            // uow will be owned by the scope, so we don't need to dispose explicitly
             var uow = this.NewUnitOfWork(scope);
         
-            using (uow)
-            {
-                var cmd = new CommandExecutor<T>(uow);
-                cmd.Execute(command, 0);
-            }
+            var cmd = new CommandExecutor<T>(uow);
+            cmd.Execute(command, 0);
         }
         
         public void Execute(ICommand command, int expectedVersion)

@@ -94,6 +94,11 @@ namespace MonoKit.Domain
         public TestDenormalizer(IRepository<TestReadModel> repository) : base(repository)
         {
         }
+        
+        public void Handle(CreatedEvent @event)
+        {
+            Console.WriteLine("Denormalize Created Event");
+        }
     }
 }
 

@@ -8,6 +8,7 @@ using MonoKit.Domain;
 using System.Linq;
 using MonoKit.Domain.Data;
 using MonoKit.Data;
+using System.Collections.Generic;
 
 namespace MonoKitSample
 {
@@ -183,6 +184,9 @@ namespace MonoKitSample
             
             var context = new SampleContext(storage);
             
+            // bootstrap
+            context.RegisterDenormalizer(typeof(TestRoot), typeof(TestDenormalizer));
+            
             var cmd = new DomainCommandExecutor<TestRoot>(context);
             cmd.Execute(new CreateCommand() { AggregateId = id });
  
@@ -242,10 +246,14 @@ namespace MonoKitSample
     
     public class SampleContext : IDomainContext
     {
-        private IEventStoreRepository es;
+        private readonly Dictionary<Type, List<Type>> registeredDenormalizers;
+        
+        private readonly IEventStoreRepository es;
+        
         public SampleContext(IEventStoreRepository es)
         {
             this.es = es;
+            this.registeredDenormalizers = new Dictionary<Type, List<Type>>();
         }
         
         public IUnitOfWorkScope GetScope()
@@ -276,6 +284,16 @@ namespace MonoKitSample
                 // todo: 
                 return new DefaultSerializer<EventBase>();
             }
+        }
+        
+        public void RegisterDenormalizer(Type aggregateType, Type denormalizer)
+        {
+            // add to dictionary
+        }
+        
+        public IList<IDenormalizer> GetDenormalizers(Type aggregateType)
+        {
+            return new List<IDenormalizer>() { new TestDenormalizer(null) };
         }
         
     }

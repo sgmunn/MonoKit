@@ -26,6 +26,7 @@ namespace MonoKit.Domain.Data
             // now, for each domain event, call a method that takes the event and call it
             foreach (var @event in events)
             {
+                // todo: should we check for not handling the event or not.  denormalizers probably don't need to handle *everthing*
                 this.ExecuteMethodForSingleParam(this, @event);
             }
         }

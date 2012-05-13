@@ -18,6 +18,7 @@ namespace MonoKit.Domain.Data
         {
             this.serializer = serializer;
             this.repository = repository;
+            this.eventBus = eventBus;
         }
 
         public T New()
