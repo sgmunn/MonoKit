@@ -11,8 +11,10 @@ namespace MonoKit.Domain.Data
         private readonly IEventStoreRepository repository;
 
         private readonly ISerializer serializer;
+        
+        private readonly IEventBus<T> eventBus;
 
-        public AggregateRepository(ISerializer serializer, IEventStoreRepository repository)
+        public AggregateRepository(ISerializer serializer, IEventStoreRepository repository, IEventBus<T> eventBus)
         {
             this.serializer = serializer;
             this.repository = repository;
@@ -80,7 +82,8 @@ namespace MonoKit.Domain.Data
                 this.repository.Save(storedEvent);
             }
 
-            // todo: collect the uncommitted and pblish them, or something.
+            this.eventBus.Publish(instance.UncommittedEvents.ToList());
+            
             instance.Commit();
         }
 

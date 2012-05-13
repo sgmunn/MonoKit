@@ -99,5 +99,7 @@
     <Compile Include="Domain\Data\DictionaryRepository.cs" />
     <Compile Include="Domain\DomainNamespace.cs" />
     <Compile Include="Domain\IEventBus.cs" />
+    <Compile Include="Domain\Data\IDenormalizer_T.cs" />
+    <Compile Include="Domain\IDenormalizer.cs" />
   </ItemGroup>
 </Project>

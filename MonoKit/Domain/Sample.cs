@@ -1,4 +1,6 @@
 using System;
+using MonoKit.Domain.Data;
+using MonoKit.Data;
 
 namespace MonoKit.Domain
 {
@@ -82,5 +84,16 @@ namespace MonoKit.Domain
     {
     }
     
+    public class TestReadModel
+    {
+        
+    }
+    
+    public class TestDenormalizer : Denormalizer<TestReadModel>
+    {
+        public TestDenormalizer(IRepository<TestReadModel> repository) : base(repository)
+        {
+        }
+    }
 }
 

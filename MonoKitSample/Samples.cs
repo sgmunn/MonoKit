@@ -181,10 +181,16 @@ namespace MonoKitSample
             // storage is not specific to an aggregate type
             var storage = new InMemoryDomainEventRepository<DomainEventContract>();
    
+            // specific to type, can be shared across scopes because we'll new up the repositories of T that we need when an event comes in
+            var bus = new EventBus<TestRoot>();
+
+            
+            
             // specific to aggregate type, should be able to reuse accross scopes - it is the underlying storage that needs to be able to interact 
             // with scope and transactions
             // attach event bus here if we want to have a global bus 
-            var testRootRepo = new AggregateRepository<TestRoot>(new DefaultSerializer<DomainEvent>(), storage);
+            // use bus here or hook up a unit of work bus?
+            var testRootRepo = new AggregateRepository<TestRoot>(new DefaultSerializer<DomainEvent>(), storage, bus);
 
             
             // not specific to aggregate type, must be newed up for each command 'batch'
@@ -193,7 +199,11 @@ namespace MonoKitSample
             // should we pass in a scope here ?
             // yes if we need to new it up each time, or no if we intend to use the same one
             // if we new one up each time, we could possibly be able to have what if type scenarios work more easily??
-            var bus = new EventBus<TestRoot>();
+            // if we use this, then we pass this into the aggregaterepo, otherwise not.  in either case it won't matter because
+            // the publish will still occur during the scope's commit, just that all the events from all command executions will be
+            // published at once rather than one event at a time
+            // we might want this behaviour
+            var uowBus = new UnitOfWorkEventBus<TestRoot>(scope, bus);
             
             // not sure if this makes sense or it we should put that back to the commandexecutor or if
             // we should have some sort of DomainContext that does this for us.
@@ -218,15 +228,46 @@ namespace MonoKitSample
         }
     }
     
-    // implement sqlite connection and repository next.  
+    // implement sqlite connection and repository next.
+    // we use a scope to a) create a unit of work that spans different aggregate types 
+    // and b) event publication
+    // realistically we can hide the uow thing and have just the command executor do it (which we had), but 
+    // that relied on something calling commit or the command executor.
+    // how about we get the context to do it like below
+    // the use case is 
+    //     1 or more commands against a specific aggregate
+    // or 
+    //    create a scope, fire commands against different aggregate types using the scope and commit
+    // 
+    // assuming the former, it would not be a requirement to ever create a scope manually.
     
+    
+    // what is the essential context information
+    // repositories, scope
+    
+    public interface IDomainContext 
+    {
+        IEventStoreRepository EventStore { get; }
+        IUnitOfWorkScope NewScope();
+        IAggregateRepository<T> GetOrResolveAggregateRepo<T>() where T : IAggregateRoot, new();
+        IUnitOfWork<T> NewUnitOfWork<T>(IUnitOfWorkScope scope) where T: IAggregateRoot, new();
+        void Execute<T>(IDomainCommand command) where T: class, IAggregateRoot, new();
+    }
+    
+    // this looks a lot like a domain context of T
     public class DomainContext
     {
         public IEventStoreRepository EventStore { get; private set; }
         
-        public IAggregateRepository<T> GetOrResolveAggregateRepo<T>() where T : IAggregateRoot, new()
+        public IEventBus<T> GetEventBus<T>() where T : IAggregateRoot, new()
         {
-            return new AggregateRepository<T>(new DefaultSerializer<DomainEvent>(), this.EventStore);
+            // could return a static instance here if we like, as long as the read model builders get newed up for each publish
+            return new EventBus<T>();
+        }
+        
+        public IAggregateRepository<T> GetOrResolveAggregateRepo<T>(IEventBus<T> bus) where T : IAggregateRoot, new()
+        {
+            return new AggregateRepository<T>(new DefaultSerializer<DomainEvent>(), this.EventStore, bus);
         }
         
         public IUnitOfWorkScope NewScope()
@@ -236,24 +277,38 @@ namespace MonoKitSample
         
         public IUnitOfWork<T> NewUnitOfWork<T>(IUnitOfWorkScope scope) where T: IAggregateRoot, new()
         {
-            return new UnitOfWork<T>(scope, this.GetOrResolveAggregateRepo<T>());
+            var bus = new UnitOfWorkEventBus<T>(scope, this.GetEventBus<T>());
+            return new UnitOfWork<T>(scope, this.GetOrResolveAggregateRepo<T>(bus));
         }
         
+        // overload to execute multiple commands - the unit of work becomes apparent then
         public void Execute<T>(IDomainCommand command) where T: class, IAggregateRoot, new()
         {
             var scope = this.NewScope();
-            var uow = this.NewUnitOfWork<T>(scope);
+            using (scope)
+            {
+                var uow = this.NewUnitOfWork<T>(scope);
             
-            var cmd = new CommandExecutor<T>(uow);
-            cmd.Execute(command, 0);
+                using (uow)
+                {
+                    var cmd = new CommandExecutor<T>(uow);
+                    cmd.Execute(command, 0);
+                }
             
-            scope.Commit();
+                scope.Commit();
+            }
         }
         
-        public void Execute<T>(IUnitOfWork<T> unitOfWork, IDomainCommand command) where T: class, IAggregateRoot, new()
+        // overload to execute multiple commands
+        public void Execute<T>(IUnitOfWorkScope scope, IDomainCommand command) where T: class, IAggregateRoot, new()
         {
-            var cmd = new CommandExecutor<T>(unitOfWork);
-            cmd.Execute(command, 0);
+            var uow = this.NewUnitOfWork<T>(scope);
+        
+            using (uow)
+            {
+                var cmd = new CommandExecutor<T>(uow);
+                cmd.Execute(command, 0);
+            }
         }
     }
 }
