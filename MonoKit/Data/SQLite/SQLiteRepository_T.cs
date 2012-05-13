@@ -3,8 +3,6 @@ namespace MonoKit.Data.SQLite
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
-    using MonoKit.Data.SQLite;
     
     public class SQLiteRepository<T> : IRepository<T> where T: new()
     {
@@ -29,7 +27,7 @@ namespace MonoKit.Data.SQLite
             return this.connection.Get<T>(id);
         }
 
-        IEnumerable<T> IRepository<T>.GetAll()
+        public IEnumerable<T> GetAll()
         {
             return this.connection.Table<T>().AsEnumerable();
         }
@@ -52,5 +50,5 @@ namespace MonoKit.Data.SQLite
             throw new NotImplementedException();
             // have to get table name
         }
-    }
+    }    
 }

@@ -9,6 +9,7 @@ using System.Linq;
 using MonoKit.Domain.Data;
 using MonoKit.Data;
 using System.Collections.Generic;
+using MonoKit.Data.SQLite;
 
 namespace MonoKitSample
 {
@@ -177,10 +178,12 @@ namespace MonoKitSample
         
         private void DoDomainTest(Element element)
         {
-            var id = Guid.NewGuid();
+            //var id = Guid.NewGuid();
+            var id = new Guid("{b1a0c1ba-cbcb-4606-b2ce-0926fb2022a2}");
    
             // storage is not specific to an aggregate type
-            var storage = new InMemoryEventStoreRepository<StoredEvent>();
+            //var storage = new InMemoryEventStoreRepository<StoredEvent>();
+            var storage = new SQLiteEventStoreRepository<SQLStoredEvent>(SampleDB.Main);
             
             var context = new SampleContext(storage);
             
@@ -200,6 +203,21 @@ namespace MonoKitSample
         }
     }
     
+    
+    public class SQLStoredEvent : IEventStoreContract
+    {
+        [PrimaryKey]
+        public Guid EventId { get; set; }
+  
+        [Indexed]
+        public Guid AggregateId { get; set; }
+  
+        public int Version { get; set; }
+  
+        public string Event { get; set; }
+    }
+
+    
     public class SampleContext : IDomainContext
     {
         private readonly Dictionary<Type, List<Type>> registeredDenormalizers;
@@ -214,7 +232,8 @@ namespace MonoKitSample
         
         public IUnitOfWorkScope GetScope()
         {
-            return new DefaultScope();
+            //return new DefaultScope();
+            return new SQLiteUnitOfWorkScope(SampleDB.Main);
         }
 
         public IEventStoreRepository EventStore

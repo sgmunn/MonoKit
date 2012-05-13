@@ -113,5 +113,7 @@
     <Compile Include="Tasks\SyncTaskScheduler.cs" />
     <Compile Include="Data\SQLite\SQLiteRepository_T.cs" />
     <Compile Include="Data\SQLite\SQLiteUnitOfWorkScope.cs" />
+    <Compile Include="Data\SQLite\SyncSQLiteRepository.cs" />
+    <Compile Include="Data\SQLite\SQLiteEventStoreRepository_T.cs" />
   </ItemGroup>
 </Project>
