@@ -13,7 +13,8 @@ namespace MonoKit.Domain.Data
         private readonly ISerializer serializer;
         
         private readonly IEventBus<T> eventBus;
-
+  
+        // todo: we need to have a repository of snapshot as well
         public AggregateRepository(ISerializer serializer, IEventStoreRepository repository, IEventBus<T> eventBus)
         {
             this.serializer = serializer;
@@ -92,14 +93,17 @@ namespace MonoKit.Domain.Data
 
         public void Delete(T instance)
         {
+            // todo:
         }
 
         public void DeleteId(object id)
         {
+            // todo:
         }
 
         public void Dispose()
         {
+            // todo:
         }
     }
 }

@@ -15,6 +15,16 @@ namespace MonoKit.Domain
     {
 
     }
+    
+    public class TestState : ISnapshot
+    {
+        public int Version { get; set; }
+    }
+    
+    public class TestStateRoot : AggregateRoot<TestState>
+    {
+        
+    }
 
     public class TestRoot : AggregateRoot, IEventSourced
     {
@@ -89,9 +99,9 @@ namespace MonoKit.Domain
         
     }
     
-    public class TestDenormalizer : Denormalizer<TestReadModel>
+    public class TestDenormalizer : Denormalizer
     {
-        public TestDenormalizer(IRepository<TestReadModel> repository) : base(repository)
+        public TestDenormalizer(IRepository<TestReadModel> repository)
         {
         }
         

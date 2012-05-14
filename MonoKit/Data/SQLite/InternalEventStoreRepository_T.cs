@@ -5,15 +5,15 @@ namespace MonoKit.Data.SQLite
     using System.Linq;
     using MonoKit.Domain.Data;
     
-    public class SQLiteEventStoreRepository<T> : IEventStoreRepository where T : IEventStoreContract, new() 
+    public class InternalEventStoreRepository<T> : IEventStoreRepository where T : IEventStoreContract, new() 
     {
-        private readonly SyncSQLiteRepository<T> repository;
+        private readonly SQLiteRepository<T> repository;
         
-        public SQLiteEventStoreRepository(SQLiteConnection connection)
+        public InternalEventStoreRepository(SQLiteConnection connection)
         {
-            this.repository = new SyncSQLiteRepository<T>(connection);
+            this.repository = new SQLiteRepository<T>(connection);
             
-            // todo: we should probably ensure that this is sync'd 
+            // todo: refactor out table creation to somewhere else so that it's not done everytime we create a repository, maybe even make the domain context do it
             connection.CreateTable<T>();
         }
 
@@ -49,7 +49,6 @@ namespace MonoKit.Data.SQLite
 
         public IEnumerable<IEventStoreContract> GetAllAggregateEvents(Guid rootId)
         {
-            // todo: use the connection to pass the query to the db and not in memory
             return this.repository.GetAll().Cast<IEventStoreContract>().Where(x => x.AggregateId == rootId).OrderBy(x => x.Version);
         }
 

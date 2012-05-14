@@ -69,7 +69,7 @@ namespace MonoKit.Domain
         }
     }
 
-    public abstract class AggregateRoot<TState> : AggregateRoot, ISnapshot where TState : class, new()
+    public abstract class AggregateRoot<TState> : AggregateRoot, ISnapshotSupport where TState : class, ISnapshot, new()
     {
         public AggregateRoot()
         {
@@ -78,13 +78,13 @@ namespace MonoKit.Domain
 
         protected TState InternalState { get; private set; }
 
-        public void LoadFromSnapshot(object snapshot, int snapshotVersion)
+        public void LoadFromSnapshot(ISnapshot snapshot)
         {
             this.InternalState = snapshot as TState;
-            this.Version = snapshotVersion;
+            this.Version = snapshot.Version;
         }
 
-        public object GetSnapshot()
+        public ISnapshot GetSnapshot()
         {
             return this.InternalState;
         }

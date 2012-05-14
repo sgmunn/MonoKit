@@ -5,6 +5,7 @@ namespace MonoKit.Data
     using MonoKit.Data.SQLite;
     
     // todo: rename this interface from IRepository to ISQLiteRepository, IRepository should be more generic
+    [Obsolete]
     public interface ISQLiteRepository<T> : IDisposable where T: new() 
     {
         T Get(object key);

@@ -11,6 +11,8 @@ namespace MonoKit.Domain
         
         IDomainEventBus EventBus { get; }
         
+        IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new();
+        
         IUnitOfWorkScope GetScope();
         
         ISerializer Serializer { get; }

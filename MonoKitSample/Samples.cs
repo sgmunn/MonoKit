@@ -183,7 +183,7 @@ namespace MonoKitSample
    
             // storage is not specific to an aggregate type
             //var storage = new InMemoryEventStoreRepository<StoredEvent>();
-            var storage = new SQLiteEventStoreRepository<SQLStoredEvent>(SampleDB.Main);
+            var storage = new EventStoreRepository<SQLStoredEvent>(SampleDB.Main);
             
             var context = new SampleContext(storage);
             
@@ -235,6 +235,15 @@ namespace MonoKitSample
             //return new DefaultScope();
             return new SQLiteUnitOfWorkScope(SampleDB.Main);
         }
+        
+        public IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new()
+        {
+            
+            // todo: how to get a snapshot repository for the snapshot state of T ????
+            //return new CrudAggregateRepository<T>(new SnapshotRepository<TestState>(null), new EventBus<T>(this));
+            
+            return new AggregateRepository<T>(this.Serializer, this.EventStore, new EventBus<T>(this));
+        }
 
         public IEventStoreRepository EventStore
         {
@@ -256,7 +265,7 @@ namespace MonoKitSample
         {
             get
             {
-                // todo: 
+                // todo: this means that the serializer can only supprt events - not commands or snapshots, we need all three to be supported
                 return new DefaultSerializer<EventBase>();
             }
         }

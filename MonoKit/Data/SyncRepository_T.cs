@@ -1,4 +1,4 @@
-namespace MonoKit.Data.SQLite
+namespace MonoKit.Data
 {
     using System;
     using System.Collections.Generic;
@@ -6,16 +6,17 @@ namespace MonoKit.Data.SQLite
     using System.Threading;
     using System.Threading.Tasks;
     using MonoKit.Tasks;
-
-    public class SyncSQLiteRepository<T> : IRepository<T> where T: new()
+    
+    public class SyncRepository<T> : IRepository<T> where T: new()
     {
-        private readonly SQLiteRepository<T> repository;
+        private readonly IRepository<T> repository;
         
-        private static SyncTaskScheduler TaskScheduler = new SyncTaskScheduler();
+        private readonly TaskScheduler scheduler;
         
-        public SyncSQLiteRepository(SQLiteConnection connection)
+        public SyncRepository(IRepository<T> repository, TaskScheduler scheduler)
         {
-            this.repository = new SQLiteRepository<T>(connection);
+            this.repository = repository;
+            this.scheduler = scheduler;
         }
         
         public void Dispose()
@@ -25,7 +26,11 @@ namespace MonoKit.Data.SQLite
 
         public T New()
         {
-            return this.repository.New();
+            return Task.Factory.StartNew<T>(
+                () => { return this.repository.New(); }, 
+                CancellationToken.None, 
+                TaskCreationOptions.None, 
+                scheduler).Result;
         }
 
         public T GetById(object id)
@@ -34,7 +39,7 @@ namespace MonoKit.Data.SQLite
                 () => { return this.repository.GetById(id); }, 
                 CancellationToken.None, 
                 TaskCreationOptions.None, 
-                TaskScheduler).Result;
+                scheduler).Result;
         }
 
         public IEnumerable<T> GetAll()
@@ -43,7 +48,7 @@ namespace MonoKit.Data.SQLite
                 () => { return this.repository.GetAll(); }, 
                 CancellationToken.None, 
                 TaskCreationOptions.None, 
-                TaskScheduler).Result;
+                scheduler).Result;
         }
 
         public void Save(T instance)
@@ -52,7 +57,7 @@ namespace MonoKit.Data.SQLite
                 () => { this.repository.Save(instance); }, 
                 CancellationToken.None, 
                 TaskCreationOptions.None, 
-                TaskScheduler).Wait();
+                scheduler).Wait();
         }
 
         public void Delete(T instance)
@@ -61,13 +66,16 @@ namespace MonoKit.Data.SQLite
                 () => { this.repository.Delete(instance); }, 
                 CancellationToken.None, 
                 TaskCreationOptions.None, 
-                TaskScheduler).Wait();
+                scheduler).Wait();
         }
 
         public void DeleteId(object id)
         {
-            throw new NotImplementedException();
-            // have to get table name
+            Task.Factory.StartNew(
+                () => { this.repository.DeleteId(id); }, 
+                CancellationToken.None, 
+                TaskCreationOptions.None, 
+                scheduler).Wait();
         }
     }
 }
