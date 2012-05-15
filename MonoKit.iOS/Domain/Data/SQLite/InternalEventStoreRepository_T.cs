@@ -1,8 +1,9 @@
-namespace MonoKit.Data.SQLite
+namespace MonoKit.Domain.Data.SQLite
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using MonoKit.Data.SQLite;
     using MonoKit.Domain.Data;
     
     public class InternalEventStoreRepository<T> : IEventStoreRepository where T : IEventStoreContract, new() 
@@ -12,9 +13,6 @@ namespace MonoKit.Data.SQLite
         public InternalEventStoreRepository(SQLiteConnection connection)
         {
             this.repository = new SQLiteRepository<T>(connection);
-            
-            // todo: refactor out table creation to somewhere else so that it's not done everytime we create a repository, maybe even make the domain context do it
-            connection.CreateTable<T>();
         }
 
         public IEventStoreContract New()

@@ -42,7 +42,6 @@
     <Folder Include="UI\" />
     <Folder Include="Domain\" />
     <Folder Include="Domain\Data\" />
-    <Folder Include="Data\SQLite\" />
     <Folder Include="Tasks\" />
     <Folder Include="Domain\Commands\" />
     <Folder Include="Domain\Events\" />
@@ -108,21 +107,16 @@
     <Compile Include="Domain\IDomainEventBus.cs" />
     <Compile Include="Domain\IEventBus_T.cs" />
     <Compile Include="Domain\EventBus_T.cs" />
-    <Compile Include="Data\SQLite\SQLite.cs" />
-    <Compile Include="Data\SQLite\ISQLiteRepository.cs" />
     <Compile Include="Tasks\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Tasks\SyncTaskScheduler.cs" />
-    <Compile Include="Data\SQLite\SQLiteRepository_T.cs" />
-    <Compile Include="Data\SQLite\SQLiteUnitOfWorkScope.cs" />
     <Compile Include="Domain\Commands\CreateCommand.cs" />
     <Compile Include="Domain\Events\CreatedEvent.cs" />
     <Compile Include="Domain\Data\Denormalizer.cs" />
     <Compile Include="Domain\ISnapshotSupport.cs" />
     <Compile Include="Data\SyncRepository_T.cs" />
     <Compile Include="Data\SyncScheduler.cs" />
-    <Compile Include="Data\SQLite\SnapshotRepository.cs" />
-    <Compile Include="Data\SQLite\InternalEventStoreRepository_T.cs" />
-    <Compile Include="Data\SQLite\EventStoreRepository_T.cs" />
-    <Compile Include="Domain\Data\CrudAggregateRepository_T.cs" />
+    <Compile Include="Domain\Data\ISnapshotRepository.cs" />
+    <Compile Include="Domain\Data\SnapshotAggregateRepository_T.cs" />
+    <Compile Include="Domain\DomainContext.cs" />
   </ItemGroup>
 </Project>

@@ -10,15 +10,13 @@ namespace MonoKit.Domain
         IEventStoreRepository EventStore { get; }
         
         IDomainEventBus EventBus { get; }
-        
-        IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new();
+
+        ISerializer Serializer { get; }
         
         IUnitOfWorkScope GetScope();
         
-        ISerializer Serializer { get; }
-        
-        void RegisterDenormalizer(Type aggregateType, Type denormalizer);
-        
+        IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new();
+
         IList<IDenormalizer> GetDenormalizers(Type aggregateType);
     }
 }

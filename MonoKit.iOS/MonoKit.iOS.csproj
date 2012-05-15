@@ -8,7 +8,7 @@
     <ProjectGuid>{ABE22D63-B716-4C58-9A59-5915F47968D4}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>MonoKit.UI</RootNamespace>
+    <RootNamespace>MonoKit</RootNamespace>
     <AssemblyName>MonoKit.UI</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -37,27 +37,35 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="PageControl.cs" />
-    <Compile Include="SizingTableViewSource.cs" />
-    <Compile Include="TableViewController.cs" />
-    <Compile Include="TableViewSection.cs" />
-    <Compile Include="TableViewSection_T.cs" />
-    <Compile Include="TableViewSectionBase.cs" />
-    <Compile Include="TableViewSectionBevhavior.cs" />
-    <Compile Include="TableViewSource.cs" />
-    <Compile Include="TextInputBehaviour.cs" />
-    <Compile Include="PagedViews\PagingTitle.cs" />
-    <Compile Include="PagedViews\TitleView.cs" />
-    <Compile Include="PagedViews\MetroPageView.cs" />
-    <Compile Include="PagedViews\ScrollingPageView.cs" />
-    <Compile Include="PagedViews\IScrollingPageViewDelegate.cs" />
-    <Compile Include="UIViewControllerExtensions.cs" />
-    <Compile Include="ViewDefinition.cs" />
-    <Compile Include="Elements\IElement.cs" />
-    <Compile Include="Elements\Element.cs" />
-    <Compile Include="Elements\ElementDataViewWrapper.cs" />
-    <Compile Include="Controls\UIDateField.cs" />
-    <Compile Include="Controls\TableViewCell.cs" />
+    <Compile Include="UI\Elements\IElement.cs" />
+    <Compile Include="UI\Elements\Element.cs" />
+    <Compile Include="UI\Elements\ElementDataViewWrapper.cs" />
+    <Compile Include="UI\Controls\UIDateField.cs" />
+    <Compile Include="UI\Controls\TableViewCell.cs" />
+    <Compile Include="UI\PagedViews\PagingTitle.cs" />
+    <Compile Include="UI\PagedViews\TitleView.cs" />
+    <Compile Include="UI\PagedViews\MetroPageView.cs" />
+    <Compile Include="UI\PagedViews\ScrollingPageView.cs" />
+    <Compile Include="UI\PagedViews\IScrollingPageViewDelegate.cs" />
+    <Compile Include="UI\PageControl.cs" />
+    <Compile Include="UI\SizingTableViewSource.cs" />
+    <Compile Include="UI\TableViewController.cs" />
+    <Compile Include="UI\TableViewSection.cs" />
+    <Compile Include="UI\TableViewSection_T.cs" />
+    <Compile Include="UI\TableViewSectionBase.cs" />
+    <Compile Include="UI\TableViewSectionBevhavior.cs" />
+    <Compile Include="UI\TableViewSource.cs" />
+    <Compile Include="UI\TextInputBehaviour.cs" />
+    <Compile Include="UI\UIViewControllerExtensions.cs" />
+    <Compile Include="UI\ViewDefinition.cs" />
+    <Compile Include="Data\SQLite\SQLite.cs" />
+    <Compile Include="Data\SQLite\SQLiteRepository_T.cs" />
+    <Compile Include="Data\SQLite\SQLiteUnitOfWorkScope.cs" />
+    <Compile Include="Domain\Data\SQLite\SQLStoredEvent.cs" />
+    <Compile Include="Domain\Data\SQLite\SQLiteDomainContext.cs" />
+    <Compile Include="Domain\Data\SQLite\SnapshotRepository.cs" />
+    <Compile Include="Domain\Data\SQLite\EventStoreRepository_T.cs" />
+    <Compile Include="Domain\Data\SQLite\InternalEventStoreRepository_T.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKit\MonoKit.csproj">
@@ -66,6 +74,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controls\" />
+    <Folder Include="UI\" />
+    <Folder Include="Domain\" />
+    <Folder Include="Data\" />
+    <Folder Include="Data\SQLite\" />
+    <Folder Include="Domain\Data\" />
+    <Folder Include="Domain\Data\SQLite\" />
   </ItemGroup>
 </Project>

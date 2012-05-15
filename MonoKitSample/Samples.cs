@@ -10,6 +10,7 @@ using MonoKit.Domain.Data;
 using MonoKit.Data;
 using System.Collections.Generic;
 using MonoKit.Data.SQLite;
+using MonoKit.Domain.Data.SQLite;
 
 namespace MonoKitSample
 {
@@ -185,7 +186,7 @@ namespace MonoKitSample
             //var storage = new InMemoryEventStoreRepository<StoredEvent>();
             var storage = new EventStoreRepository<SQLStoredEvent>(SampleDB.Main);
             
-            var context = new SampleContext(storage);
+            var context = new SampleContext(SampleDB.Main, storage, null);
             
             // bootstrap
             context.RegisterDenormalizer(typeof(TestRoot), typeof(TestDenormalizer));
@@ -203,88 +204,19 @@ namespace MonoKitSample
         }
     }
     
-    
-    public class SQLStoredEvent : IEventStoreContract
+    public class SampleContext : SQLiteDomainContext
     {
-        [PrimaryKey]
-        public Guid EventId { get; set; }
-  
-        [Indexed]
-        public Guid AggregateId { get; set; }
-  
-        public int Version { get; set; }
-  
-        public string Event { get; set; }
-    }
+        public SampleContext(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
+        {
 
-    
-    public class SampleContext : IDomainContext
-    {
-        private readonly Dictionary<Type, List<Type>> registeredDenormalizers;
-        
-        private readonly IEventStoreRepository es;
-        
-        public SampleContext(IEventStoreRepository es)
-        {
-            this.es = es;
-            this.registeredDenormalizers = new Dictionary<Type, List<Type>>();
         }
-        
-        public IUnitOfWorkScope GetScope()
+
+        public override ISnapshotRepository GetSnapshotRepository(Type aggregateType)
         {
-            //return new DefaultScope();
-            return new SQLiteUnitOfWorkScope(SampleDB.Main);
-        }
-        
-        public IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new()
-        {
+            // todo: register a Func<Type, ISnapshotRepository> to create the snapshot repository
             
-            // todo: how to get a snapshot repository for the snapshot state of T ????
-            //return new CrudAggregateRepository<T>(new SnapshotRepository<TestState>(null), new EventBus<T>(this));
-            
-            return new AggregateRepository<T>(this.Serializer, this.EventStore, new EventBus<T>(this));
+            return new SnapshotRepository<TestState>(this.Connection);
         }
-
-        public IEventStoreRepository EventStore
-        {
-            get
-            {
-                return this.es;
-            }
-        }
-
-        public IDomainEventBus EventBus
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        public ISerializer Serializer
-        {
-            get
-            {
-                // todo: this means that the serializer can only supprt events - not commands or snapshots, we need all three to be supported
-                return new DefaultSerializer<EventBase>();
-            }
-        }
-        
-        public void RegisterDenormalizer(Type aggregateType, Type denormalizer)
-        {
-            // add to dictionary
-        }
-        
-        public IList<IDenormalizer> GetDenormalizers(Type aggregateType)
-        {
-            // todo: need an actual repository here to store data in
-            return new List<IDenormalizer>() { new TestDenormalizer(null) };
-        }
-        
     }
-    
-    // implement sqlite connection and repository next.
-    // we use a scope to a) create a unit of work that spans different aggregate types 
-    // and b) event publication
 }
 

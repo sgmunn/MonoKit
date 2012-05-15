@@ -1,11 +1,14 @@
-using System;
-using MonoKit.Domain;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace MonoKit.Data.SQLite
+namespace MonoKit.Domain.Data.SQLite
 {
-    public class SnapshotRepository<T> : IRepository<ISnapshot> where T : class, ISnapshot, new() 
+    using System;
+    using MonoKit.Domain;
+    using System.Collections.Generic;
+    using System.Linq;
+    using MonoKit.Domain.Data;
+    using MonoKit.Data;
+    using MonoKit.Data.SQLite;
+    
+    public class SnapshotRepository<T> : ISnapshotRepository where T : class, ISnapshot, new() 
     {
         private readonly SyncRepository<T> repository;
         

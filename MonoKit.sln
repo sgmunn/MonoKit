@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iPhoneTest", "iPhoneTest\iP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKitSample", "MonoKitSample\MonoKitSample.csproj", "{93EB339A-DFF9-48FA-A490-E53069BD1B66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKit.UI", "MonoKit.UI\MonoKit.UI.csproj", "{ABE22D63-B716-4C58-9A59-5915F47968D4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKit.iOS", "MonoKit.iOS\MonoKit.iOS.csproj", "{ABE22D63-B716-4C58-9A59-5915F47968D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

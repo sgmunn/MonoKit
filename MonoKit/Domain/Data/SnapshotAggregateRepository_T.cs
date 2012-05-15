@@ -1,17 +1,16 @@
 namespace MonoKit.Domain.Data
 {
     using System;
-    using MonoKit.Data;
     using System.Collections.Generic;
     using System.Linq;
     
-    public class CrudAggregateRepository<T> : IAggregateRepository<T> where T : IAggregateRoot, new()
+    public class SnapshotAggregateRepository<T> : IAggregateRepository<T> where T : IAggregateRoot, new()
     {
-        private readonly IRepository<ISnapshot> repository;
+        private readonly ISnapshotRepository repository;
         
         private readonly IEventBus<T> eventBus;
   
-        public CrudAggregateRepository(IRepository<ISnapshot> repository, IEventBus<T> eventBus)
+        public SnapshotAggregateRepository(ISnapshotRepository repository, IEventBus<T> eventBus)
         {
             this.repository = repository;
             this.eventBus = eventBus;

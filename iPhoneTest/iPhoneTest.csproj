@@ -87,9 +87,9 @@
       <Project>{93EB339A-DFF9-48FA-A490-E53069BD1B66}</Project>
       <Name>MonoKitSample</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MonoKit.UI\MonoKit.UI.csproj">
+    <ProjectReference Include="..\MonoKit.iOS\MonoKit.iOS.csproj">
       <Project>{ABE22D63-B716-4C58-9A59-5915F47968D4}</Project>
-      <Name>MonoKit.UI</Name>
+      <Name>MonoKit.iOS</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

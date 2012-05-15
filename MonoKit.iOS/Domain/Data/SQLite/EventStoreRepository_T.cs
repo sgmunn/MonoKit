@@ -1,11 +1,11 @@
-namespace MonoKit.Data.SQLite
+namespace MonoKit.Domain.Data.SQLite
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using System.Threading;
-    using MonoKit.Domain.Data;
+    using MonoKit.Data;
+    using MonoKit.Data.SQLite;
     
     public class EventStoreRepository<T> : IEventStoreRepository where T : IEventStoreContract, new() 
     {
@@ -13,7 +13,6 @@ namespace MonoKit.Data.SQLite
         
         public EventStoreRepository(SQLiteConnection connection)
         {
-            // todo: construction of this will perform create table without syncing unless we refactor table creation out
             this.repository = new InternalEventStoreRepository<T>(connection);
         }
 
