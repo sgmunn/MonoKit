@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.Serialization;
+    using MonoKit.Domain.Events;
     
     // todo: register event / command and state types 
     public  class DefaultSerializer<T> : ISerializer
@@ -14,7 +15,7 @@
         {
             singletonInstance = new DataContractSerializer(
                 typeof(T),
-                new List<Type> {  typeof(EventBase), typeof(CreatedEvent), typeof(TestEvent2), typeof(NextEvent)}
+                new List<Type> {  typeof(EventBase), typeof(CreatedEvent)}
                 );
         }
 

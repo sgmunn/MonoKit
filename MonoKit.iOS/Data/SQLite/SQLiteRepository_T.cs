@@ -24,7 +24,15 @@ namespace MonoKit.Data.SQLite
 
         public T GetById(object id)
         {
-            return this.connection.Get<T>(id);
+            // todo: check this
+            try
+            {
+                return this.connection.Get<T>(id);
+            }
+            catch
+            {
+                return default(T);
+            }
         }
 
         public IEnumerable<T> GetAll()

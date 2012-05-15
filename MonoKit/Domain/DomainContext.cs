@@ -20,7 +20,7 @@ namespace MonoKit.Domain
 
         public IDomainEventBus EventBus { get; private set; }
 
-        public ISerializer Serializer
+        public virtual ISerializer Serializer
         {
             get
             {
@@ -34,7 +34,7 @@ namespace MonoKit.Domain
             return new DefaultScope();
         }
 
-        public IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new()
+        public virtual IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new()
         {
             // todo: should we decorate the aggregate root with an attribute to denote event sourced vs snapshot only ??
             //return new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new EventBus<T>(this));

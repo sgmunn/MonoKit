@@ -4,7 +4,7 @@ namespace MonoKit.Domain
     
     public static class DomainNamespace
     {
-        public const string Namespace = "http://sgmunn.com/MonoKit/Domain"; 
+        public const string Namespace = "http://sgmunn.com/2012/MonoKit/Domain"; 
     }
 }
 

@@ -72,7 +72,6 @@
     <Compile Include="Domain\AggregateRoot.cs" />
     <Compile Include="Domain\IAggregateRoot.cs" />
     <Compile Include="Domain\MethodExecutor.cs" />
-    <Compile Include="Domain\Sample.cs" />
     <Compile Include="Data\IRepository_T.cs" />
     <Compile Include="Data\IUnitOfWork.cs" />
     <Compile Include="Data\IUnitOfWorkScope.cs" />

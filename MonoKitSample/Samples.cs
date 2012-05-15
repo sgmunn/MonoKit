@@ -11,6 +11,7 @@ using MonoKit.Data;
 using System.Collections.Generic;
 using MonoKit.Data.SQLite;
 using MonoKit.Domain.Data.SQLite;
+using MonoKit.Domain.Commands;
 
 namespace MonoKitSample
 {
@@ -47,9 +48,10 @@ namespace MonoKitSample
             
             section2.Header = "Test Samples";
             
+            section2.Add(new DisclosureElement("Event Sourced Domain Test") { Command = this.DoDomainTest1 });
+            section2.Add(new DisclosureElement("Snapshot Domain Test") { Command = this.DoDomainTest2 });
             section2.Add(new DisclosureElement("Custom Control") { Command = this.GotoCustomControl });
             section2.Add(new DisclosureElement("GC Tests") { Command = this.GotoGCTests });
-            section2.Add(new DisclosureElement("Domain Test") { Command = this.DoDomainTest });
             
             var section3 = new TableViewSection(source);
             
@@ -177,45 +179,93 @@ namespace MonoKitSample
         }
 
         
-        private void DoDomainTest(Element element)
+        private void DoDomainTest1(Element element)
         {
-            //var id = Guid.NewGuid();
-            var id = new Guid("{b1a0c1ba-cbcb-4606-b2ce-0926fb2022a2}");
+            SampleDB.Main.CreateTable<SQLStoredEvent>();
+
+            var id = new Guid("{4332b5a6-ab99-49dc-b37f-216c67247f14}");
    
-            // storage is not specific to an aggregate type
-            //var storage = new InMemoryEventStoreRepository<StoredEvent>();
             var storage = new EventStoreRepository<SQLStoredEvent>(SampleDB.Main);
             
-            var context = new SampleContext(SampleDB.Main, storage, null);
+            var context = new SampleContext1(SampleDB.Main, storage, null);
             
             // bootstrap
-            context.RegisterDenormalizer(typeof(TestRoot), typeof(TestDenormalizer));
+            //context.RegisterDenormalizer(typeof(TestRoot), typeof(TestDenormalizer));
             
-            var cmd = new DomainCommandExecutor<TestRoot>(context);
+            var cmd = new DomainCommandExecutor<EventSourcedTestRoot>(context);
             cmd.Execute(new CreateCommand() { AggregateId = id });
  
             var scope = context.GetScope();
             
             using (scope)
             {
-                cmd.Execute(scope, new TestCommand2() { AggregateId = id });
+                cmd.Execute(scope, new TestCommand() { AggregateId = id, Description = DateTime.Now.ToShortTimeString(), });
+                scope.Commit();
+            }
+        }
+        
+        private void DoDomainTest2(Element element)
+        {
+            SampleDB.Main.CreateTable<TestSnapshot>();
+
+            var id = new Guid("{c239587e-c8bc-4654-9f28-6a79a7feb12a}");
+   
+            var storage = new EventStoreRepository<SQLStoredEvent>(SampleDB.Main);
+            
+            var context = new SampleContext2(SampleDB.Main, storage, null);
+            
+            // bootstrap
+            //context.RegisterDenormalizer(typeof(TestRoot), typeof(TestDenormalizer));
+            
+            var cmd = new DomainCommandExecutor<SnapshotTestRoot>(context);
+            cmd.Execute(new CreateCommand() { AggregateId = id });
+ 
+            var scope = context.GetScope();
+            
+            using (scope)
+            {
+                cmd.Execute(scope, new TestCommand() { AggregateId = id, Description = DateTime.Now.ToShortTimeString(), });
                 scope.Commit();
             }
         }
     }
     
-    public class SampleContext : SQLiteDomainContext
+    public class SampleContext1 : SQLiteDomainContext
     {
-        public SampleContext(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
+        public SampleContext1(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
         {
+        }
 
+        public override ISerializer Serializer
+        {
+            get
+            {
+                return new SampleSerializer<EventBase>();
+            }
+        }
+
+        public override IAggregateRepository<T> AggregateRepository<T>() 
+        {
+            return new AggregateRepository<T>(this.Serializer, this.EventStore, new EventBus<T>(this));
+        }
+    }
+    
+    public class SampleContext2 : SQLiteDomainContext
+    {
+        public SampleContext2(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
+        {
+        }
+
+        public override IAggregateRepository<T> AggregateRepository<T>() 
+        {
+            return new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new EventBus<T>(this));
         }
 
         public override ISnapshotRepository GetSnapshotRepository(Type aggregateType)
         {
             // todo: register a Func<Type, ISnapshotRepository> to create the snapshot repository
             
-            return new SnapshotRepository<TestState>(this.Connection);
+            return new SnapshotRepository<TestSnapshot>(this.Connection);
         }
     }
 }

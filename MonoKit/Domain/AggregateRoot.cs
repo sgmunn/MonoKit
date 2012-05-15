@@ -3,6 +3,8 @@
 //   (c) sgmunn 2012  
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+using MonoKit.Domain.Commands;
+using MonoKit.Domain.Events;
 
 namespace MonoKit.Domain
 {
@@ -27,6 +29,8 @@ namespace MonoKit.Domain
 
         public int Version { get; protected set; }
 
+        public bool Created { get; private set; }
+
         public IEnumerable<IEvent> UncommittedEvents
         {
             get
@@ -34,12 +38,27 @@ namespace MonoKit.Domain
                 return this.uncommittedEvents;
             }
         }
+        
+        public virtual void Execute(CreateCommand command)
+        {
+            if (this.Created)
+            {
+                throw new InvalidOperationException(string.Format("The Aggregate {0} has already been created.", this.GetType().Name));
+            }
+
+            this.AggregateId = command.AggregateId;
+            this.NewEvent(new CreatedEvent());
+        }
+        
+        public void Apply(CreatedEvent @event)
+        {
+            this.AggregateId = @event.AggregateId;
+        }
 
         public void Commit()
         {
             this.uncommittedEvents.Clear();
         }
-
 
         protected void ApplyEvents(IList<IEvent> events)
         {
@@ -56,12 +75,16 @@ namespace MonoKit.Domain
 
             @event.AggregateId = this.AggregateId;
             @event.Version = this.Version;
+            @event.Timestamp = DateTime.UtcNow;
+
             this.ApplyEvent(@event);
             this.uncommittedEvents.Add(@event);
         }
 
         private void ApplyEvent(IEvent @event)
         {
+            Console.WriteLine("{0} - Apply {1} event {2}",  @event.Version,  @event.GetType().Name,  @event.Timestamp);
+
             if (!Executor.ExecuteMethodForSingleParam(this, @event))
             {
                 throw new MissingMethodException(string.Format("Aggregate {0} does not support a method that can be called with {1}", this, @event));
@@ -77,16 +100,27 @@ namespace MonoKit.Domain
         }
 
         protected TState InternalState { get; private set; }
+                
+        public override void Execute(CreateCommand command)
+        {
+            base.Execute(command);
+        }
+
 
         public void LoadFromSnapshot(ISnapshot snapshot)
         {
             this.InternalState = snapshot as TState;
             this.Version = snapshot.Version;
+            this.AggregateId = snapshot.Id;
         }
 
         public ISnapshot GetSnapshot()
         {
-            return this.InternalState;
+            var snapshot = this.InternalState;
+            snapshot.Id = this.AggregateId;
+            snapshot.Version = this.Version;
+
+            return snapshot;
         }
     }
 

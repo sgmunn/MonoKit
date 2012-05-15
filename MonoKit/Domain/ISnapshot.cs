@@ -4,7 +4,8 @@ namespace MonoKit.Domain
     
     public interface ISnapshot
     {
-        int Version { get; }
+        Guid Id { get; set; }
+        int Version { get; set; }
     }
 }
 

@@ -8,12 +8,19 @@ namespace MonoKit.Data.SQLite
         private readonly SQLiteConnection connection;
         
         private readonly List<IUnitOfWork> scopedWork;
+
+        private bool startedTransaction;
         
         public SQLiteUnitOfWorkScope(SQLiteConnection connection)
         {
             this.connection = connection;
             this.scopedWork = new List<IUnitOfWork>();
-            this.connection.BeginTransaction();
+
+            if (!this.connection.IsInTransaction)
+            {
+                this.startedTransaction = true;
+                this.connection.BeginTransaction();
+            }
         }
 
         public void Add(IUnitOfWork uow)
@@ -27,8 +34,12 @@ namespace MonoKit.Data.SQLite
             {
                 uow.Commit();
             }
-            
-            this.connection.Commit();
+
+            if (this.startedTransaction)
+            {
+                this.connection.Commit();
+                this.startedTransaction = false;
+            }
         }
 
         public void Dispose()
@@ -38,7 +49,10 @@ namespace MonoKit.Data.SQLite
                 uow.Dispose();
             }
             
-            this.connection.Rollback();
+            if (this.startedTransaction)
+            {
+                this.connection.Rollback();
+            }
         }
     }
 }

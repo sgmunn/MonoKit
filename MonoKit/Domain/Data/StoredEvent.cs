@@ -3,7 +3,7 @@ namespace MonoKit.Domain.Data
     using System;
     using System.Runtime.Serialization;
 
-    [DataContract(Name="StoredEvent", Namespace="http://sgmunn.com/MonoKit/Domain")]
+    [DataContract(Name="StoredEvent", Namespace=DomainNamespace.Namespace)]
     public class StoredEvent : IEventStoreContract
     {
         [DataMember]

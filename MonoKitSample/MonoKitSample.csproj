@@ -34,12 +34,14 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Samples.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="SampleDB.cs" />
+    <Compile Include="SampleDomain.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKit\MonoKit.csproj">
