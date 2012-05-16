@@ -19,10 +19,5 @@ namespace MonoKit.Domain.Data.SQLite
         {
             return new SQLiteUnitOfWorkScope(this.Connection);
         }
-
-        public override ISnapshotRepository GetSnapshotRepository(Type aggregateType)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

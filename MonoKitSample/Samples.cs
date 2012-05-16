@@ -182,16 +182,11 @@ namespace MonoKitSample
         private void DoDomainTest1(Element element)
         {
             SampleDB.Main.CreateTable<SQLStoredEvent>();
-
-            var id = new Guid("{4332b5a6-ab99-49dc-b37f-216c67247f14}");
    
             var storage = new EventStoreRepository<SQLStoredEvent>(SampleDB.Main);
-            
             var context = new SampleContext1(SampleDB.Main, storage, null);
-            
-            // bootstrap
-            //context.RegisterDenormalizer(typeof(TestRoot), typeof(TestDenormalizer));
-            
+
+            var id = new Guid("{4332b5a6-ab99-49dc-b37f-216c67247f14}");
             var cmd = new DomainCommandExecutor<EventSourcedTestRoot>(context);
             cmd.Execute(new CreateCommand() { AggregateId = id });
  
@@ -206,17 +201,19 @@ namespace MonoKitSample
         
         private void DoDomainTest2(Element element)
         {
+            // setup and bootstrap context
             SampleDB.Main.CreateTable<TestSnapshot>();
-
-            var id = new Guid("{c239587e-c8bc-4654-9f28-6a79a7feb12a}");
    
             var storage = new EventStoreRepository<SQLStoredEvent>(SampleDB.Main);
             
             var context = new SampleContext2(SampleDB.Main, storage, null);
+
+            context.RegisterSnapshot<SnapshotTestRoot>(c => new SnapshotRepository<TestSnapshot>(SampleDB.Main));
             
-            // bootstrap
-            //context.RegisterDenormalizer(typeof(TestRoot), typeof(TestDenormalizer));
+            context.RegisterDenormalizer<SnapshotTestRoot>(c => new TestDenormalizer(new SQLiteRepository<TestReadModel>(SampleDB.Main)));
             
+            // the commanding bit
+            var id = new Guid("{c239587e-c8bc-4654-9f28-6a79a7feb12a}");
             var cmd = new DomainCommandExecutor<SnapshotTestRoot>(context);
             cmd.Execute(new CreateCommand() { AggregateId = id });
  

@@ -7,13 +7,16 @@ namespace MonoKit.Domain
     
     public abstract class DomainContext : IDomainContext
     {
-        private readonly Dictionary<Type, List<Type>> registeredDenormalizers;
+        private readonly Dictionary<Type, List<Func<IDomainContext, IDenormalizer>>> registeredDenormalizers;
+
+        private readonly Dictionary<Type, Func<IDomainContext, ISnapshotRepository>> registeredSnapshotRepositories;
 
         public DomainContext(IEventStoreRepository eventStore, IDomainEventBus eventBus)
         {
             this.EventBus = eventBus;
             this.EventStore = eventStore;
-            this.registeredDenormalizers = new Dictionary<Type, List<Type>>();
+            this.registeredDenormalizers = new Dictionary<Type, List<Func<IDomainContext, IDenormalizer>>>();
+            this.registeredSnapshotRepositories = new Dictionary<Type, Func<IDomainContext, ISnapshotRepository>>();
         }
 
         public IEventStoreRepository EventStore{ get; private set; }
@@ -42,19 +45,44 @@ namespace MonoKit.Domain
             return new AggregateRepository<T>(this.Serializer, this.EventStore, new EventBus<T>(this));
         }
         
-        // todo: register a Func<Type, ISnapshotRepository> to create the snapshot repository
-        public abstract ISnapshotRepository GetSnapshotRepository(Type aggregateType);
-
-        public void RegisterDenormalizer(Type aggregateType, Type denormalizer)
+        public virtual ISnapshotRepository GetSnapshotRepository(Type aggregateType)
         {
-            // add to dictionary
+            if (this.registeredSnapshotRepositories.ContainsKey(aggregateType))
+            {
+                return this.registeredSnapshotRepositories [aggregateType](this);
+            }
+
+            return null;
         }
-        
+
         public IList<IDenormalizer> GetDenormalizers(Type aggregateType)
         {
-            return new List<IDenormalizer>();
-            // todo: need an actual repository here to store data in
-            //return new List<IDenormalizer>() { new TestDenormalizer(null) };
+            var result = new List<IDenormalizer>();
+
+            if (this.registeredDenormalizers.ContainsKey(aggregateType))
+            {
+                foreach (var factory in this.registeredDenormalizers[aggregateType])
+                {
+                    result.Add(factory(this));
+                }
+            }
+
+            return result;
+        }
+
+        public void RegisterSnapshot<T>(Func<IDomainContext, ISnapshotRepository> createSnapshotRepository) where T : IAggregateRoot
+        {
+            this.registeredSnapshotRepositories[typeof(T)] = createSnapshotRepository;
+        }
+
+        public void RegisterDenormalizer<T>(Func<IDomainContext, IDenormalizer> createDenormalizer) where T : IAggregateRoot
+        {
+            if (!this.registeredDenormalizers.ContainsKey(typeof(T)))
+            {
+                this.registeredDenormalizers [typeof(T)] = new List<Func<IDomainContext, IDenormalizer>>();
+            }
+
+            this.registeredDenormalizers [typeof(T)].Add(createDenormalizer);
         }
     }
 }
