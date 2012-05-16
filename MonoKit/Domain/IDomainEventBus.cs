@@ -5,7 +5,7 @@ namespace MonoKit.Domain
 
     public interface IDomainEventBus 
     {
-        void Publish(IList<IDomainEvent> events); 
+        void Publish(IList<IEvent> events); 
     }
 }
 

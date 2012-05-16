@@ -14,11 +14,25 @@ namespace MonoKit.Domain
     {
         public bool ExecuteMethodForSingleParam(object instance, object param)
         {
-            var method = this.GetCommandHandlerMethod(instance, param);
+            return this.ExecuteMethodForParams(instance, param);
+//            var method = this.GetCommandHandlerMethod(instance, param);
+//
+//            if (method != null)
+//            {
+//                method.Invoke(instance, new object[1] { param });
+//                return true;
+//            }
+//            
+//            return false;
+        }
+
+        public bool ExecuteMethodForParams(object instance, params object[] args)
+        {
+            var method = this.GetCommandHandlerMethod(instance, args);
 
             if (method != null)
             {
-                method.Invoke(instance, new object[1] { param });
+                method.Invoke(instance, args);
                 return true;
             }
             
@@ -26,15 +40,52 @@ namespace MonoKit.Domain
         }
         
         // todo: cache method info for aggregate and command combination
-        private MethodInfo GetCommandHandlerMethod(object instance, object param)
+//        private MethodInfo GetCommandHandlerMethod(object instance, object param)
+//        {
+//            foreach (var method in instance.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance))
+//            {
+//                var methodParams = method.GetParameters();
+//                if (methodParams.Count() == 1)
+//                {
+//                    var p1 = methodParams[0];
+//                    if (p1 != null && p1.ParameterType == param.GetType())
+//                    {
+//                        return method;
+//                    }
+//                }
+//            }
+//            
+//            return null;
+//        }
+
+        private MethodInfo GetCommandHandlerMethod(object instance, params object[] args)
         {
             foreach (var method in instance.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance))
             {
                 var methodParams = method.GetParameters();
-                if (methodParams.Count() == 1)
+                if (methodParams.Count() == args.Count())
                 {
-                    var p1 = methodParams[0];
-                    if (p1 != null && p1.ParameterType == param.GetType())
+                    bool matches = true;
+                    for (int i = 0; i < args.Count(); i++)
+                    {
+                        var p1 = methodParams [i];
+
+                        if (args.Count() == 2)
+                        {
+                            Console.WriteLine(method.Name);
+                            if (args [i].GetType() == typeof(Type))
+                            {
+                                matches = true;
+                            }
+                        }
+
+                        if (p1 == null || p1.ParameterType != args [i].GetType())
+                        {
+                            matches = false;
+                        }
+                    }
+
+                    if (matches)
                     {
                         return method;
                     }

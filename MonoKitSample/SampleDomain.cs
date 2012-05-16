@@ -81,9 +81,9 @@ namespace MonoKitSample
         {
         }
         
-        public void Handle(CreatedEvent @event)
+        public void HandleMe(CreatedEvent @event)
         {
-            Console.WriteLine("Denormalize Created Event");
+            Console.WriteLine("Denormalize Created Event {0}", @event.AggregateType);
         }
     }
 

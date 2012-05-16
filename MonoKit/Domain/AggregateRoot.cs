@@ -72,6 +72,7 @@ namespace MonoKit.Domain
             this.Version++;
 
             @event.AggregateId = this.AggregateId;
+            @event.AggregateType = this.GetType();
             @event.Version = this.Version;
             @event.Timestamp = DateTime.UtcNow;
 

@@ -12,6 +12,8 @@ namespace MonoKit.Domain
     {
         Guid AggregateId { get; }
 
+        Type AggregateType { get; }
+
         Guid EventId { get; }
         
         // todo: we can use the command id to match events to commands, or when we store unsent commands

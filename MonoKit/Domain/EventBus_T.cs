@@ -16,28 +16,16 @@ namespace MonoKit.Domain
         {
             var denormalizers = this.context.GetDenormalizers(typeof(T));
             
-            // todo: this can be done async
+            // todo: this coud be done async, but because we should only have one thread to the db at any one time it's not really worth it.
+            // just don't take too long in any one denormalizer and don't make assumptions on the order of denormalizers being executed.
             foreach (var denormalizer in denormalizers)
             {
                 denormalizer.Handle(events);
             }
-            
+
             if (this.context.EventBus != null)
             {
-                var domainEvents = new List<IDomainEvent>(); 
-                
-                foreach (var @event in events)
-                {
-                    var domainEvent = new DomainEvent 
-                    {
-                        AggregateType = typeof(T),
-                        Event = @event,
-                    };
-                    
-                    domainEvents.Add(domainEvent);
-                }
-                
-                this.context.EventBus.Publish(domainEvents);
+                this.context.EventBus.Publish(events);
             }
         }
     }

@@ -12,7 +12,7 @@ namespace MonoKit.Domain.Data
             foreach (var @event in events)
             {
                 // todo: should we check for not handling the event or not.  denormalizers probably don't need to handle *everthing*
-                this.ExecuteMethodForSingleParam(this, @event);
+                this.ExecuteMethodForParams(this, @event);
             }
         }
     }
