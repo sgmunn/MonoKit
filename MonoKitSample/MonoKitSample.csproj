@@ -42,6 +42,7 @@
     <Compile Include="Person.cs" />
     <Compile Include="SampleDB.cs" />
     <Compile Include="SampleDomain.cs" />
+    <Compile Include="MinionDomain.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKit\MonoKit.csproj">

@@ -15,4 +15,6 @@ I'll be adding more samples and work on base features over the next while.
 
 I look forward to any comments you might have.
 
+License is MIT, just need to update headers.
+
 Cheers.
