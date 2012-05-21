@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace MonoKit.Domain
 {
     using System;
@@ -7,7 +9,7 @@ namespace MonoKit.Domain
     
     public abstract class DomainContext : IDomainContext
     {
-        private readonly Dictionary<Type, List<Func<IDomainContext, IDenormalizer>>> registeredDenormalizers;
+        private readonly Dictionary<Type, List<Func<IDomainContext, IReadModelBuilder>>> registeredBuilders;
 
         private readonly Dictionary<Type, Func<IDomainContext, ISnapshotRepository>> registeredSnapshotRepositories;
 
@@ -15,7 +17,9 @@ namespace MonoKit.Domain
         {
             this.EventBus = eventBus;
             this.EventStore = eventStore;
-            this.registeredDenormalizers = new Dictionary<Type, List<Func<IDomainContext, IDenormalizer>>>();
+            this.EventSerializer = new DefaultEventSerializer();
+
+            this.registeredBuilders = new Dictionary<Type, List<Func<IDomainContext, IReadModelBuilder>>>();
             this.registeredSnapshotRepositories = new Dictionary<Type, Func<IDomainContext, ISnapshotRepository>>();
         }
 
@@ -23,26 +27,21 @@ namespace MonoKit.Domain
 
         public IDomainEventBus EventBus { get; private set; }
 
-        public virtual ISerializer Serializer
-        {
-            get
-            {
-                // todo: this means that the serializer can only supprt events - not commands or snapshots, we need all three to be supported
-                return new DefaultSerializer<EventBase>();
-            }
-        }
+        public IEventSerializer EventSerializer { get; protected set; }
 
-        public virtual IUnitOfWorkScope GetScope()
+        public virtual IUnitOfWorkScope BeginUnitOfWork()
         {
             return new DefaultScope();
         }
 
         public virtual IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new()
         {
-            // todo: should we decorate the aggregate root with an attribute to denote event sourced vs snapshot only ??
-            //return new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new EventBus<T>(this));
-            
-            return new AggregateRepository<T>(this.Serializer, this.EventStore, new EventBus<T>(this));
+            if (typeof(T).GetInterfaces().Contains(typeof(IEventSourced)))
+            {
+                return new AggregateRepository<T>(this.EventSerializer, this.EventStore, new EventBus<T>(this));
+            }
+
+            return new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new EventBus<T>(this));
         }
         
         public virtual ISnapshotRepository GetSnapshotRepository(Type aggregateType)
@@ -55,13 +54,13 @@ namespace MonoKit.Domain
             return null;
         }
 
-        public IList<IDenormalizer> GetDenormalizers(Type aggregateType)
+        public IList<IReadModelBuilder> GetReadModelBuilders(Type aggregateType)
         {
-            var result = new List<IDenormalizer>();
+            var result = new List<IReadModelBuilder>();
 
-            if (this.registeredDenormalizers.ContainsKey(aggregateType))
+            if (this.registeredBuilders.ContainsKey(aggregateType))
             {
-                foreach (var factory in this.registeredDenormalizers[aggregateType])
+                foreach (var factory in this.registeredBuilders[aggregateType])
                 {
                     result.Add(factory(this));
                 }
@@ -75,14 +74,14 @@ namespace MonoKit.Domain
             this.registeredSnapshotRepositories[typeof(T)] = createSnapshotRepository;
         }
 
-        public void RegisterDenormalizer<T>(Func<IDomainContext, IDenormalizer> createDenormalizer) where T : IAggregateRoot
+        public void RegisterBuilder<T>(Func<IDomainContext, IReadModelBuilder> createBuilder) where T : IAggregateRoot
         {
-            if (!this.registeredDenormalizers.ContainsKey(typeof(T)))
+            if (!this.registeredBuilders.ContainsKey(typeof(T)))
             {
-                this.registeredDenormalizers [typeof(T)] = new List<Func<IDomainContext, IDenormalizer>>();
+                this.registeredBuilders [typeof(T)] = new List<Func<IDomainContext, IReadModelBuilder>>();
             }
 
-            this.registeredDenormalizers [typeof(T)].Add(createDenormalizer);
+            this.registeredBuilders [typeof(T)].Add(createBuilder);
         }
     }
 }

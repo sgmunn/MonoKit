@@ -13,7 +13,7 @@ namespace MonoKit.Domain
         }
 
         [DataMember]
-        public Type AggregateType { get; set; }
+        public string AggregateTypeId { get; set; }
 
         [DataMember]
         public Guid EventId { get; set; }

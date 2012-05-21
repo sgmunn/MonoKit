@@ -9,18 +9,10 @@ namespace MonoKit.Data.SQLite
         
         private readonly List<IUnitOfWork> scopedWork;
 
-        private bool startedTransaction;
-        
         public SQLiteUnitOfWorkScope(SQLiteConnection connection)
         {
             this.connection = connection;
             this.scopedWork = new List<IUnitOfWork>();
-
-            if (!this.connection.IsInTransaction)
-            {
-                this.startedTransaction = true;
-                this.connection.BeginTransaction();
-            }
         }
 
         public void Add(IUnitOfWork uow)
@@ -30,15 +22,20 @@ namespace MonoKit.Data.SQLite
 
         public void Commit()
         {
-            foreach (var uow in this.scopedWork)
+            this.connection.BeginTransaction();
+            try
             {
-                uow.Commit();
-            }
+                foreach (var uow in this.scopedWork)
+                {
+                    uow.Commit();
+                }
 
-            if (this.startedTransaction)
-            {
                 this.connection.Commit();
-                this.startedTransaction = false;
+            }
+            catch
+            {
+                this.connection.Rollback();
+                throw;
             }
         }
 
@@ -47,11 +44,6 @@ namespace MonoKit.Data.SQLite
             foreach (var uow in this.scopedWork)
             {
                 uow.Dispose();
-            }
-            
-            if (this.startedTransaction)
-            {
-                this.connection.Rollback();
             }
         }
     }

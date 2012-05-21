@@ -11,13 +11,13 @@ namespace MonoKit.Domain
         
         IDomainEventBus EventBus { get; }
 
-        ISerializer Serializer { get; }
+        IEventSerializer EventSerializer { get; }
         
-        IUnitOfWorkScope GetScope();
+        IUnitOfWorkScope BeginUnitOfWork();
         
         IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new();
 
-        IList<IDenormalizer> GetDenormalizers(Type aggregateType);
+        IList<IReadModelBuilder> GetReadModelBuilders(Type aggregateType);
     }
 }
 

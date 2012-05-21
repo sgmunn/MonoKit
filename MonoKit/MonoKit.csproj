@@ -84,13 +84,10 @@
     <Compile Include="Domain\CommandExecutor_T.cs" />
     <Compile Include="Domain\Data\IAggregateRepository_T.cs" />
     <Compile Include="Domain\Data\AggregateRepository_T.cs" />
-    <Compile Include="Domain\Data\DefaultSerializer.cs" />
-    <Compile Include="Domain\Data\ISerializer.cs" />
     <Compile Include="Domain\Data\IEventStoreRepository.cs" />
     <Compile Include="Domain\Data\ConcurrencyException.cs" />
     <Compile Include="Domain\Data\DictionaryRepository.cs" />
     <Compile Include="Domain\DomainNamespace.cs" />
-    <Compile Include="Domain\IDenormalizer.cs" />
     <Compile Include="Domain\IEvent.cs" />
     <Compile Include="Domain\EventBase.cs" />
     <Compile Include="Domain\ICommand.cs" />
@@ -108,12 +105,15 @@
     <Compile Include="Tasks\SyncTaskScheduler.cs" />
     <Compile Include="Domain\Commands\CreateCommand.cs" />
     <Compile Include="Domain\Events\CreatedEvent.cs" />
-    <Compile Include="Domain\Data\Denormalizer.cs" />
     <Compile Include="Domain\ISnapshotSupport.cs" />
     <Compile Include="Data\SyncRepository_T.cs" />
     <Compile Include="Data\SyncScheduler.cs" />
     <Compile Include="Domain\Data\ISnapshotRepository.cs" />
     <Compile Include="Domain\Data\SnapshotAggregateRepository_T.cs" />
     <Compile Include="Domain\DomainContext.cs" />
+    <Compile Include="Domain\Data\IEventSerializer.cs" />
+    <Compile Include="Domain\Data\DefaultEventSerializer.cs" />
+    <Compile Include="Domain\IReadModelBuilder.cs" />
+    <Compile Include="Domain\Data\ReadModelBuilder.cs" />
   </ItemGroup>
 </Project>

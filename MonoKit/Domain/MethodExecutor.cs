@@ -9,7 +9,8 @@ namespace MonoKit.Domain
     using System;
     using System.Reflection;
     using System.Linq;
-    
+
+    // todo: make a static class and use caching
     public class MethodExecutor
     {
         public bool ExecuteMethodForSingleParam(object instance, object param)
@@ -69,15 +70,6 @@ namespace MonoKit.Domain
                     for (int i = 0; i < args.Count(); i++)
                     {
                         var p1 = methodParams [i];
-
-                        if (args.Count() == 2)
-                        {
-                            Console.WriteLine(method.Name);
-                            if (args [i].GetType() == typeof(Type))
-                            {
-                                matches = true;
-                            }
-                        }
 
                         if (p1 == null || p1.ParameterType != args [i].GetType())
                         {

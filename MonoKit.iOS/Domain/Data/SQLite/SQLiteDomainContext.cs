@@ -15,7 +15,7 @@ namespace MonoKit.Domain.Data.SQLite
 
         public SQLiteConnection Connection { get; private set; }
 
-        public override IUnitOfWorkScope GetScope()
+        public override IUnitOfWorkScope BeginUnitOfWork()
         {
             return new SQLiteUnitOfWorkScope(this.Connection);
         }

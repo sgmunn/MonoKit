@@ -58,6 +58,11 @@ namespace MonoKit.Domain
             this.uncommittedEvents.Clear();
         }
 
+        protected virtual string GetAggregateTypeId()
+        {
+            return this.GetType().Name;
+        }
+
         protected void ApplyEvents(IList<IEvent> events)
         {
             foreach (var @event in events)
@@ -72,7 +77,7 @@ namespace MonoKit.Domain
             this.Version++;
 
             @event.AggregateId = this.AggregateId;
-            @event.AggregateType = this.GetType();
+            @event.AggregateTypeId = this.GetAggregateTypeId();
             @event.Version = this.Version;
             @event.Timestamp = DateTime.UtcNow;
 

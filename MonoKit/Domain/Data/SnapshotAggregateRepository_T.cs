@@ -49,6 +49,9 @@ namespace MonoKit.Domain.Data
                 return;
             }
             
+            // todo: this could cause deadlocks if multiple threads / processes can access the persistence store at any one time
+            // we need to either lock or update where instead of the read then write
+            // snapshot repositories need to do an update where id = xx or we implement a lock for each aggregate id - will be fine for single process apps
             var current = this.GetById(instance.AggregateId);
 
             int expectedVersion = instance.UncommittedEvents.First().Version - 1;

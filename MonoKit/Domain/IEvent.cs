@@ -12,7 +12,7 @@ namespace MonoKit.Domain
     {
         Guid AggregateId { get; }
 
-        Type AggregateType { get; }
+        string AggregateTypeId { get; }
 
         Guid EventId { get; }
         

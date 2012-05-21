@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using MonoKit.Data.SQLite;
 using MonoKit.Domain.Data.SQLite;
 using MonoKit.Domain.Commands;
+using System.Reflection;
 
 namespace MonoKitSample
 {
@@ -48,6 +49,7 @@ namespace MonoKitSample
             
             section2.Header = "Test Samples";
             
+            section2.Add(new DisclosureElement("Minion Test") { Command = this.DoMinionTest });
             section2.Add(new DisclosureElement("Event Sourced Domain Test") { Command = this.DoDomainTest1 });
             section2.Add(new DisclosureElement("Snapshot Domain Test") { Command = this.DoDomainTest2 });
             section2.Add(new DisclosureElement("Custom Control") { Command = this.GotoCustomControl });
@@ -181,6 +183,9 @@ namespace MonoKitSample
         
         private void DoDomainTest1(Element element)
         {
+            // register events before creating context if using default serializer
+            KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
+
             SampleDB.Main.CreateTable<SQLStoredEvent>();
    
             var storage = new EventStoreRepository<SQLStoredEvent>(SampleDB.Main);
@@ -190,7 +195,7 @@ namespace MonoKitSample
             var cmd = new DomainCommandExecutor<EventSourcedTestRoot>(context);
             cmd.Execute(new CreateCommand() { AggregateId = id });
  
-            var scope = context.GetScope();
+            var scope = context.BeginUnitOfWork();
             
             using (scope)
             {
@@ -201,6 +206,9 @@ namespace MonoKitSample
         
         private void DoDomainTest2(Element element)
         {
+            // register events before creating context if using default serializer
+            KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
+
             // setup and bootstrap context
             SampleDB.Main.CreateTable<TestSnapshot>();
    
@@ -210,18 +218,51 @@ namespace MonoKitSample
 
             context.RegisterSnapshot<SnapshotTestRoot>(c => new SnapshotRepository<TestSnapshot>(SampleDB.Main));
             
-            context.RegisterDenormalizer<SnapshotTestRoot>(c => new TestDenormalizer(new SQLiteRepository<TestReadModel>(SampleDB.Main)));
+            context.RegisterBuilder<SnapshotTestRoot>(c => new TestBuilder(new SQLiteRepository<TestReadModel>(SampleDB.Main)));
             
             // the commanding bit
             var id = new Guid("{c239587e-c8bc-4654-9f28-6a79a7feb12a}");
             var cmd = new DomainCommandExecutor<SnapshotTestRoot>(context);
             cmd.Execute(new CreateCommand() { AggregateId = id });
  
-            var scope = context.GetScope();
+            var scope = context.BeginUnitOfWork();
             
             using (scope)
             {
                 cmd.Execute(scope, new TestCommand() { AggregateId = id, Description = DateTime.Now.ToShortTimeString(), });
+                scope.Commit();
+            }
+        }
+        
+        private void DoMinionTest(Element element)
+        {
+            // register events before creating context if using default serializer
+            KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
+
+            // setup and bootstrap context
+            SampleDB.Main.CreateTable<MinionDataContract>();
+            SampleDB.Main.CreateTable<PocketMoneyTransactionDataContract>();
+   
+            var storage = new EventStoreRepository<SQLStoredEvent>(SampleDB.Main);
+            
+            var context = new MinionContext(SampleDB.Main, storage, null);
+
+            context.RegisterSnapshot<Minion>(c => new SnapshotRepository<MinionDataContract>(SampleDB.Main));
+            
+            context.RegisterBuilder<Minion>(c => new TransactionReadModelBuilder(new SQLiteRepository<PocketMoneyTransactionDataContract>(SampleDB.Main)));
+            
+            // the commanding bit
+            var id = new Guid("{b6dc9675-a6ca-4767-8b49-e24b4262ac93}");
+            var cmd = new DomainCommandExecutor<Minion>(context);
+            cmd.Execute(new CreateCommand() { AggregateId = id });
+ 
+            var scope = context.BeginUnitOfWork();
+            
+            using (scope)
+            {
+                cmd.Execute(
+                    scope,
+                    new EarnPocketMoneyCommand() { AggregateId = id, Date = DateTime.Today, Amount = 10, });
                 scope.Commit();
             }
         }
@@ -232,37 +273,12 @@ namespace MonoKitSample
         public SampleContext1(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
         {
         }
-
-        public override ISerializer Serializer
-        {
-            get
-            {
-                return new SampleSerializer<EventBase>();
-            }
-        }
-
-        public override IAggregateRepository<T> AggregateRepository<T>() 
-        {
-            return new AggregateRepository<T>(this.Serializer, this.EventStore, new EventBus<T>(this));
-        }
     }
     
     public class SampleContext2 : SQLiteDomainContext
     {
         public SampleContext2(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
         {
-        }
-
-        public override IAggregateRepository<T> AggregateRepository<T>() 
-        {
-            return new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new EventBus<T>(this));
-        }
-
-        public override ISnapshotRepository GetSnapshotRepository(Type aggregateType)
-        {
-            // todo: register a Func<Type, ISnapshotRepository> to create the snapshot repository
-            
-            return new SnapshotRepository<TestSnapshot>(this.Connection);
         }
     }
 }

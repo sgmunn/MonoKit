@@ -16,7 +16,7 @@ namespace MonoKit.Domain
         // overload to execute multiple commands 
         public void Execute(ICommand command)
         {
-            var scope = this.context.GetScope();
+            var scope = this.context.BeginUnitOfWork();
             using (scope)
             {
                 // uow will be owned by the scope, so we don't need to dispose explicitly

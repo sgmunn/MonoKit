@@ -2,7 +2,7 @@ namespace MonoKit.Domain.Data
 {
     using System;
 
-    public interface ISerializer
+    public interface IEventSerializer
     {
         string SerializeToString(object instance);
 
