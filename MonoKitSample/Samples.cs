@@ -52,6 +52,7 @@ namespace MonoKitSample
             section2.Add(new DisclosureElement("Minion Test") { Command = this.DoMinionTest });
             section2.Add(new DisclosureElement("Event Sourced Domain Test") { Command = this.DoDomainTest1 });
             section2.Add(new DisclosureElement("Snapshot Domain Test") { Command = this.DoDomainTest2 });
+            section2.Add(new DisclosureElement("SQLite Admin Test") { Command = this.DoSqliteTest });
             section2.Add(new DisclosureElement("Custom Control") { Command = this.GotoCustomControl });
             section2.Add(new DisclosureElement("GC Tests") { Command = this.GotoGCTests });
             
@@ -253,7 +254,7 @@ namespace MonoKitSample
             
             // the commanding bit
             var id = new Guid("{b6dc9675-a6ca-4767-8b49-e24b4262ac93}");
-            var cmd = new DomainCommandExecutor<Minion>(context);
+            var cmd = context.NewCommandExecutor<Minion>();
             cmd.Execute(new CreateCommand() { AggregateId = id });
  
             var scope = context.BeginUnitOfWork();
@@ -266,6 +267,14 @@ namespace MonoKitSample
                 scope.Commit();
             }
         }
+                
+        private void DoSqliteTest(Element element)
+        {
+
+            var admin = new SQLite.MonoTouchAdmin.SQLiteAdmin(SampleDB.Main);
+            this.rootController.PushViewController(admin.NewTablesViewController(), true);
+        }
+
     }
     
     public class SampleContext1 : SQLiteDomainContext

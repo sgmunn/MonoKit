@@ -14,6 +14,8 @@ namespace MonoKit.Domain
         IEventSerializer EventSerializer { get; }
         
         IUnitOfWorkScope BeginUnitOfWork();
+
+        IDomainCommandExecutor<T> NewCommandExecutor<T>() where T : class, IAggregateRoot, new();
         
         IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new();
 

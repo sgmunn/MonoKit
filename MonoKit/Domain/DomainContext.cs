@@ -34,6 +34,11 @@ namespace MonoKit.Domain
             return new DefaultScope();
         }
 
+        public IDomainCommandExecutor<T> NewCommandExecutor<T>() where T : class, IAggregateRoot, new()
+        {
+            return new DomainCommandExecutor<T>(this);
+        }
+
         public virtual IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new()
         {
             if (typeof(T).GetInterfaces().Contains(typeof(IEventSourced)))
