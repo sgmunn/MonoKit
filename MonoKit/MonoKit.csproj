@@ -45,6 +45,9 @@
     <Folder Include="Tasks\" />
     <Folder Include="Domain\Commands\" />
     <Folder Include="Domain\Events\" />
+    <Folder Include="Reactive\" />
+    <Folder Include="Reactive\Disposables\" />
+    <Folder Include="Reactive\Subjects\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBinding\Binding.cs" />
@@ -115,5 +118,10 @@
     <Compile Include="Domain\Data\DefaultEventSerializer.cs" />
     <Compile Include="Domain\IReadModelBuilder.cs" />
     <Compile Include="Domain\Data\ReadModelBuilder.cs" />
+    <Compile Include="Reactive\Disposables\AnonymousDisposable.cs" />
+    <Compile Include="Reactive\Disposables\Disposable.cs" />
+    <Compile Include="Reactive\Disposables\NullDisposable.cs" />
+    <Compile Include="Reactive\Subjects\Subject_T.cs" />
+    <Compile Include="Domain\ObservableDomainEventBus.cs" />
   </ItemGroup>
 </Project>
