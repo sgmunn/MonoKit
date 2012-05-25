@@ -33,6 +33,10 @@ using MonoKit.Data.SQLite;
 using MonoKit.Domain.Data.SQLite;
 using MonoKit.Domain.Commands;
 using System.Reflection;
+using MonoKit.Tasks;
+using MonoKit.Reactive;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MonoKitSample
 {
@@ -69,6 +73,7 @@ namespace MonoKitSample
             
             section2.Header = "Test Samples";
             
+            section2.Add(new DisclosureElement("Tasks Test") { Command = this.DoTaskTest });
             section2.Add(new DisclosureElement("Minion Test") { Command = this.DoMinionTest });
             section2.Add(new DisclosureElement("Event Sourced Domain Test") { Command = this.DoDomainTest1 });
             section2.Add(new DisclosureElement("Snapshot Domain Test") { Command = this.DoDomainTest2 });
@@ -295,6 +300,29 @@ namespace MonoKitSample
             this.rootController.PushViewController(admin.NewTablesViewController(), true);
         }
 
+                
+        private void DoTaskTest(Element element)
+        {
+            Console.WriteLine("start test {0}", Thread.CurrentThread.ManagedThreadId);
+
+            Action act = () => {Thread.Sleep(5000);Console.WriteLine("Nested {0}", Thread.CurrentThread.ManagedThreadId);};
+
+            var task = new Task(() => {Thread.Sleep(1000);
+                Console.WriteLine("Task {0}", Thread.CurrentThread.ManagedThreadId);
+            
+            var next = new Task(act,TaskCreationOptions.AttachedToParent);
+                next.Start();
+            });
+
+            // continuations not supported, nested work fine though
+            // we could do an asobservable on it but without the .Start -- we'd need a different AsObservable though
+            // OR if we want to continue tasks then chain them using observables
+            // task.ContinueWith((_) => {Console.WriteLine("Continue {0}", Thread.CurrentThread.ManagedThreadId);});
+
+            task.AsObservable<Unit>().SubscribeOnMainThread(_ => {Console.WriteLine("Done {0}", Thread.CurrentThread.ManagedThreadId);
+            element.Text = "Done";});
+            Console.WriteLine("Done button click");
+        }
     }
     
     public class SampleContext1 : SQLiteDomainContext

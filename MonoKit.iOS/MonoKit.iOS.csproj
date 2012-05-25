@@ -66,6 +66,8 @@
     <Compile Include="Domain\Data\SQLite\SnapshotRepository.cs" />
     <Compile Include="Domain\Data\SQLite\EventStoreRepository_T.cs" />
     <Compile Include="Domain\Data\SQLite\InternalEventStoreRepository_T.cs" />
+    <Compile Include="Reactive\MainThreadObservableExtensions.cs" />
+    <Compile Include="Reactive\MainThreadObserver_T.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKit\MonoKit.csproj">
@@ -80,5 +82,6 @@
     <Folder Include="Data\SQLite\" />
     <Folder Include="Domain\Data\" />
     <Folder Include="Domain\Data\SQLite\" />
+    <Folder Include="Reactive\" />
   </ItemGroup>
 </Project>

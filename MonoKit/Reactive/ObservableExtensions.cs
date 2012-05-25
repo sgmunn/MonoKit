@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ObservableDomainEventBus.cs" company="sgmunn">
+// <copyright file=".cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,32 +17,26 @@
 //   IN THE SOFTWARE.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-namespace MonoKit.Domain
+
+namespace MonoKit.Reactive
 {
     using System;
-    using System.Collections.Generic;
-    using MonoKit.Reactive.Subjects;
-    
-    public class ObservableDomainEventBus : IDomainEventBus, IObservable<IEvent>
+
+    public static class ObservableExtensions
     {
-        private readonly Subject<IEvent> publisher;
-
-        public ObservableDomainEventBus()
+        public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext)
         {
-            this.publisher = new Subject<IEvent>();
+            return source.Subscribe(new AnonymousObserver<T>(onNext));
+        }
+        
+        public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext, Action onCompleted)
+        {
+            return source.Subscribe(new AnonymousObserver<T>(onNext, onCompleted));
         }
 
-        public void Publish(IList<IEvent> events)
+        public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext, Action<Exception> onError, Action onCompleted)
         {
-            foreach (var @event in events)
-            {
-                this.publisher.OnNext(@event);
-            }
-        }
-
-        public IDisposable Subscribe(IObserver<IEvent> observer)
-        {
-            return this.publisher.Subscribe(observer);
+            return source.Subscribe(new AnonymousObserver<T>(onNext, onError, onCompleted));
         }
     }
 }

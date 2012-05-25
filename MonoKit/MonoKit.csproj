@@ -118,10 +118,15 @@
     <Compile Include="Domain\Data\DefaultEventSerializer.cs" />
     <Compile Include="Domain\IReadModelBuilder.cs" />
     <Compile Include="Domain\Data\ReadModelBuilder.cs" />
-    <Compile Include="Reactive\Disposables\AnonymousDisposable.cs" />
     <Compile Include="Reactive\Disposables\Disposable.cs" />
     <Compile Include="Reactive\Disposables\NullDisposable.cs" />
     <Compile Include="Reactive\Subjects\Subject_T.cs" />
     <Compile Include="Domain\ObservableDomainEventBus.cs" />
+    <Compile Include="Reactive\ObservableExtensions.cs" />
+    <Compile Include="Reactive\AnonymousObservable_T.cs" />
+    <Compile Include="Reactive\AnonymousObserver_T.cs" />
+    <Compile Include="Reactive\Disposables\AnonymousDisposable.cs" />
+    <Compile Include="Tasks\TaskExtensions.cs" />
+    <Compile Include="Reactive\Unit.cs" />
   </ItemGroup>
 </Project>

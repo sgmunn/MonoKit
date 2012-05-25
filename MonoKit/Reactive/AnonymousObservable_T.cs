@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ObservableDomainEventBus.cs" company="sgmunn">
+// <copyright file=".cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,32 +17,44 @@
 //   IN THE SOFTWARE.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-namespace MonoKit.Domain
+
+namespace MonoKit.Reactive
 {
     using System;
-    using System.Collections.Generic;
-    using MonoKit.Reactive.Subjects;
-    
-    public class ObservableDomainEventBus : IDomainEventBus, IObservable<IEvent>
+    using MonoKit.Reactive.Disposables;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>
+    /// Takes a function that returns a subscription token from an observer.  The function allows us to have side
+    /// effects when we subscribe to an observable whilst being subscribed.
+    /// </remarks>
+    public class AnonymousObservable<T> : IObservable<T>
     {
-        private readonly Subject<IEvent> publisher;
+        private readonly Func<IObserver<T>, IDisposable> subscribe;
 
-        public ObservableDomainEventBus()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MonoKit.Reactive.AnonymousObservable`1"/> class.
+        /// </summary>
+        /// <param name='subscribe'>A function to subscribe an observer to</param>
+        public AnonymousObservable(Func<IObserver<T>, IDisposable> subscribe)
         {
-            this.publisher = new Subject<IEvent>();
+            this.subscribe = subscribe;
         }
 
-        public void Publish(IList<IEvent> events)
+        /// <summary>
+        /// 
+        /// </summary>
+        public IDisposable Subscribe(IObserver<T> observer)
         {
-            foreach (var @event in events)
-            {
-                this.publisher.OnNext(@event);
-            }
-        }
+            // invoke the subscribe function and register the observer, 
+            // we get given a token that we'll dispose
+            IDisposable subscription = this.subscribe(observer);
 
-        public IDisposable Subscribe(IObserver<IEvent> observer)
-        {
-            return this.publisher.Subscribe(observer);
+            // returns a disposable that will dispose the subscription that the subscribe function
+            // subscribed us to.
+            return Disposable.Create(() => subscription.Dispose()); 
         }
     }
 }
