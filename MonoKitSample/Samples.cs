@@ -319,7 +319,7 @@ namespace MonoKitSample
             // OR if we want to continue tasks then chain them using observables
             // task.ContinueWith((_) => {Console.WriteLine("Continue {0}", Thread.CurrentThread.ManagedThreadId);});
 
-            task.AsObservable<Unit>().SubscribeOnMainThread(_ => {Console.WriteLine("Done {0}", Thread.CurrentThread.ManagedThreadId);
+            task.AsObservable<Unit>().ObserveOnMainThread().Subscribe(_ => {Console.WriteLine("Done {0}", Thread.CurrentThread.ManagedThreadId);
             element.Text = "Done";});
             Console.WriteLine("Done button click");
         }

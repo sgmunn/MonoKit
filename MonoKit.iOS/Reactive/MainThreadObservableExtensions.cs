@@ -22,21 +22,22 @@ namespace MonoKit.Reactive
 {
     using System;
 
+    // todo: These should really be ObserveOnMainThread. in which case I have implemented it backwards
+    // I want the actions passed in to be processed on the main thread when they are observed, not 
+    // meaning that the subscription should be set up on the main thread.
     public static class MainThreadObservableExtensions
     {
-        public static IDisposable SubscribeOnMainThread<T>(this IObservable<T> source, Action<T> onNext)
+        public static IObservable<T> ObserveOnMainThread<T>(this IObservable<T> source)
         {
-            return source.Subscribe(new MainThreadObserver<T>(onNext));
-        }
-        
-        public static IDisposable SubscribeOnMainThread<T>(this IObservable<T> source, Action<T> onNext, Action onCompleted)
-        {
-            return source.Subscribe(new MainThreadObserver<T>(onNext, onCompleted));
-        }
-
-        public static IDisposable SubscribeOnMainThread<T>(this IObservable<T> source, Action<T> onNext, Action<Exception> onError, Action onCompleted)
-        {
-            return source.Subscribe(new MainThreadObserver<T>(onNext, onError, onCompleted));
+            return new AnonymousObservable<T>
+                (observer =>
+                 {
+                    return source.Subscribe(new MainThreadObserver<T>(
+                        next => observer.OnNext(next),
+                        error => observer.OnError(error),
+                        () => observer.OnCompleted()
+                        ));
+                });
         }
     }
 }
