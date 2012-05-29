@@ -128,5 +128,6 @@
     <Compile Include="Reactive\Disposables\AnonymousDisposable.cs" />
     <Compile Include="Tasks\TaskExtensions.cs" />
     <Compile Include="Reactive\Unit.cs" />
+    <Compile Include="Reactive\Disposables\CompositeDisposable.cs" />
   </ItemGroup>
 </Project>

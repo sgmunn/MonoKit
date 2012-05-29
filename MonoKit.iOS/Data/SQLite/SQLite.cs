@@ -429,9 +429,10 @@ namespace MonoKit.Data.SQLite
 		/// </returns>
 		public T Get<T> (object pk) where T : new()
 		{
+            // greg -- firstordefault
 			var map = GetMapping (typeof(T));
 			string query = string.Format ("select * from \"{0}\" where \"{1}\" = ?", map.TableName, map.PK.Name);
-			return Query<T> (query, pk).First ();
+			return Query<T> (query, pk).FirstOrDefault ();
 		}
 
 		/// <summary>

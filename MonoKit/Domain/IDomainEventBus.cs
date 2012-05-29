@@ -23,7 +23,7 @@ namespace MonoKit.Domain
     using System;
     using System.Collections.Generic;
 
-    public interface IDomainEventBus 
+    public interface IDomainEventBus : IObservable<IEvent> 
     {
         void Publish(IList<IEvent> events); 
     }

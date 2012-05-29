@@ -23,6 +23,8 @@ namespace MonoKit.Data.SQLite
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
+    using System.Threading;
     
     public class SQLiteRepository<T> : IRepository<T> where T: new()
     {
@@ -32,7 +34,15 @@ namespace MonoKit.Data.SQLite
         {
             this.connection = connection;
         }
-        
+
+        public SQLiteConnection Connection
+        {
+            get
+            {
+                return this.connection;
+            }
+        }
+
         public void Dispose()
         {
         }
@@ -44,10 +54,9 @@ namespace MonoKit.Data.SQLite
 
         public T GetById(object id)
         {
-            // todo: check this
             try
             {
-                return this.connection.Get<T>(id);
+                return GetSync(() => this.connection.Get<T>(id));
             }
             catch
             {
@@ -57,26 +66,56 @@ namespace MonoKit.Data.SQLite
 
         public IEnumerable<T> GetAll()
         {
-            return this.connection.Table<T>().AsEnumerable();
+            return GetSync(() => this.connection.Table<T>().AsEnumerable());
         }
 
         public void Save(T instance)
         {
-            if (this.connection.Update(instance) == 0)
-            {
-                this.connection.Insert(instance);
-            }
+            DoSync
+                (() => 
+                 {
+                    if (this.connection.Update(instance) == 0)
+                    {
+                        this.connection.Insert(instance);
+                    }
+                });
         }
 
         public void Delete(T instance)
         {
-            this.connection.Delete(instance);
+            DoSync(() => this.connection.Delete(instance));
         }
 
         public void DeleteId(object id)
         {
             throw new NotImplementedException();
-            // have to get table name
+            // todo: have to get table name and primary key 
+        }
+
+        // todo: using SyncScheduler to ensure that only one thread accesses the connection as per gist but..
+        // I'm using this to block the current thread so not really async.  more sqlite threading investigation
+        protected static TTask GetSync<TTask>(Func<TTask> task)
+        {
+            return Task.Factory.StartNew<TTask>
+                (() => 
+                 { 
+                    return task(); 
+                }, 
+                CancellationToken.None, 
+                TaskCreationOptions.None, 
+                SyncScheduler.TaskScheduler).Result;
+        }
+
+        protected static void DoSync(Action task)
+        {
+            Task.Factory.StartNew
+                (() => 
+                 { 
+                    task(); 
+                }, 
+                CancellationToken.None, 
+                TaskCreationOptions.None, 
+                SyncScheduler.TaskScheduler).Wait();
         }
     }    
 }

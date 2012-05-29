@@ -286,6 +286,11 @@ namespace MonoKit.UI.Controls
             return this.textField.BecomeFirstResponder();
         }
 
+        public override bool ResignFirstResponder()
+        {
+            return this.textField.ResignFirstResponder();
+        }
+
         protected override void ValueUpdated(string newValue)
         {
             base.ValueUpdated(newValue);
