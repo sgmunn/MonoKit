@@ -27,5 +27,7 @@ namespace MonoKit.Domain
     public interface IEventBus
     {
         void Publish(IEvent @event);
+
+        void Publish(IReadModel readModel);
     }
 }

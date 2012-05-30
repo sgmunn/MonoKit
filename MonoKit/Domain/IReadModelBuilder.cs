@@ -25,7 +25,7 @@ namespace MonoKit.Domain
 
     public interface IReadModelBuilder
     {
-        void Handle(IList<IEvent> events);
+        IEnumerable<IReadModel> Handle(IList<IEvent> events);
     }
 }
 

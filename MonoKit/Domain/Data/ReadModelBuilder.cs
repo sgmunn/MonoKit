@@ -25,14 +25,38 @@ namespace MonoKit.Domain.Data
 
     public abstract class ReadModelBuilder : MethodExecutor, IReadModelBuilder
     {
-        public void Handle(IList<IEvent> events)
+        private readonly List<IReadModel> updatedReadModels;
+
+        protected ReadModelBuilder()
         {
+            this.updatedReadModels = new List<IReadModel>();
+        }
+
+        public IEnumerable<IReadModel> Handle(IList<IEvent> events)
+        {
+            this.updatedReadModels.Clear();
+
             // now, for each domain event, call a method that takes the event and call it
             foreach (var @event in events)
             {
-                // todo: should we check for not handling the event or not.  read model builders probably don't need to handle *everthing*
+                // todo: should we check for not handling the event or not.  read model builders probably don't need to 
+                // handle *everthing*
                 this.ExecuteMethodForParams(this, @event);
             }
+
+            return this.updatedReadModels;
+        }
+
+        /// <summary>
+        /// Provides a reminder to inheritors that we need to register which read models we update so that we can
+        /// publish them on the event bus.  A bit of an annoyance but we'll see how well this works first.
+        /// </summary>
+        protected abstract void DoSaveReadModel(IReadModel readModel);
+
+        protected void SaveReadModel(IReadModel readModel)
+        {
+            this.DoSaveReadModel(readModel);
+            this.updatedReadModels.Add(readModel);
         }
     }
 }

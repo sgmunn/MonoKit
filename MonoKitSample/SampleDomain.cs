@@ -107,6 +107,11 @@ namespace MonoKitSample
         {
             Console.WriteLine("Builder Created Event {0}", @event.AggregateTypeId);
         }
+        
+        protected override void DoSaveReadModel(IReadModel readModel)
+        {
+        }
+
     }
 }
 

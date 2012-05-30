@@ -83,7 +83,7 @@ namespace MonoKit.Domain.Data
    
             var snapshot = ((ISnapshotSupport)instance).GetSnapshot() as ISnapshot;
             this.repository.Save(snapshot);
-            
+
             if (this.eventBus != null)
             {
                 this.eventBus.Publish(instance.UncommittedEvents.ToList());

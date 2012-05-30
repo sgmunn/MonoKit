@@ -22,8 +22,7 @@ namespace MonoKit.Domain
 {
     using System;
     using MonoKit.Data;
-    using MonoKit.Domain.Data;
-    
+
     public class DomainCommandExecutor<T> : IDomainCommandExecutor<T> where T : class, IAggregateRoot, new()
     {
         private readonly IDomainContext context;
@@ -45,7 +44,7 @@ namespace MonoKit.Domain
                     // uow will be owned by the scope, so we don't need to dispose explicitly
                     var uow = new UnitOfWork<T>(scope, this.context.AggregateRepository<T>(bus));
                 
-                    var cmd = new CommandExecutor<T>(uow);
+                    var cmd = new CommandExecutor<T>(uow, bus);
                     cmd.Execute(command, 0);
                 
                     scope.Commit();
@@ -66,7 +65,7 @@ namespace MonoKit.Domain
             // uow will be owned by the scope, so we don't need to dispose explicitly
             var uow = new UnitOfWork<T>(scope, this.context.AggregateRepository<T>(bus));
         
-            var cmd = new CommandExecutor<T>(uow);
+            var cmd = new CommandExecutor<T>(uow, bus);
             cmd.Execute(command, 0);
         }
         

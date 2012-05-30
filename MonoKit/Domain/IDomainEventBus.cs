@@ -24,7 +24,6 @@ namespace MonoKit.Domain
 
     public interface IDomainEventBus : IEventBus, IObservable<IEvent>, IObservable<IReadModel> 
     {
-        void Publish(IReadModel readModel);
     }
 }
 

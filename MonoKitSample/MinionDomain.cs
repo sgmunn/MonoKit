@@ -81,7 +81,7 @@ namespace MonoKitSample
         public decimal Amount { get; set; }
     }
 
-    public class PocketMoneyTransactionDataContract
+    public class PocketMoneyTransactionDataContract : IReadModel
     {
         public PocketMoneyTransactionDataContract()
         {
@@ -118,7 +118,13 @@ namespace MonoKitSample
             transaction.Amount = @event.Amount;
             transaction.Date = @event.Date;
 
-            this.repository.Save(transaction);
+
+            this.SaveReadModel(transaction);
+        }
+
+        protected override void DoSaveReadModel(IReadModel readModel)
+        {
+            this.repository.Save(readModel as PocketMoneyTransactionDataContract);
         }
     }
 

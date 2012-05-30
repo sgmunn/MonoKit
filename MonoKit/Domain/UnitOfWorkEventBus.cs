@@ -22,6 +22,7 @@ namespace MonoKit.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using MonoKit.Data;
     
     public class UnitOfWorkEventBus : IEventBus, IUnitOfWork
@@ -29,10 +30,13 @@ namespace MonoKit.Domain
         private readonly IEventBus bus;
 
         private readonly List<IEvent> events;
+
+        private readonly List<IReadModel> readModels;
         
         public UnitOfWorkEventBus(IEventBus bus)
         {
             this.events = new List<IEvent>();
+            this.readModels = new List<IReadModel>();
             this.bus = bus;
         }
         
@@ -41,9 +45,15 @@ namespace MonoKit.Domain
             this.events.Add(@event);
         }
 
+        public void Publish(IReadModel readModel)
+        {
+            this.readModels.Add(readModel);
+        }
+
         public void Dispose()
         {
             this.events.Clear();
+            this.readModels.Clear();
         }
 
         public void Commit()
@@ -53,6 +63,17 @@ namespace MonoKit.Domain
                 foreach (var @event in this.events)
                 {
                     this.bus.Publish(@event);
+                }
+
+                // todo: just need to check that we don't need type info here and that Id will be
+                // enough
+
+                // only publish each read model once and then the last one
+                var distinctIds = this.readModels.Select(x => x.Id).Distinct().ToList();
+
+                foreach (var readModelId in distinctIds)
+                {
+                    this.bus.Publish(this.readModels.Last(x => x.Id == readModelId));
                 }
             }
         }

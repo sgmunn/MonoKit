@@ -31,9 +31,12 @@ namespace MonoKit.Domain
 
         private readonly Dictionary<Guid, int> versions;
 
-        public CommandExecutor(IRepository<T> repository)
+        private readonly IEventBus bus;
+
+        public CommandExecutor(IRepository<T> repository, IEventBus bus)
         {
             this.repository = repository;
+            this.bus = bus;
             this.versions = new Dictionary<Guid, int>();
         }
 
@@ -58,6 +61,15 @@ namespace MonoKit.Domain
             this.Execute(root, command);
    
             this.repository.Save(root);
+
+            // we can assume that this is what is going to be saved, as the version will ensure consistency
+            // thus, if the aggregate supports snapshot we can publish it
+            // a bit hacky, will think on it.
+            if (bus != null && root as ISnapshotSupport != null)
+            {
+                var snapshot = ((ISnapshotSupport)root).GetSnapshot() as ISnapshot;
+                bus.Publish(snapshot);
+            }
 
             if (expectedVersion != 0 && !this.versions.ContainsKey(root.AggregateId))
             {
