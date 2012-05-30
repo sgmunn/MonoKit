@@ -52,11 +52,11 @@ namespace MonoKit.Data.SQLite
             return new T();
         }
 
-        public T GetById(object id)
+        public virtual T GetById(object id)
         {
             try
             {
-                return GetSync(() => this.connection.Get<T>(id));
+                return GetSync(() => this.Connection.Get<T>(id));
             }
             catch
             {
@@ -64,32 +64,42 @@ namespace MonoKit.Data.SQLite
             }
         }
 
-        public IEnumerable<T> GetAll()
+        public virtual IEnumerable<T> GetAll()
         {
-            return GetSync(() => this.connection.Table<T>().AsEnumerable());
+            return GetSync(() => this.Connection.Table<T>().AsEnumerable());
         }
 
-        public void Save(T instance)
+        public virtual void Save(T instance)
         {
             DoSync
                 (() => 
                  {
-                    if (this.connection.Update(instance) == 0)
+                    if (this.Connection.Update(instance) == 0)
                     {
-                        this.connection.Insert(instance);
+                        this.Connection.Insert(instance);
                     }
                 });
         }
 
-        public void Delete(T instance)
+        public virtual void Delete(T instance)
         {
-            DoSync(() => this.connection.Delete(instance));
+            DoSync(() => this.Connection.Delete(instance));
         }
 
-        public void DeleteId(object id)
+        public virtual void DeleteId(object id)
         {
-            throw new NotImplementedException();
-            // todo: have to get table name and primary key 
+            DoSync
+                (() => 
+                 {
+                    var map = this.Connection.GetMapping(typeof(T));
+                    var pk = map.PK;
+                    if (pk == null) {
+                        throw new NotSupportedException ("Cannot delete " + map.TableName + ": it has no PK");
+                    }
+
+                    var q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
+                    this.Connection.Execute (q, id);
+                });
         }
 
         // todo: using SyncScheduler to ensure that only one thread accesses the connection as per gist but..

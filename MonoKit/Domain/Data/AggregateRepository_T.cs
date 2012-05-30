@@ -34,7 +34,6 @@ namespace MonoKit.Domain.Data
         
         private readonly IEventBus<T> eventBus;
   
-        // todo: we need to have a repository of snapshot as well
         public AggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IEventBus<T> eventBus)
         {
             this.serializer = serializer;

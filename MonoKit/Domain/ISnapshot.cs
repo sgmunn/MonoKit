@@ -22,9 +22,8 @@ namespace MonoKit.Domain
 {
     using System;
     
-    public interface ISnapshot
+    public interface ISnapshot : IReadModel
     {
-        Guid Id { get; set; }
         int Version { get; set; }
     }
 }

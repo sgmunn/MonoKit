@@ -37,7 +37,7 @@ namespace MonoKit.Domain
 
         IDomainCommandExecutor<T> NewCommandExecutor<T>() where T : class, IAggregateRoot, new();
         
-        IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new();
+        IAggregateRepository<T> AggregateRepository<T>(IEventBus bus) where T : IAggregateRoot, new();
 
         IList<IReadModelBuilder> GetReadModelBuilders(Type aggregateType);
     }

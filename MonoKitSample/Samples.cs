@@ -221,13 +221,14 @@ namespace MonoKitSample
             var cmd = new DomainCommandExecutor<EventSourcedTestRoot>(context);
             cmd.Execute(new CreateCommand() { AggregateId = id });
  
-            var scope = context.BeginUnitOfWork();
-            
-            using (scope)
-            {
-                cmd.Execute(scope, new TestCommand() { AggregateId = id, Description = DateTime.Now.ToShortTimeString(), });
-                scope.Commit();
-            }
+            // not supported at the moment
+//            var scope = context.BeginUnitOfWork();
+//            
+//            using (scope)
+//            {
+//                cmd.Execute(scope, new TestCommand() { AggregateId = id, Description = DateTime.Now.ToShortTimeString(), });
+//                scope.Commit();
+//            }
         }
         
         private void DoDomainTest2(Element element)
@@ -251,13 +252,14 @@ namespace MonoKitSample
             var cmd = new DomainCommandExecutor<SnapshotTestRoot>(context);
             cmd.Execute(new CreateCommand() { AggregateId = id });
  
-            var scope = context.BeginUnitOfWork();
-            
-            using (scope)
-            {
-                cmd.Execute(scope, new TestCommand() { AggregateId = id, Description = DateTime.Now.ToShortTimeString(), });
-                scope.Commit();
-            }
+            // not supported at the moment
+//            var scope = context.BeginUnitOfWork();
+//            
+//            using (scope)
+//            {
+//                cmd.Execute(scope, new TestCommand() { AggregateId = id, Description = DateTime.Now.ToShortTimeString(), });
+//                scope.Commit();
+//            }
         }
         
         private void DoMinionTest(Element element)
@@ -282,15 +284,17 @@ namespace MonoKitSample
             var cmd = context.NewCommandExecutor<Minion>();
             cmd.Execute(new CreateCommand() { AggregateId = id });
  
-            var scope = context.BeginUnitOfWork();
-            
-            using (scope)
-            {
-                cmd.Execute(
-                    scope,
-                    new EarnPocketMoneyCommand() { AggregateId = id, Date = DateTime.Today, Amount = 10, });
-                scope.Commit();
-            }
+            // not supported just yet
+//            var scope = context.BeginUnitOfWork();
+//            
+//            using (scope)
+//            {
+//                cmd.Execute(
+//                    scope,
+//                    new EarnPocketMoneyCommand() { AggregateId = id, Date = DateTime.Today, Amount = 10, });
+//                scope.Commit();
+//            }
+            cmd.Execute(new EarnPocketMoneyCommand() { AggregateId = id, Date = DateTime.Today, Amount = 10, });
         }
                 
         private void DoSqliteTest(Element element)

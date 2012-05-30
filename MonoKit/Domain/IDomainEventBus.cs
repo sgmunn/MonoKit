@@ -21,11 +21,10 @@
 namespace MonoKit.Domain
 {
     using System;
-    using System.Collections.Generic;
 
-    public interface IDomainEventBus : IObservable<IEvent> 
+    public interface IDomainEventBus : IEventBus, IObservable<IEvent>, IObservable<IReadModel> 
     {
-        void Publish(IList<IEvent> events); 
+        void Publish(IReadModel readModel);
     }
 }
 

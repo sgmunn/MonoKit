@@ -25,5 +25,6 @@ namespace MonoKit.Domain.Commands
     public class CreateCommand : CommandBase
     {
     }
+
 }
 

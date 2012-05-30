@@ -72,7 +72,7 @@ namespace MonoKit.Domain
             this.uncommittedEvents.Clear();
         }
 
-        protected virtual string GetAggregateTypeId()
+        public virtual string GetAggregateTypeId()
         {
             return this.GetType().Name;
         }

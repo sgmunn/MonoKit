@@ -17,19 +17,21 @@
 //   IN THE SOFTWARE.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace MonoKit.Domain
 {
     using System;
     using System.Collections.Generic;
-    
+
     public class EventBus<T> : IEventBus<T> where T : IAggregateRoot
     {
         private readonly IDomainContext context;
+
+        private readonly IEventBus bus;
         
-        public EventBus(IDomainContext context)
+        public EventBus(IDomainContext context, IEventBus bus)
         {
             this.context = context;
+            this.bus = bus;
         }
         
         public void Publish(IList<IEvent> events)
@@ -43,9 +45,12 @@ namespace MonoKit.Domain
                 builder.Handle(events);
             }
 
-            if (this.context.EventBus != null)
+            if (this.bus != null)
             {
-                this.context.EventBus.Publish(events);
+                foreach (var @event in events)
+                {
+                    this.bus.Publish(@event);
+                }
             }
         }
     }

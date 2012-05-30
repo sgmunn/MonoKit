@@ -36,24 +36,35 @@ namespace MonoKit.Domain
         // overload to execute multiple commands 
         public void Execute(ICommand command)
         {
-            var scope = this.context.BeginUnitOfWork();
-            using (scope)
+            var bus = new UnitOfWorkEventBus(this.context.EventBus);
+            using (bus)
             {
-                // uow will be owned by the scope, so we don't need to dispose explicitly
-                var uow = new UnitOfWork<T>(scope, this.context.AggregateRepository<T>());
-            
-                var cmd = new CommandExecutor<T>(uow);
-                cmd.Execute(command, 0);
-            
-                scope.Commit();
+                var scope = this.context.BeginUnitOfWork();
+                using (scope)
+                {
+                    // uow will be owned by the scope, so we don't need to dispose explicitly
+                    var uow = new UnitOfWork<T>(scope, this.context.AggregateRepository<T>(bus));
+                
+                    var cmd = new CommandExecutor<T>(uow);
+                    cmd.Execute(command, 0);
+                
+                    scope.Commit();
+                }
+
+                bus.Commit();
             }
         }
         
-        // overload to execute multiple commands
+        // overload to execute multiple commands, actually this isn't so good, the bus isn't outside the scope
+        // so we need post commit actions in the scope
         public void Execute(IUnitOfWorkScope scope, ICommand command)
         {
+            // todo: post commit actions in the scope
+            throw new NotImplementedException();
+
+            var bus = new UnitOfWorkEventBus(this.context.EventBus);
             // uow will be owned by the scope, so we don't need to dispose explicitly
-            var uow = new UnitOfWork<T>(scope, this.context.AggregateRepository<T>());
+            var uow = new UnitOfWork<T>(scope, this.context.AggregateRepository<T>(bus));
         
             var cmd = new CommandExecutor<T>(uow);
             cmd.Execute(command, 0);

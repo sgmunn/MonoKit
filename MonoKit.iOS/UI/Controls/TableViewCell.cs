@@ -63,6 +63,7 @@ namespace MonoKit.UI.Controls
         
         protected virtual void TextUpdated(string newValue)
         { 
+            // todo: if the original value is null or empty this doesn;t update properly
             this.TextLabel.Text = newValue;
         }
         

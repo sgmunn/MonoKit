@@ -129,5 +129,10 @@
     <Compile Include="Tasks\TaskExtensions.cs" />
     <Compile Include="Reactive\Unit.cs" />
     <Compile Include="Reactive\Disposables\CompositeDisposable.cs" />
+    <Compile Include="Domain\Commands\DeleteCommand.cs" />
+    <Compile Include="Domain\Events\DeletedEvent.cs" />
+    <Compile Include="Domain\UnitOfWorkEventBus.cs" />
+    <Compile Include="Domain\IEventBus.cs" />
+    <Compile Include="Domain\IReadModel.cs" />
   </ItemGroup>
 </Project>

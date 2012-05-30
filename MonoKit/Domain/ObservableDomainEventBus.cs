@@ -23,26 +23,35 @@ namespace MonoKit.Domain
     using System.Collections.Generic;
     using MonoKit.Reactive.Subjects;
     
-    public class ObservableDomainEventBus : IDomainEventBus, IObservable<IEvent>
+    public class ObservableDomainEventBus : IDomainEventBus
     {
-        private readonly Subject<IEvent> publisher;
+        private readonly Subject<IEvent> eventPublisher;
+        private readonly Subject<IReadModel> readModelPublisher;
 
         public ObservableDomainEventBus()
         {
-            this.publisher = new Subject<IEvent>();
+            this.eventPublisher = new Subject<IEvent>();
+            this.readModelPublisher = new Subject<IReadModel>();
         }
 
-        public void Publish(IList<IEvent> events)
+        public void Publish(IEvent @event)
         {
-            foreach (var @event in events)
-            {
-                this.publisher.OnNext(@event);
-            }
+            this.eventPublisher.OnNext(@event);
+        }
+
+        public void Publish(IReadModel readModel)
+        {
+            this.readModelPublisher.OnNext(readModel);
         }
 
         public IDisposable Subscribe(IObserver<IEvent> observer)
         {
-            return this.publisher.Subscribe(observer);
+            return this.eventPublisher.Subscribe(observer);
+        }
+
+        public IDisposable Subscribe(IObserver<IReadModel> observer)
+        {
+            return this.readModelPublisher.Subscribe(observer);
         }
     }
 }

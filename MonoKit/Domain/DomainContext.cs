@@ -18,12 +18,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Linq;
-
 namespace MonoKit.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using MonoKit.Domain.Data;
     using MonoKit.Data;
     
@@ -59,14 +58,14 @@ namespace MonoKit.Domain
             return new DomainCommandExecutor<T>(this);
         }
 
-        public virtual IAggregateRepository<T> AggregateRepository<T>() where T : IAggregateRoot, new()
+        public virtual IAggregateRepository<T> AggregateRepository<T>(IEventBus bus) where T : IAggregateRoot, new()
         {
             if (typeof(T).GetInterfaces().Contains(typeof(IEventSourced)))
             {
-                return new AggregateRepository<T>(this.EventSerializer, this.EventStore, new EventBus<T>(this));
+                return new AggregateRepository<T>(this.EventSerializer, this.EventStore, new EventBus<T>(this, bus));
             }
 
-            return new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new EventBus<T>(this));
+            return new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new EventBus<T>(this, bus));
         }
         
         public virtual ISnapshotRepository GetSnapshotRepository(Type aggregateType)
