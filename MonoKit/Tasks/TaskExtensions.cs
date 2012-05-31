@@ -35,15 +35,25 @@ namespace MonoKit.Tasks
             task.ContinueWith
                 (t => 
                  {
+                    Console.WriteLine("Task Error {0} ", t.Exception);
                     subject.OnError(t.Exception); 
                 }, TaskContinuationOptions.OnlyOnFaulted);
 
             task.ContinueWith
                 (t => 
                  {
+                    try
+                    {
+
+                    
                     Unit res;
                     subject.OnNext(res);
                     subject.OnCompleted(); 
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Task error on completion {0}", ex);
+                    }
                 }, TaskContinuationOptions.OnlyOnRanToCompletion);
 
             return new AnonymousObservable<Unit>(o => {
