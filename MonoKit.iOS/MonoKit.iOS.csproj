@@ -66,15 +66,9 @@
     <Compile Include="Domain\Data\SQLite\SnapshotRepository.cs" />
     <Compile Include="Domain\Data\SQLite\EventStoreRepository_T.cs" />
     <Compile Include="Domain\Data\SQLite\InternalEventStoreRepository_T.cs" />
-    <Compile Include="Reactive\MainThreadObservableExtensions.cs" />
-    <Compile Include="Reactive\MainThreadObserver_T.cs" />
     <Compile Include="Threading\Tasks\UIKitScheduler.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MonoKit\MonoKit.csproj">
-      <Project>{7BA35695-77B9-4237-AE28-396B0E5DDF7F}</Project>
-      <Name>MonoKit</Name>
-    </ProjectReference>
+    <Compile Include="Reactive\Concurrency\UIKitMainThreadScheduler.cs" />
+    <Compile Include="Reactive\UIKitObservableExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
@@ -86,5 +80,12 @@
     <Folder Include="Reactive\" />
     <Folder Include="Threading\" />
     <Folder Include="Threading\Tasks\" />
+    <Folder Include="Reactive\Concurrency\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MonoKit\MonoKit.csproj">
+      <Project>{7BA35695-77B9-4237-AE28-396B0E5DDF7F}</Project>
+      <Name>MonoKit</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

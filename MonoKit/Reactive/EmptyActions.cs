@@ -18,17 +18,49 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 // 
+
+using MonoKit.Reactive.Concurrency;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MonoKit.Reactive.Subjects;
+
 namespace MonoKit.Reactive
 {
     using System;
+    using MonoKit.Reactive.Disposables;
 
-    public sealed class Unit
+    public static class EmptyActions
     {
-        public static Unit Default = new Unit();
+        public static Action Simple = () => {};
 
-        private Unit()
-        {
-        }
+        public static Action<Exception> SimpleException = (_) => {};
     }
-}
 
+//    internal class HotObservable<T> : IObservable<T>
+//    {
+//        IDisposable scheduler_disposable;
+//        Subject<T> subject;
+//
+//        public HotObservable (Action<IObserver<T>> work, IScheduler scheduler)
+//        {
+//            subject = new Subject<T> ();
+//            scheduler_disposable = scheduler.Schedule (() => work (subject));
+//        }
+//
+//        bool disposed;
+//
+//        public void Dispose ()
+//        {
+//            if (disposed)
+//                return;
+//            disposed = true;
+//            scheduler_disposable.Dispose ();
+//        }
+//
+//        public IDisposable Subscribe (IObserver<T> observer)
+//        {
+//            return subject.Subscribe (observer);
+//        }
+//    }
+    
+}

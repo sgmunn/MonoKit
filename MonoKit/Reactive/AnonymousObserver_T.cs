@@ -36,17 +36,21 @@ namespace MonoKit.Reactive
         public AnonymousObserver(Action<T> onNext)
         {
             this.onNext = onNext;
+            this.onCompleted = EmptyActions.Simple;
+            this.onError = EmptyActions.SimpleException;
         }
         
         public AnonymousObserver(Action<T> onNext, Action onCompleted)
         {
             this.onNext = onNext;
             this.onCompleted = onCompleted;
+            this.onError = EmptyActions.SimpleException;
         }
         
         public AnonymousObserver(Action<T> onNext, Action<Exception> onError)
         {
             this.onNext = onNext;
+            this.onCompleted = EmptyActions.Simple;
             this.onError = onError;
         }
         
@@ -59,32 +63,48 @@ namespace MonoKit.Reactive
         
         public AnonymousObserver(Action onCompleted)
         {
+            this.onNext = (_) => {};
             this.onCompleted = onCompleted;
+            this.onError = onError;
         }
 
         public void OnCompleted ()
         {
-            if (this.onCompleted != null)
-            {
-                this.onCompleted();
-            }
+            this.onCompleted();
         }
 
         public void OnError (Exception error)
         {
-            if (this.onError != null)
-            {
-                this.onError(error);
-            }
+            this.onError(error);
         }
 
         public void OnNext (T value)
         {
-            if (this.onNext != null)
-            {
-                this.onNext(value);
-            }
+            this.onNext(value);
         }
     }
+
+//    public class AnonymousObjectObserver : AnonymousObserver<object>, IObserver
+//    {
+//        public AnonymousObjectObserver(Action<object> onNext) : base(onNext)
+//        {
+//        }
+//        
+//        public AnonymousObjectObserver(Action<object> onNext, Action onCompleted) : base(onNext, onCompleted)
+//        {
+//        }
+//        
+//        public AnonymousObjectObserver(Action<object> onNext, Action<Exception> onError) : base(onNext, onError)
+//        {
+//        }
+//        
+//        public AnonymousObjectObserver(Action<object> onNext, Action<Exception> onError, Action onCompleted) : base(onNext, onError, onCompleted)
+//        {
+//        }
+//        
+//        public AnonymousObjectObserver(Action onCompleted) : base(onCompleted)
+//        {
+//        }
+//    }
 }
 

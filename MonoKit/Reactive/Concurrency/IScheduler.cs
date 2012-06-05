@@ -18,17 +18,15 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 // 
-namespace MonoKit.Reactive
+namespace MonoKit.Reactive.Concurrency
 {
     using System;
 
-    public sealed class Unit
+    public interface IScheduler
     {
-        public static Unit Default = new Unit();
-
-        private Unit()
-        {
-        }
+        // returns cancellation disposable, 
+        //IDisposable Schedule<TState>(TState state, Func<IScheduler, TState, IDisposable> action);
+        IDisposable Schedule(Action action);
     }
 }
 

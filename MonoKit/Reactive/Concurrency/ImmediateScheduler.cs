@@ -17,17 +17,34 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-// 
-namespace MonoKit.Reactive
+
+namespace MonoKit.Reactive.Concurrency
 {
     using System;
+    using MonoKit.Reactive.Disposables;
 
-    public sealed class Unit
+    public sealed class ImmediateScheduler : IScheduler
     {
-        public static Unit Default = new Unit();
+        private static readonly ImmediateScheduler instance = new ImmediateScheduler ();
 
-        private Unit()
+        public static ImmediateScheduler Instance 
         {
+            get { return instance; }
+        }
+
+        private ImmediateScheduler()
+        {
+        }
+
+        public IDisposable Schedule<TState>(TState state, Func<IScheduler, TState, IDisposable> action)
+        {
+            return action(this, state);
+        }
+
+        public IDisposable Schedule(Action action)
+        {
+            action();
+            return Disposable.Empty;
         }
     }
 }

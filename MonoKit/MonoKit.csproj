@@ -48,6 +48,8 @@
     <Folder Include="Reactive\" />
     <Folder Include="Reactive\Disposables\" />
     <Folder Include="Reactive\Subjects\" />
+    <Folder Include="Domain\Reactive\" />
+    <Folder Include="Reactive\Concurrency\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBinding\Binding.cs" />
@@ -122,11 +124,9 @@
     <Compile Include="Reactive\Disposables\NullDisposable.cs" />
     <Compile Include="Reactive\Subjects\Subject_T.cs" />
     <Compile Include="Domain\ObservableDomainEventBus.cs" />
-    <Compile Include="Reactive\ObservableExtensions.cs" />
     <Compile Include="Reactive\AnonymousObservable_T.cs" />
     <Compile Include="Reactive\AnonymousObserver_T.cs" />
     <Compile Include="Reactive\Disposables\AnonymousDisposable.cs" />
-    <Compile Include="Tasks\TaskExtensions.cs" />
     <Compile Include="Reactive\Unit.cs" />
     <Compile Include="Reactive\Disposables\CompositeDisposable.cs" />
     <Compile Include="Domain\Commands\DeleteCommand.cs" />
@@ -134,5 +134,12 @@
     <Compile Include="Domain\UnitOfWorkEventBus.cs" />
     <Compile Include="Domain\IEventBus.cs" />
     <Compile Include="Domain\IReadModel.cs" />
+    <Compile Include="Reactive\Observable.cs" />
+    <Compile Include="Reactive\Concurrency\IScheduler.cs" />
+    <Compile Include="ObservableExtensions.cs" />
+    <Compile Include="Reactive\Concurrency\ImmediateScheduler.cs" />
+    <Compile Include="Reactive\Observer.cs" />
+    <Compile Include="Reactive\ScheduledObserver.cs" />
+    <Compile Include="Reactive\EmptyActions.cs" />
   </ItemGroup>
 </Project>

@@ -20,9 +20,8 @@
 namespace MonoKit.Domain
 {
     using System;
-    using System.Collections.Generic;
     using MonoKit.Reactive.Subjects;
-    
+
     public class ObservableDomainEventBus : IDomainEventBus
     {
         private readonly Subject<IEvent> eventPublisher;

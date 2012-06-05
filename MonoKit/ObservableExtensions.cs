@@ -18,16 +18,31 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 // 
-namespace MonoKit.Reactive
+namespace MonoKit
 {
     using System;
+    using MonoKit.Reactive;
 
-    public sealed class Unit
+    public static class ObservableExtensions
     {
-        public static Unit Default = new Unit();
-
-        private Unit()
+        public static IDisposable Subscribe<T>(this IObservable<T> source)
         {
+            return source.Subscribe(Observer.Create<T>((_) => {Console.WriteLine("done");} ));
+        }
+
+        public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext)
+        {
+            return source.Subscribe(Observer.Create<T>(onNext));
+        }
+        
+        public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext, Action onCompleted)
+        {
+            return source.Subscribe(Observer.Create<T>(onNext, onCompleted));
+        }
+
+        public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext, Action<Exception> onError, Action onCompleted)
+        {
+            return source.Subscribe(Observer.Create<T>(onNext, onError, onCompleted));
         }
     }
 }

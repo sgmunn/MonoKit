@@ -17,17 +17,17 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-// 
+
 namespace MonoKit.Reactive
 {
     using System;
+    using MonoKit.Reactive.Concurrency;
 
-    public sealed class Unit
+    public static class UIKitObservableExtensions
     {
-        public static Unit Default = new Unit();
-
-        private Unit()
+        public static IObservable<T> ObserveOnMainThread<T>(this IObservable<T> source)
         {
+            return Observable.ObserveOn(source, UIKitMainThreadScheduler.Instance);
         }
     }
 }

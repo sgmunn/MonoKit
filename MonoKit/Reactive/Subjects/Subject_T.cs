@@ -56,7 +56,7 @@ namespace MonoKit.Reactive.Subjects
             return subscription;
         }
 
-        public void OnNext(T value)
+        public virtual void OnNext(T value)
         {
             this.CheckDisposed();
             if (this.stopped)

@@ -21,40 +21,31 @@
 namespace MonoKit.Reactive
 {
     using System;
-    using MonoKit.Reactive.Disposables;
 
-    /// <summary>
-    /// 
-    /// </summary>
     /// <remarks>
     /// Takes a function that returns a subscription token from an observer.  The function allows us to have side
     /// effects when we subscribe to an observable whilst being subscribed.
     /// </remarks>
     public class AnonymousObservable<T> : IObservable<T>
     {
-        private readonly Func<IObserver<T>, IDisposable> subscribe;
+        private readonly Func<IObserver<T>, IDisposable> onSubscribe;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.Reactive.AnonymousObservable`1"/> class.
-        /// </summary>
         /// <param name='subscribe'>A function to subscribe an observer to</param>
-        public AnonymousObservable(Func<IObserver<T>, IDisposable> subscribe)
+        public AnonymousObservable(Func<IObserver<T>, IDisposable> onSubscribe)
         {
-            this.subscribe = subscribe;
+            this.onSubscribe = onSubscribe;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public IDisposable Subscribe(IObserver<T> observer)
         {
             // invoke the subscribe function and register the observer, 
             // we get given a token that we'll dispose
-            IDisposable subscription = this.subscribe(observer);
+            IDisposable subscription = this.onSubscribe(observer);
 
             // returns a disposable that will dispose the subscription that the subscribe function
             // subscribed us to.
-            return Disposable.Create(() => subscription.Dispose()); 
+            //return Disposable.Create(() => subscription.Dispose()); 
+            return subscription;
         }
     }
 }

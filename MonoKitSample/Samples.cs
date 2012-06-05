@@ -35,6 +35,7 @@ using MonoKit.Domain.Commands;
 using System.Reflection;
 using MonoKit.Tasks;
 using MonoKit.Reactive;
+using MonoKit;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -304,12 +305,13 @@ namespace MonoKitSample
             this.rootController.PushViewController(admin.NewTablesViewController(), true);
         }
 
+        private IDisposable temp;
                 
         private void DoTaskTest(Element element)
         {
             Console.WriteLine("start test {0}", Thread.CurrentThread.ManagedThreadId);
 
-            Action act = () => {Thread.Sleep(5000);Console.WriteLine("Nested {0}", Thread.CurrentThread.ManagedThreadId);};
+            Action act = () => {Thread.Sleep(2000);Console.WriteLine("Nested {0}", Thread.CurrentThread.ManagedThreadId);};
 
             var task = new Task(() => {Thread.Sleep(1000);
                 Console.WriteLine("Task {0}", Thread.CurrentThread.ManagedThreadId);
@@ -323,8 +325,27 @@ namespace MonoKitSample
             // OR if we want to continue tasks then chain them using observables
             // task.ContinueWith((_) => {Console.WriteLine("Continue {0}", Thread.CurrentThread.ManagedThreadId);});
 
-            task.AsObservable<Unit>().ObserveOnMainThread().Subscribe(_ => {Console.WriteLine("Done {0}", Thread.CurrentThread.ManagedThreadId);
-            element.Text = "Done";});
+            if (temp != null)
+            {
+                            Console.WriteLine("reset temp {0}", Thread.CurrentThread.ManagedThreadId);
+
+                temp.Dispose();
+                temp = null;
+                return;
+            }
+
+            temp = Observable.Start(act).
+            //temp = Observable.Start( () => { 
+            //    Thread.Sleep(5000);
+            //    return Unit.Default; }  ).
+            //task.AsObservable().
+                ObserveOnMainThread().Subscribe
+                (_ => 
+                 {
+                    Console.WriteLine("Done {0}", Thread.CurrentThread.ManagedThreadId);
+                    element.Text = "Done";
+                });
+
             Console.WriteLine("Done button click");
         }
     }

@@ -18,17 +18,35 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 // 
-namespace MonoKit.Reactive
+
+namespace MonoKit.Reactive.Concurrency
 {
     using System;
-
-    public sealed class Unit
+    using MonoTouch.Foundation;
+    using MonoKit.Reactive.Disposables;
+    
+    public sealed class UIKitMainThreadScheduler : NSObject, IScheduler
     {
-        public static Unit Default = new Unit();
+        private static readonly UIKitMainThreadScheduler instance = new UIKitMainThreadScheduler();
 
-        private Unit()
+        public static UIKitMainThreadScheduler Instance 
         {
+            get { return instance; }
+        }
+
+        private UIKitMainThreadScheduler()
+        {
+        }
+
+        public IDisposable Schedule<TState>(TState state, Func<IScheduler, TState, IDisposable> action)
+        {
+            return action(this, state);
+        }
+
+        public IDisposable Schedule(Action action)
+        {
+            this.BeginInvokeOnMainThread(() => { action(); } );
+            return Disposable.Empty;
         }
     }
 }
-
