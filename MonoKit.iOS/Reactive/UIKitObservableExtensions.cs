@@ -22,6 +22,7 @@ namespace MonoKit.Reactive
 {
     using System;
     using MonoKit.Reactive.Concurrency;
+    using MonoKit.Reactive.Linq;
 
     public static class UIKitObservableExtensions
     {

@@ -27,34 +27,6 @@ using MonoKit.Reactive.Subjects;
 namespace MonoKit.Reactive
 {
     using System;
-    using MonoKit.Reactive.Disposables;
-
-//    internal class HotObservable<T> : IObservable<T>
-//    {
-//        IDisposable scheduler_disposable;
-//        Subject<T> subject;
-//
-//        public HotObservable (Action<IObserver<T>> work, IScheduler scheduler)
-//        {
-//            subject = new Subject<T> ();
-//            scheduler_disposable = scheduler.Schedule (() => work (subject));
-//        }
-//
-//        bool disposed;
-//
-//        public void Dispose ()
-//        {
-//            if (disposed)
-//                return;
-//            disposed = true;
-//            scheduler_disposable.Dispose ();
-//        }
-//
-//        public IDisposable Subscribe (IObserver<T> observer)
-//        {
-//            return subject.Subscribe (observer);
-//        }
-//    }
 
     public static class Observer
     {

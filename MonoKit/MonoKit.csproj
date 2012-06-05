@@ -50,6 +50,7 @@
     <Folder Include="Reactive\Subjects\" />
     <Folder Include="Domain\Reactive\" />
     <Folder Include="Reactive\Concurrency\" />
+    <Folder Include="Reactive\Linq\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBinding\Binding.cs" />
@@ -134,12 +135,12 @@
     <Compile Include="Domain\UnitOfWorkEventBus.cs" />
     <Compile Include="Domain\IEventBus.cs" />
     <Compile Include="Domain\IReadModel.cs" />
-    <Compile Include="Reactive\Observable.cs" />
     <Compile Include="Reactive\Concurrency\IScheduler.cs" />
     <Compile Include="ObservableExtensions.cs" />
     <Compile Include="Reactive\Concurrency\ImmediateScheduler.cs" />
     <Compile Include="Reactive\Observer.cs" />
     <Compile Include="Reactive\ScheduledObserver.cs" />
     <Compile Include="Reactive\EmptyActions.cs" />
+    <Compile Include="Reactive\Linq\Observable.cs" />
   </ItemGroup>
 </Project>

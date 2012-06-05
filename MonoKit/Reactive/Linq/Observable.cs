@@ -19,10 +19,11 @@
 //  --------------------------------------------------------------------------------------------------------------------
 // 
 
-namespace MonoKit.Reactive
+namespace MonoKit.Reactive.Linq
 {
     using System;
     using System.Threading.Tasks;
+    using MonoKit.Reactive;
     using MonoKit.Reactive.Concurrency;
     using MonoKit.Reactive.Subjects;
     using MonoKit.Reactive.Disposables;
@@ -127,6 +128,130 @@ namespace MonoKit.Reactive
                     // return the subscription token
                     return subscription;
                 });
+        }
+
+        public static IObservable<T> Do<T>(this IObservable<T> source, Action<T> onNextAction)
+        {
+            Func<IObserver<T>, IDisposable> subscribeFunction = observer => source.Subscribe(
+                (x =>
+                {
+                    try
+                    {
+                        onNextAction(x);
+                    }
+                    catch (Exception ex)
+                    {
+                        observer.OnError(ex);
+                    return;
+                    }
+
+                    observer.OnNext(x);
+                }),
+                observer.OnError,
+                observer.OnCompleted);
+
+            return new AnonymousObservable<T>(subscribeFunction);
+        }
+
+        public static IObservable<T> Where<T>(this IObservable<T> source, Func<T, bool> whereClause)
+        {
+            return new AnonymousObservable<T>(
+                observer => source.Subscribe(
+                    new AnonymousObserver<T>(
+                    x =>
+                    {
+                        bool result;
+                        try
+                        {
+                            result = whereClause(x);
+                        }
+                        catch (Exception exception)
+                        {
+                            observer.OnError(exception);
+                            return;
+                        }
+
+                        if (result)
+                        {
+                            observer.OnNext(x);
+                        }
+                    },
+                    observer.OnError,
+                    observer.OnCompleted))
+                    );
+
+
+        }
+
+
+        public static IObservable<TResult> Select<T, TResult>(this IObservable<T> source, Func<T, TResult> selector)
+        {
+            return new AnonymousObservable<TResult>(
+                observer => source.Subscribe(
+                    new AnonymousObserver<T>(
+                    x =>
+                    {
+                        TResult result;
+
+                        try
+                        {
+                            result = selector(x);
+                        }
+                        catch (Exception exception)
+                        {
+                            observer.OnError(exception);
+                            return;
+                        }
+
+                        observer.OnNext(result);
+                    },
+                    observer.OnError,
+                    observer.OnCompleted)));
+
+
+        }
+
+
+        public static IObservable<T> Take<T>(this IObservable<T> source, int count)
+        {
+            return new AnonymousObservable<T>(
+                observer => source.Subscribe(
+                    new AnonymousObserver<T>(
+                                x =>
+                                    {
+                                        if (count > 0)
+                                        {
+                                            count--;
+                                            observer.OnNext(x);
+                                            if (count < 1)
+                                            {
+                                                observer.OnCompleted();
+                                            }
+                                        }
+                                    },
+                                observer.OnError,
+                                observer.OnCompleted)));
+        }
+
+
+        public static IObservable<T> Skip<T>(this IObservable<T> source, int count)
+        {
+            return new AnonymousObservable<T>(
+                observer => source.Subscribe(
+                    new AnonymousObserver<T>(
+                                x =>
+                                    {
+                                        if (count <= 0)
+                                        {
+                                            observer.OnNext(x);
+                                        }
+                                        else
+                                        {
+                                            count--;
+                                        }
+                                    },
+                                observer.OnError,
+                                observer.OnCompleted)));
         }
     }
 }

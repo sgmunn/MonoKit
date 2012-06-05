@@ -38,6 +38,7 @@ using MonoKit.Reactive;
 using MonoKit;
 using System.Threading;
 using System.Threading.Tasks;
+using MonoKit.Reactive.Linq;
 
 namespace MonoKitSample
 {
