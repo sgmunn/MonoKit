@@ -132,7 +132,6 @@ namespace MonoKit.UI.Controls
         
         protected override void Dispose(bool disposing)
         {
-            Console.WriteLine("Dispose UiDateField");
             if (disposing)
             {
                 this.picker.Dispose();

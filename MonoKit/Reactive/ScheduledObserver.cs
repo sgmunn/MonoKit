@@ -62,9 +62,7 @@ namespace MonoKit.Reactive
 
         public void OnNext(T value)
         {
-             Console.WriteLine("scheduled observer {0}", System.Threading.Thread.CurrentThread.ManagedThreadId);
-           // todo: locking
-            // queue up an action to notify the real observer
+            // todo: locking
             this.queue.Enqueue(() =>
             {
                 this.observer.OnNext(value);

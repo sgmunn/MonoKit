@@ -107,6 +107,14 @@ namespace MonoKit.UI
                 return new UIViewDefinition<DateInputElementTableViewCell, DateInputElement>(SimpleElementBinding);
             }
         }
+
+        public static IViewDefinition DecimalInputElementViewDefintion
+        {
+            get
+            {
+                return new UIViewDefinition<DecimalInputElementTableViewCell, DecimalInputElement>(SimpleElementBinding);
+            }
+        }
         
         public static void SimpleElementBinding(UIView view, object data)
         {
@@ -145,6 +153,7 @@ namespace MonoKit.UI
                 DefaultElementViewDefintions.TextInputElementViewDefintion,
                 DefaultElementViewDefintions.PasswordInputElementViewDefintion,
                 DefaultElementViewDefintions.DateInputElementViewDefintion,
+                DefaultElementViewDefintions.DecimalInputElementViewDefintion,
             };
         }
         

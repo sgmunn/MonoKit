@@ -50,12 +50,7 @@ namespace MonoKit.UI
             this.tableStyle = tableStyle;
             this.Source = source;
         }
-        
-        ~TableViewController()
-        {
-            Console.WriteLine("TableViewController");
-        }
-        
+
         /// <summary>
         /// Gets the source for the UITableView.
         /// </summary>

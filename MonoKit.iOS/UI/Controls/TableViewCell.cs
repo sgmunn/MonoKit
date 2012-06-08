@@ -476,6 +476,107 @@ namespace MonoKit.UI.Controls
             return new SizeF(w, sz.Height);
         }
     }
+    
+    public class DecimalInputElementTableViewCell : ElementTableViewCell<decimal>
+    {       
+        private UITextField textField;
+        
+        public DecimalInputElementTableViewCell() : base(UITableViewCellStyle.Default, new NSString("DecimalInputElement"))
+        {
+            this.ConfigureCell();
+        }
+        
+        public DecimalInputElementTableViewCell(UITableViewCellStyle style, NSString reuseIdentifer)
+            : base(style, reuseIdentifer)
+        {
+            this.ConfigureCell();
+        }
+        
+        public override void TouchesEnded (NSSet touches, UIEvent evt)
+        {
+            base.TouchesEnded (touches, evt);
+            if (evt.Type == UIEventType.Touches)
+            {
+                this.textField.BecomeFirstResponder();
+            }
+        }
+        
+        public override bool BecomeFirstResponder()
+        {
+            return this.textField.BecomeFirstResponder();
+        }
+                
+        protected override void Dispose (bool disposing)
+        {
+            if (disposing)
+            {
+                this.textField.Dispose();
+                this.textField = null;
+            }
+            
+            base.Dispose (disposing);
+        }
+        
+        protected override void TextUpdated (string newValue)
+        {
+            base.TextUpdated (newValue);
+            this.textField.Frame = this.CalculateTextFieldFrame(newValue);
+            this.ContentView.BringSubviewToFront(this.textField);
+        }
+
+        protected override void ValueUpdated(decimal newValue)
+        {
+            base.ValueUpdated(newValue);
+            this.textField.Text = string.Format("{0}", newValue);
+        }
+        
+        private void DateValueChanged(object sender, EventArgs args)
+        {
+            //this.Value = (sender as UIDateField).Date;
+        }
+        
+        private void ConfigureCell ()
+        {
+            this.SelectionStyle = UITableViewCellSelectionStyle.None;
+   
+            this.textField = new UITextField(this.CalculateTextFieldFrame(this.Text))
+            {
+                KeyboardType = UIKeyboardType.DecimalPad,
+                AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleLeftMargin,
+            };
+            
+            this.ContentView.AddSubview(this.textField);
+
+            var proxy = new EventProxy<DecimalInputElementTableViewCell, EventArgs>(this);
+            proxy.Handle = (t,s,o) => { 
+                t.Value = Convert.ToDecimal(((UITextField)s).Text); 
+            };
+            this.textField.Ended += proxy.HandleEvent;
+        }
+        
+        private RectangleF CalculateTextFieldFrame(string textValue)
+        {
+            float margin = 10;
+            
+            var textSize = new RectangleF (margin, 10, this.ContentView.Bounds.Width - (margin * 2), this.ContentView.Bounds.Height - (margin * 2)); 
+
+            if (!String.IsNullOrEmpty(textValue))
+            {
+                var sz = this.CalculateEntrySize(null);
+                textSize = new RectangleF (sz.Width, (this.ContentView.Bounds.Height - sz.Height) / 2 - 1, sz.Width * 2 - margin, sz.Height);
+            }
+
+            return textSize;
+        }
+        
+        private SizeF CalculateEntrySize (UITableView tv)
+        {
+            var sz = this.StringSize("W", UIFont.SystemFontOfSize (17));
+            float w = this.ContentView.Bounds.Width / 3;
+            
+            return new SizeF(w, sz.Height);
+        }
+    }
         
     public class CustomElementTableViewCell : ElementTableViewCell<string>
     {       

@@ -423,5 +423,24 @@ namespace MonoKit.UI.Elements
         {           
         }
     }
+      
+    public class DecimalInputElement : Element<decimal>, IInputElement
+    {
+        public DecimalInputElement(string caption) : base(caption)
+        {
+        }
+        
+        public DecimalInputElement(string caption, decimal value) : base(caption, value)
+        {
+        }
+        
+        public DecimalInputElement(object data, Binding binding) : base(data, binding)
+        {           
+        }
+        
+        public DecimalInputElement(object data, Binding binding, Binding valueBinding) : base(data, binding, valueBinding)
+        {           
+        }
+    }
 }
 

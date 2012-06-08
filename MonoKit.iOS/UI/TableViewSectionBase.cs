@@ -50,11 +50,6 @@ namespace MonoKit.UI
             this.viewDefinitions = new List<IViewDefinition>(viewDefinitions);
             this.Source.Add(this);
         }
-                 
-        ~TableViewSectionBase()
-        {
-            Console.WriteLine("TableViewSectionBase");
-        }
                
         public static AttachedProperty SectionProperty
         {

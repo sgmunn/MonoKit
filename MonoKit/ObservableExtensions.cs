@@ -27,7 +27,7 @@ namespace MonoKit
     {
         public static IDisposable Subscribe<T>(this IObservable<T> source)
         {
-            return source.Subscribe(Observer.Create<T>((_) => {Console.WriteLine("done");} ));
+            return source.Subscribe(Observer.Create<T>((_) => {} ));
         }
 
         public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext)

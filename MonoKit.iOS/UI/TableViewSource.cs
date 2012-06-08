@@ -23,10 +23,11 @@ namespace MonoKit.UI
     using System;
     using MonoTouch.UIKit;
     using MonoTouch.Foundation;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Specialized;
     
-    public class TableViewSource : UITableViewSource
+    public class TableViewSource : UITableViewSource, IEnumerable<TableViewSectionBase>
     {
         private UITableView tableView;
         
@@ -36,12 +37,7 @@ namespace MonoKit.UI
         {
             this.sections = new List<TableViewSectionBase>();
         }
-        
-        ~TableViewSource()
-        {
-            Console.WriteLine("TableViewSource");
-        }
-        
+
         public UITableView TableView
         {
             get 
@@ -113,7 +109,18 @@ namespace MonoKit.UI
         {
             return this.Sections[index];
         }
-        
+
+        public IEnumerator<TableViewSectionBase> GetEnumerator()
+        {
+            return this.sections.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.sections.GetEnumerator();
+        }
+
+               
         public void Reload()
         {
             if (this.TableView != null)
@@ -289,7 +296,8 @@ namespace MonoKit.UI
         
         private void ReloadSection(int sectionIndex)
         {
-            this.TableView.ReloadSections(new NSIndexSet ((uint) sectionIndex), UITableViewRowAnimation.Fade);
+            this.TableView.ReloadData();
+            //this.TableView.ReloadSections(new NSIndexSet ((uint) sectionIndex), UITableViewRowAnimation.Right);
         }
     }
 }

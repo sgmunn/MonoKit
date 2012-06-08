@@ -118,7 +118,6 @@ namespace MonoKit.UI.PagedViews
         
         void HandleMainLabelhandleTouchUpInside (object sender, EventArgs e)
         {
-            Console.WriteLine("click");
             //this.test.TextColor = UIColor.Black;
             var newIndex = ((UIButton)sender).Tag;
             

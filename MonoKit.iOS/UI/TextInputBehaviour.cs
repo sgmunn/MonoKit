@@ -55,25 +55,36 @@ namespace MonoKit.UI
 
         private void HandleStarted (object sender, EventArgs e)
         {
+            var source = this.AttachedObject.GetValue(DataContextAttachedProperty.DataContextProperty);
+
             var section = this.AttachedObject.GetValue(TableViewSection.SectionProperty) as TableViewSectionBase;
+
             if (section != null)
             {
-                var source = this.AttachedObject.GetValue(DataContextAttachedProperty.DataContextProperty);
-                
+                var tableSource = section.Source;
+    
                 bool found = false;
                 bool isLast = true;
-                foreach (var obj in section)
 
+                foreach (var tableSection in tableSource)
                 {
-                    if (obj.Equals(source))
+                    foreach (var obj in tableSection)
                     {
-                        found = true;
-                        continue;
+                        if (obj.Equals(source))
+                        {
+                            found = true;
+                            continue;
+                        }
+                        
+                        if (found && obj is IInputElement)
+                        {
+                            isLast = false;
+                            break;
+                        }
                     }
-                    
-                    if (found && obj is IInputElement)
+
+                    if (!isLast)
                     {
-                        isLast = false;
                         break;
                     }
                 }
@@ -97,50 +108,58 @@ namespace MonoKit.UI
                 return true;
             }
 
+            var source = this.AttachedObject.GetValue(DataContextAttachedProperty.DataContextProperty);
             var section = this.AttachedObject.GetValue(TableViewSection.SectionProperty) as TableViewSectionBase;
             if (section != null)
             {            
-                var source = this.AttachedObject.GetValue(DataContextAttachedProperty.DataContextProperty);
-            
-                var indx = section.Source.TableView.IndexPathForCell(this.AttachedObject as UITableViewCell);
-                
+                var tableSource = section.Source;
+
                 bool found = false;
-                int row = indx.Row;
-                
-                foreach (var obj in section)
+                var indx = tableSource.TableView.IndexPathForCell(this.AttachedObject as UITableViewCell);
+                int sectionIndex = indx.Section;
+
+                foreach (var tableSection in tableSource)
                 {
-                    if (obj.Equals(source))
-                    {
-                        found = true;
-                        continue;
-                    }
-                    
+                    int row = -1;
+                        
                     if (found)
                     {
-                        row += 1;
+                        sectionIndex += 1;
                     }
                     
-                    if (found && obj is IInputElement)
+                    foreach (var obj in tableSection)
                     {
-                        var newCell = section.Source.TableView.CellAt(NSIndexPath.FromRowSection(row, indx.Section));
-                        
-                        // animate scroll if we have the cell, otherwise don't animate - not animating will allow the tableview to construct the cell
-                        // during this call so that we can set responder afterwards
-                        section.Source.TableView.ScrollToRow(NSIndexPath.FromRowSection(row, indx.Section), UITableViewScrollPosition.Middle, newCell != null);
-                        
-                        if (newCell == null)
+                        row += 1;
+
+                        if (!found && obj.Equals(source))
                         {
-                            newCell = section.Source.TableView.CellAt(NSIndexPath.FromRowSection(row, indx.Section));
+                            found = true;
+                            continue;
                         }
-                        
-                        if (newCell != null)
+
+                        if (found && obj is IInputElement)
                         {
-                            (newCell).BecomeFirstResponder();
+                            var newCell = tableSource.TableView.CellAt(NSIndexPath.FromRowSection(row, sectionIndex));
+                            
+                            // animate scroll if we have the cell, otherwise don't animate - not animating will allow the tableview to construct the cell
+                            // during this call so that we can set responder afterwards
+                            tableSource.TableView.ScrollToRow(NSIndexPath.FromRowSection(row, sectionIndex), UITableViewScrollPosition.Middle, newCell != null);
+                            
+                            if (newCell == null)
+                            {
+                                newCell = tableSource.TableView.CellAt(NSIndexPath.FromRowSection(row, sectionIndex));
+                            }
+                            
+                            if (newCell != null)
+                            {
+                                (newCell).BecomeFirstResponder();
+                            }
+                            
+                            return true;
                         }
-                        
-                        break;
                     }
                 }
+
             }
             
             return true;

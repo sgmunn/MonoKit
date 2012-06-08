@@ -101,8 +101,6 @@ namespace MonoKit.Domain
 
         private void ApplyEvent(IEvent @event)
         {
-            Console.WriteLine("{0} - Apply {1} event {2}",  @event.Version,  @event.GetType().Name,  @event.Timestamp);
-
             if (!Executor.ExecuteMethodForSingleParam(this, @event))
             {
                 throw new MissingMethodException(string.Format("Aggregate {0} does not support a method that can be called with {1}", this, @event));
