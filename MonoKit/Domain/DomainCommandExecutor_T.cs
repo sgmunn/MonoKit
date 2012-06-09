@@ -21,6 +21,8 @@
 namespace MonoKit.Domain
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using MonoKit.Data;
 
     public class DomainCommandExecutor<T> : IDomainCommandExecutor<T> where T : class, IAggregateRoot, new()
@@ -32,7 +34,6 @@ namespace MonoKit.Domain
             this.context = context;
         }
         
-        // overload to execute multiple commands 
         public void Execute(ICommand command)
         {
             var bus = new UnitOfWorkEventBus(this.context.EventBus);
@@ -53,25 +54,35 @@ namespace MonoKit.Domain
                 bus.Commit();
             }
         }
-        
-        // overload to execute multiple commands, actually this isn't so good, the bus isn't outside the scope
-        // so we need post commit actions in the scope
-        public void Execute(IUnitOfWorkScope scope, ICommand command)
-        {
-            // todo: post commit actions in the scope
-            throw new NotImplementedException();
 
+        public void Execute(IEnumerable<ICommand> commands)
+        {
             var bus = new UnitOfWorkEventBus(this.context.EventBus);
-            // uow will be owned by the scope, so we don't need to dispose explicitly
-            var uow = new UnitOfWork<T>(scope, this.context.AggregateRepository<T>(bus));
-        
-            var cmd = new CommandExecutor<T>(uow, bus);
-            cmd.Execute(command, 0);
+            using (bus)
+            {
+                var scope = this.context.BeginUnitOfWork();
+                using (scope)
+                {
+                    // uow will be owned by the scope, so we don't need to dispose explicitly
+                    var uow = new UnitOfWork<T>(scope, this.context.AggregateRepository<T>(bus));
+                
+                    var cmd = new CommandExecutor<T>(uow, bus);
+
+                    foreach (var command in commands.ToList())
+                    {
+                        cmd.Execute(command, 0);
+                    }
+                
+                    scope.Commit();
+                }
+
+                bus.Commit();
+            }
         }
-        
+
         public void Execute(ICommand command, int expectedVersion)
         {
-            this.Execute(command, 0);
+            this.Execute(command, expectedVersion);
         }
     }
 }
