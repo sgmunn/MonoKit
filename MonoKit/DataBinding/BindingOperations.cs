@@ -140,6 +140,27 @@ namespace MonoKit.DataBinding
 
             return expression;
         }
+
+        // todo: better way of changing binding source
+        public static void ReplaceBindingSource(this object target, object source)
+        {
+            var key = GetDicionaryKey(target);
+
+            if (ExpressionDictionary.ContainsKey(key))
+            {
+                var bindingExpressions = ExpressionDictionary[key];
+
+                var newExpressions = new List<BindingExpression>();
+
+                foreach (var expression in bindingExpressions)
+                {
+                    var newExpression = new BindingExpression(target, expression.TargetProperty, source, expression.Binding);
+                    newExpressions.Add(newExpression);
+                }
+
+                ExpressionDictionary[key] = newExpressions;
+            }
+        }
         
         /// <summary>
         /// Clears all bindings for target

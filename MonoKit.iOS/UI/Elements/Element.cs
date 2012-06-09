@@ -34,6 +34,8 @@ namespace MonoKit.UI.Elements
     
     public class Element : IElement, INotifyPropertyChanged, ICommand, IEdit
     {
+        private object data;
+
         private string text;
         
         public Element(string text)
@@ -57,8 +59,23 @@ namespace MonoKit.UI.Elements
         
         public object Data
         {
-            get;
-            private set;
+            get
+            {
+                return this.data;
+            }
+
+            set
+            {
+                this.data = value;
+                if (value != null)
+                {
+                    this.ReplaceBindingSource(value);
+                }
+                else
+                {
+                    this.ClearBindings();
+                }
+            }
         }
         
         public Action<Element> Command

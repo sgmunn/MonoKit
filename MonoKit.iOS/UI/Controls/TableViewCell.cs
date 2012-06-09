@@ -529,12 +529,7 @@ namespace MonoKit.UI.Controls
             base.ValueUpdated(newValue);
             this.textField.Text = string.Format("{0}", newValue);
         }
-        
-        private void DateValueChanged(object sender, EventArgs args)
-        {
-            //this.Value = (sender as UIDateField).Date;
-        }
-        
+
         private void ConfigureCell ()
         {
             this.SelectionStyle = UITableViewCellSelectionStyle.None;
@@ -548,9 +543,19 @@ namespace MonoKit.UI.Controls
             this.ContentView.AddSubview(this.textField);
 
             var proxy = new EventProxy<DecimalInputElementTableViewCell, EventArgs>(this);
-            proxy.Handle = (t,s,o) => { 
-                t.Value = Convert.ToDecimal(((UITextField)s).Text); 
+
+            proxy.Handle = (t,s,o) => 
+            { 
+                try
+                {
+                    t.Value = Convert.ToDecimal(((UITextField)s).Text); 
+                }
+                catch
+                {
+                    t.Value = 0;
+                }
             };
+
             this.textField.Ended += proxy.HandleEvent;
         }
         
