@@ -45,7 +45,7 @@ namespace MonoKit.Reactive.Concurrency
 
         public IDisposable Schedule(Action action)
         {
-            this.BeginInvokeOnMainThread(() => { action(); } );
+            this.InvokeOnMainThread(() => { action(); } );
             return Disposable.Empty;
         }
     }
