@@ -44,6 +44,7 @@
     <Compile Include="SampleDomain.cs" />
     <Compile Include="MinionDomain.cs" />
     <Compile Include="SQLite.MonoTouchAdmin.cs" />
+    <Compile Include="Samples2.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKit\MonoKit.csproj">

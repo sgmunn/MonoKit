@@ -69,6 +69,9 @@
     <Compile Include="Threading\Tasks\UIKitScheduler.cs" />
     <Compile Include="Reactive\Concurrency\UIKitMainThreadScheduler.cs" />
     <Compile Include="Reactive\UIKitObservableExtensions.cs" />
+    <Compile Include="UI\Metro\UIPivotView.cs" />
+    <Compile Include="UI\Metro\UIPanoramaView.cs" />
+    <Compile Include="UI\Metro\UIPanoramaViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
@@ -81,6 +84,7 @@
     <Folder Include="Threading\" />
     <Folder Include="Threading\Tasks\" />
     <Folder Include="Reactive\Concurrency\" />
+    <Folder Include="UI\Metro\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKit\MonoKit.csproj">

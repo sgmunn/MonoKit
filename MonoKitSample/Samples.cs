@@ -90,7 +90,7 @@ namespace MonoKitSample
             section3.Add(new StringElement("GC.Collect") { Command = this.DoGCCollect });
         }
                 
-        private void GotoElementSamples(Element element)
+        protected void GotoElementSamples(Element element)
         {
             var tb = new TableViewController(UITableViewStyle.Grouped);
             tb.Title = "Element Samples";
@@ -117,7 +117,7 @@ namespace MonoKitSample
             this.rootController.PushViewController(tb, true);
         }
                 
-        private void GotoBindingSamples(Element element)
+        protected void GotoBindingSamples(Element element)
         {
             var tb = new TableViewController(UITableViewStyle.Grouped);
             tb.Title = "Binding Samples";
@@ -134,7 +134,7 @@ namespace MonoKitSample
             this.rootController.PushViewController(tb, true);
         }
                 
-        private void GotoLargeDataSample(Element element)
+        protected void GotoLargeDataSample(Element element)
         {
             var tb = new TableViewController(UITableViewStyle.Grouped);
             tb.Title = "Large Data Sample";
@@ -151,7 +151,7 @@ namespace MonoKitSample
             this.rootController.PushViewController(tb, true);
         }
         
-        private void GotoBindToSingleObject(Element element)
+        protected void GotoBindToSingleObject(Element element)
         {
             var tb = new TableViewController(UITableViewStyle.Grouped);
             tb.Title = "Single Object Binding Sample";
@@ -165,7 +165,7 @@ namespace MonoKitSample
             this.rootController.PushViewController(tb, true);
         }
                         
-        private void GotoCustomControl(Element element)
+        protected void GotoCustomControl(Element element)
         {
             var tb = new TableViewController(UITableViewStyle.Grouped);
             tb.Title = "Custom Control";
@@ -187,12 +187,12 @@ namespace MonoKitSample
             this.rootController.PushViewController(tb, true);
         }
         
-        private void DoGCCollect(Element element)
+        protected void DoGCCollect(Element element)
         {
             GC.Collect();
         }
                         
-        private void GotoGCTests(Element element)
+        protected void GotoGCTests(Element element)
         {
             var tb = new TableViewController(UITableViewStyle.Grouped);
             tb.Title = "GC Tests";
@@ -204,12 +204,12 @@ namespace MonoKitSample
             this.rootController.PushViewController(tb, true);
         }
         
-        private void SelfReferencingItemsTest(Element element)
+        protected void SelfReferencingItemsTest(Element element)
         {
         }
 
         
-        private void DoDomainTest1(Element element)
+        protected void DoDomainTest1(Element element)
         {
             // register events before creating context if using default serializer
             KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
@@ -233,7 +233,7 @@ namespace MonoKitSample
 //            }
         }
         
-        private void DoDomainTest2(Element element)
+        protected void DoDomainTest2(Element element)
         {
             // register events before creating context if using default serializer
             KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
@@ -264,7 +264,7 @@ namespace MonoKitSample
 //            }
         }
         
-        private void DoMinionTest(Element element)
+        protected void DoMinionTest(Element element)
         {
             // register events before creating context if using default serializer
             KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
@@ -299,7 +299,7 @@ namespace MonoKitSample
             cmd.Execute(new EarnPocketMoneyCommand() { AggregateId = id, Date = DateTime.Today, Amount = 10, });
         }
                 
-        private void DoSqliteTest(Element element)
+        protected void DoSqliteTest(Element element)
         {
 
             var admin = new SQLite.MonoTouchAdmin.SQLiteAdmin(SampleDB.Main);
@@ -308,7 +308,7 @@ namespace MonoKitSample
 
         private IDisposable temp;
                 
-        private void DoTaskTest(Element element)
+        protected void DoTaskTest(Element element)
         {
             Console.WriteLine("start test {0}", Thread.CurrentThread.ManagedThreadId);
 

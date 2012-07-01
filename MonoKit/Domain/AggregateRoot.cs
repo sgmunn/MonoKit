@@ -122,15 +122,14 @@ namespace MonoKit.Domain
             base.Execute(command);
         }
 
-
-        public void LoadFromSnapshot(ISnapshot snapshot)
+        public virtual void LoadFromSnapshot(ISnapshot snapshot)
         {
             this.InternalState = snapshot as TState;
             this.Version = snapshot.Version;
             this.AggregateId = snapshot.Id;
         }
 
-        public ISnapshot GetSnapshot()
+        public virtual ISnapshot GetSnapshot()
         {
             var snapshot = this.InternalState;
             snapshot.Id = this.AggregateId;

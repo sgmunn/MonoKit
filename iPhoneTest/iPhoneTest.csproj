@@ -92,4 +92,10 @@
       <Name>MonoKit.iOS</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\whereswalle.jpg" />
+  </ItemGroup>
 </Project>
