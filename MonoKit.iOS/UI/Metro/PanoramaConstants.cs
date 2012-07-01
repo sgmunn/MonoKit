@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="UIPanoramaViewController.cs" company="sgmunn">
+//  <copyright file="PanoramaConstants.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,61 +18,40 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
+
 namespace MonoKit.Metro
 {
     using System;
     using MonoTouch.UIKit;
 
     /// <summary>
-    /// Controller for panorama views
+    /// Constants for panorama views
     /// </summary>
-    public class UIPanoramaViewController : UIViewController
+    public static class PanoramaConstants
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.Metro.UIPanoramaViewController"/> class.
+        /// The amount of the next content item that is visible 
         /// </summary>
-        public UIPanoramaViewController()
-        {
-            this.View = new UIPanoramaView();
-        }
+        public static float NextContentItemPreviewSize = 30;
 
         /// <summary>
-        /// Gets or sets the title of the panorama
+        /// The name of the default font to use for titles
         /// </summary>
-        public string Title
-        {
-            get
-            {
-                return ((UIPanoramaView)this.View).TitleText;
-            }
-
-            set
-            {
-                ((UIPanoramaView)this.View).TitleText = value;
-            }
-        }
+        public static string DefaultFontName = "Thonburi";
 
         /// <summary>
-        /// Gets the background view of the panorama
+        /// The default font size for titles
         /// </summary>
-        public UIView BackgroundView
-        {
-            get
-            {
-                return ((UIPanoramaView)this.View).BackgroundView;
-            }
-        }
+        public static float DefaultFontSize = 46;
 
         /// <summary>
-        /// Adds a new content item to the panorama
+        /// The default text color for titles
         /// </summary>
-        /// <param name='item'>
-        /// The item to add 
-        /// </param>
-        public void Add(ContentItem item)
-        {
-            ((UIPanoramaView)this.View).ContentItems.Add(item);
-        }
+        public static UIColor DefaultTextColor = UIColor.White;
+
+        /// <summary>
+        /// The left margin between content items and titles
+        /// </summary>
+        public static float LeftMargin = 5;
     }
 }
-

@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file=".cs" company="sgmunn">
+//  <copyright file="UIPanoramaView.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,85 +18,71 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
-using System;
-using System.Linq;
-using MonoTouch.UIKit;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Drawing;
-using MonoTouch.Foundation;
-using System.Collections.Generic;
-
 namespace MonoKit.Metro
 {
-    public static class PanoramaConstants
-    {
-        public static float NextContentItemPreviewSize = 30;
-
-        public static string DefaultFontName = "Thonburi";
-
-        public static float DefaultFontSize = 46;
-
-        public static UIColor DefaultTextColor = UIColor.White;
-
-        public static float LeftMargin = 5;
-    }
-
-    public sealed class ContentItem
-    {
-        // todo: make disposable to let go of view ??
-
-        /// <summary>
-        /// function to create the view
-        /// </summary>
-        private Func<UIView> create;
-
-        public ContentItem(string title, Func<UIView> create, float width)
-        {
-            this.Title = title;
-            this.create = create;
-
-            this.Width = width != 0 ? width : UIScreen.MainScreen.Bounds.Width - PanoramaConstants.NextContentItemPreviewSize;
-        }
-
-        public string Title { get; private set; }
-
-        public float Width { get; private set; }
-
-        public UIView CreateView()
-        {
-            this.Content = this.create();
-            return this.Content;
-        }
-
-        public UIView Content { get ; private set; }
-    }
+    using System;
+    using System.Linq;
+    using MonoTouch.UIKit;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+    using System.Drawing;
+    using MonoTouch.Foundation;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Implements a metro style panorama.
     /// todo: free up unused views when requested, dispose etc
     /// </summary>
-    public class UIPanoramaView : UIView
+    public sealed class UIPanoramaView : UIView
     {
-
+        /// <summary>
+        /// The scrollview that scrolls the panorama
+        /// </summary> 
         private readonly UIScrollView scrollView;
 
+        /// <summary>
+        /// Dictionary of labels for each content item
+        /// </summary>
         private readonly Dictionary<ContentItem, UILabel> labels;
-        
+
+        /// <summary>
+        /// The font used to display the titles
+        /// </summary>
         private UIFont font;
 
+        /// <summary>
+        /// The color of the title text
+        /// </summary>
         private UIColor textColor;
 
+        /// <summary>
+        /// property backing field
+        /// </summary>
         private string titleText;
 
+        /// <summary>
+        /// The rate at which the title slides in relation to the scrollview
+        /// </summary>
         private float titleRate;
 
+        /// <summary>
+        /// The rate at which the background slides in relation to the scrollview
+        /// </summary>
         private float backgroundRate;
 
+        /// <summary>
+        /// property backing field
+        /// </summary>
         private bool animateBackground;
 
+        /// <summary>
+        /// The space between the title and content items, and the left edge of the view  
+        /// </summary>
         private float leftMargin = PanoramaConstants.LeftMargin;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MonoKit.Metro.UIPanoramaView"/> class.
+        /// </summary>
         public UIPanoramaView()
         {
             this.scrollView = new UIScrollView();
@@ -115,12 +101,19 @@ namespace MonoKit.Metro
             this.TextColor = PanoramaConstants.DefaultTextColor;
         }
 
+        /// <summary>
+        /// Gets the collection of items contained in the panorama.
+        /// Each item represents a view with a title
+        /// </summary>
         public ObservableCollection<ContentItem> ContentItems
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets or sets the font that is used to display the main title and title for each content item
+        /// </summary>
         public UIFont Font
         {
             get
@@ -140,6 +133,9 @@ namespace MonoKit.Metro
             }
         }
 
+        /// <summary>
+        /// Gets or sets the text color that is used to display the main title and title for each content item
+        /// </summary>
         public UIColor TextColor
         {
             get
@@ -169,6 +165,9 @@ namespace MonoKit.Metro
         /// </summary>
         public UIView BackgroundView { get; private set; } 
 
+        /// <summary>
+        /// Gets or sets the title text.
+        /// </summary>
         public string TitleText
         {
             get
@@ -200,12 +199,18 @@ namespace MonoKit.Metro
             }
         }
 
+        /// <summary>
+        /// Layouts the content items and titles
+        /// </summary>
         public override void LayoutSubviews()
         {
             base.LayoutSubviews();
             this.LayoutContent();
         }
 
+        /// <summary>
+        /// Handles the scrollview did scroll delegate method and slides the title and background views
+        /// </summary>
         [Export("scrollViewDidScroll:")]
         private void DidScroll(UIScrollView sView)
         {
@@ -223,13 +228,21 @@ namespace MonoKit.Metro
             }
         }
 
+        /// <summary>
+        /// Handles the scrollview will end dragging delegate method and calculates the correct offset
+        /// </summary>
         [Export("scrollViewWillEndDragging:withVelocity:targetContentOffset:")]
         private void WillEndDragging(UIScrollView sView, PointF velocity, ref PointF target)
         {
             // BUG: setting the target.X doesn't always have an effect.
             // 3 items, scroll item 2 to just past midway -- doesn't change
-            // also, setting X = 0 doesn't work
-            target.X = this.NearestItemLeftFromOffset(target.X);
+            // also, setting X = 0 doesn't work << actually it might just be the one bug (setting zero)
+
+            // if we set to zero, just bump it to 1 to make it actually scroll to there - zero won't do
+            if (target.X > 0)
+            {
+                target.X = Math.Max(this.NearestItemLeftFromOffset(target.X), 1);
+            }
         }
 
         /// <summary>
@@ -359,6 +372,9 @@ namespace MonoKit.Metro
             }
         }
 
+        /// <summary>
+        /// Handles changes in the collection items and updates the layout of the items
+        /// </summary>
         private void HandleCollectionChanged (object sender, NotifyCollectionChangedEventArgs e)
         {
             // handle content items being added or removed
@@ -380,11 +396,26 @@ namespace MonoKit.Metro
             this.LayoutContent();
         }
 
+        /// <summary>
+        /// Calculates the with of the given item
+        /// </summary>
+        /// <returns>
+        /// Returns a float that is the width the item should be
+        /// </returns>
+        /// <param name='item'>
+        /// The content item to calculate the width for
+        /// </param>
         private float CalculateItemWidth(ContentItem item)
         {
             return item.Width == 0 ? this.Frame.Width : item.Width;
         }
 
+        /// <summary>
+        /// Calculates the width of the content that is contained in the scrollviewer
+        /// </summary>
+        /// <returns>
+        /// returns a float that is the total width of the content for the scrollviewer
+        /// </returns>
         private float CalculateContentWidth()
         {
             if (this.ContentItems.Count == 0)
@@ -410,6 +441,9 @@ namespace MonoKit.Metro
             return (float)res;
         }
 
+        /// <summary>
+        /// Sets up initial state for the views
+        /// </summary>
         private void Initialize()
         {
             // background

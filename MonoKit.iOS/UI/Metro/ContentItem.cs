@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="UIPanoramaViewController.cs" company="sgmunn">
+//  <copyright file="ContentItem.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,61 +18,64 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
+
 namespace MonoKit.Metro
 {
     using System;
     using MonoTouch.UIKit;
 
     /// <summary>
-    /// Controller for panorama views
+    /// An item of content in a Panorama or Pivot
     /// </summary>
-    public class UIPanoramaViewController : UIViewController
+    public sealed class ContentItem
     {
+        // todo: make disposable to let go of view ??
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.Metro.UIPanoramaViewController"/> class.
+        /// function to create the view
         /// </summary>
-        public UIPanoramaViewController()
+        private Func<UIView> create;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MonoKit.Metro.ContentItem"/> class.
+        /// </summary>
+        /// <param name='title'>The title of the content</param>
+        /// <param name='create'>A function to create the view that represents the content</param>
+        /// <param name='width'>The desired width of the content, zero defaults to standard</param>
+        public ContentItem(string title, Func<UIView> create, float width)
         {
-            this.View = new UIPanoramaView();
+            this.Title = title;
+            this.create = create;
+
+            this.Width = width != 0 ? width : UIScreen.MainScreen.Bounds.Width - PanoramaConstants.NextContentItemPreviewSize;
         }
 
         /// <summary>
-        /// Gets or sets the title of the panorama
+        /// Gets the title for the content
         /// </summary>
-        public string Title
-        {
-            get
-            {
-                return ((UIPanoramaView)this.View).TitleText;
-            }
-
-            set
-            {
-                ((UIPanoramaView)this.View).TitleText = value;
-            }
-        }
+        public string Title { get; private set; }
 
         /// <summary>
-        /// Gets the background view of the panorama
+        /// Gets the width of the item
         /// </summary>
-        public UIView BackgroundView
-        {
-            get
-            {
-                return ((UIPanoramaView)this.View).BackgroundView;
-            }
-        }
+        public float Width { get; private set; }
+
+        // todo: get rid of this
+        /// <summary>
+        /// Gets the content that was previously created
+        /// </summary>
+        public UIView Content { get ; private set; }
 
         /// <summary>
-        /// Adds a new content item to the panorama
+        /// Creates the view for the item.
         /// </summary>
-        /// <param name='item'>
-        /// The item to add 
-        /// </param>
-        public void Add(ContentItem item)
+        /// <returns>
+        /// Returns a new UIView
+        /// </returns>
+        public UIView CreateView()
         {
-            ((UIPanoramaView)this.View).ContentItems.Add(item);
+            this.Content = this.create();
+            return this.Content;
         }
     }
 }
-

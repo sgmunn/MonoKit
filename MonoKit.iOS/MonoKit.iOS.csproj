@@ -72,6 +72,8 @@
     <Compile Include="UI\Metro\UIPivotView.cs" />
     <Compile Include="UI\Metro\UIPanoramaView.cs" />
     <Compile Include="UI\Metro\UIPanoramaViewController.cs" />
+    <Compile Include="UI\Metro\PanoramaConstants.cs" />
+    <Compile Include="UI\Metro\ContentItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
