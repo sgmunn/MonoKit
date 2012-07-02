@@ -43,12 +43,20 @@ namespace MonoKit.Metro
         {
             get
             {
-                return ((UIPanoramaView)this.View).TitleText;
+                return this.Panorama.TitleText;
             }
 
             set
             {
-                ((UIPanoramaView)this.View).TitleText = value;
+                this.Panorama.TitleText = value;
+            }
+        }
+
+        public UIPanoramaView Panorama
+        {
+            get
+            {
+                return ((UIPanoramaView)this.View);
             }
         }
 
@@ -71,7 +79,7 @@ namespace MonoKit.Metro
         /// </param>
         public void Add(ContentItem item)
         {
-            ((UIPanoramaView)this.View).ContentItems.Add(item);
+            this.Panorama.ContentItems.Add(item);
         }
     }
 }

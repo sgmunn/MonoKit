@@ -449,7 +449,7 @@ namespace MonoKit.Metro
             // background
             this.BackgroundView.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
             this.AddSubview(this.BackgroundView);
-            this.BackgroundView.BackgroundColor = UIColor.White;
+            this.BackgroundView.BackgroundColor = UIColor.Black;
 
             // scrollviewer
             this.scrollView.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;

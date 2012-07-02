@@ -52,11 +52,37 @@ namespace iPhoneTest
             /// make yours views styled better ! :)
 
 
-
-            this.InitSamples();
+            this.InitPanoramaSample();
+            //this.InitSamples();
             //this.InitSamplesOld();
 
             return true;
+        }
+
+        private void InitPanoramaSample()
+        {
+            this.window = new UIWindow(UIScreen.MainScreen.Bounds);
+
+            var panorama = new UIPanoramaViewController();
+
+            Func<UIView> createView = () => new UIView() { BackgroundColor = UIColor.Green };
+
+            panorama.Title = "my minions";
+            panorama.Panorama.TextColor = UIColor.DarkGray;
+
+            panorama.Add(new ContentItem("item 1", createView, 0));
+            panorama.Add(new ContentItem("item 2", createView, 600));
+            panorama.Add(new ContentItem("item 3", createView, 0));
+
+            var img = UIImage.FromBundle("Images/whereswalle.jpg");
+
+            panorama.BackgroundView.AddSubview(
+                new UIImageView(img) {
+                    AutoresizingMask = UIViewAutoresizing.FlexibleDimensions,
+               });
+
+            this.window.RootViewController = panorama;
+            this.window.MakeKeyAndVisible();
         }
 
         private void InitSamples()
