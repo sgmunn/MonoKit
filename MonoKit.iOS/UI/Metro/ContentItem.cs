@@ -60,12 +60,6 @@ namespace MonoKit.Metro
         /// </summary>
         public float Width { get; private set; }
 
-        // todo: get rid of this
-        /// <summary>
-        /// Gets the content that was previously created
-        /// </summary>
-        public UIView Content { get ; private set; }
-
         /// <summary>
         /// Creates the view for the item.
         /// </summary>
@@ -74,8 +68,7 @@ namespace MonoKit.Metro
         /// </returns>
         public UIView CreateView()
         {
-            this.Content = this.create();
-            return this.Content;
+            return this.create();
         }
     }
 }

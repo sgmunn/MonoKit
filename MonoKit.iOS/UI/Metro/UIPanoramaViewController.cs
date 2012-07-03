@@ -17,7 +17,7 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-//
+
 namespace MonoKit.Metro
 {
     using System;
@@ -33,25 +33,19 @@ namespace MonoKit.Metro
         /// </summary>
         public UIPanoramaViewController()
         {
-            this.View = new UIPanoramaView();
         }
 
         /// <summary>
-        /// Gets or sets the title of the panorama
+        /// Initializes a new instance of the <see cref="MonoKit.Metro.UIPanoramaViewController"/> class.
         /// </summary>
-        public string Title
+        /// <param name='handle'>Handle to the underlying UIKit object</param>
+        public UIPanoramaViewController(IntPtr handle) : base(handle)
         {
-            get
-            {
-                return this.Panorama.TitleText;
-            }
-
-            set
-            {
-                this.Panorama.TitleText = value;
-            }
         }
 
+        /// <summary>
+        /// Gets the panorama view
+        /// </summary>
         public UIPanoramaView Panorama
         {
             get
@@ -61,25 +55,22 @@ namespace MonoKit.Metro
         }
 
         /// <summary>
-        /// Gets the background view of the panorama
+        /// Loads the view.
         /// </summary>
-        public UIView BackgroundView
+        public override void LoadView()
         {
-            get
-            {
-                return ((UIPanoramaView)this.View).BackgroundView;
-            }
+            base.LoadView();
+            this.View = new UIPanoramaView();
         }
 
         /// <summary>
-        /// Adds a new content item to the panorama
+        /// Called when the controller’s view is released from memory. 
         /// </summary>
-        /// <param name='item'>
-        /// The item to add 
-        /// </param>
-        public void Add(ContentItem item)
+        public override void ViewDidUnload()
         {
-            this.Panorama.ContentItems.Add(item);
+            base.ViewDidUnload();
+            //this.View.Dispose();
+           // this.View = null;
         }
     }
 }

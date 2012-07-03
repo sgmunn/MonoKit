@@ -46,6 +46,11 @@ namespace MonoKit.Metro
         private readonly Dictionary<ContentItem, UILabel> labels;
 
         /// <summary>
+        /// Dictionary of labels for each content item
+        /// </summary>
+        private readonly Dictionary<ContentItem, UIView> contentViews;
+
+        /// <summary>
         /// The font used to display the titles
         /// </summary>
         private UIFont font;
@@ -90,6 +95,7 @@ namespace MonoKit.Metro
 
             this.Title = new UILabel();
             this.labels = new Dictionary<ContentItem, UILabel>();
+            this.contentViews = new Dictionary<ContentItem, UIView>();
 
             this.ContentItems = new ObservableCollection<ContentItem>();
 
@@ -172,7 +178,7 @@ namespace MonoKit.Metro
         {
             get
             {
-                return this.titleText;
+                return this.titleText ?? string.Empty;
             }
 
             set
@@ -361,14 +367,21 @@ namespace MonoKit.Metro
                 x += itemWidth;
 
                 // and now the item itself
-                if (item.Content == null)
+                UIView contentView = null;
+                if (this.contentViews.ContainsKey(item))
                 {
-                    this.scrollView.AddSubview(item.CreateView());
+                    contentView = this.contentViews[item];
+                }
+                else
+                {
+                    contentView = item.CreateView();
+                    this.scrollView.AddSubview(contentView);
+                    this.contentViews[item] = contentView;
                 }
 
                 r.Y = r.Height + r.Y;
                 r.Height = this.Frame.Height - r.Y;
-                item.Content.Frame = r;
+                contentView.Frame = r;
             }
         }
 

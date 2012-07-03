@@ -52,11 +52,16 @@ namespace MonoKit.UI
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MonoKit.UI.TableViewController"/> class.
+        /// </summary>
+        /// <param name='handle'>Handle to the underlying UIKit object</param>
+        public TableViewController(IntPtr handle) : base(handle)
+        {
+        }
+
+        /// <summary>
         /// Gets the source for the UITableView.
         /// </summary>
-        /// <value>
-        /// The source.
-        /// </value>
         public TableViewSource Source
         {
             get;
@@ -69,7 +74,8 @@ namespace MonoKit.UI
         public override void LoadView ()
         {
             base.LoadView ();
-            
+
+            // todo: fix up 
             var tableView = new UITableView(UIScreen.MainScreen.Bounds, this.tableStyle);
             tableView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin;
             tableView.AutosizesSubviews = true;
@@ -77,32 +83,15 @@ namespace MonoKit.UI
             this.View = tableView;
             this.Source.TableView = tableView;
         }
-        
+
+        /// <summary>
+        /// Called when the controller’s view is released from memory. 
+        /// </summary>
         public override void ViewDidUnload ()
         {
             this.Source.TableView.Dispose();
             this.Source.TableView = null;
             base.ViewDidUnload ();
-        }
-        
-        public override void ViewWillDisappear (bool animated)
-        {
-            base.ViewWillDisappear (animated);
-        }
-        
-        public override void ViewDidAppear (bool animated)
-        {
-            base.ViewDidAppear (animated);
-        }
-        
-        public override void ViewDidDisappear (bool animated)
-        {
-            base.ViewDidDisappear (animated);
-        }
-        
-        protected override void Dispose (bool disposing)
-        {
-            base.Dispose (disposing);
         }
     }
 }

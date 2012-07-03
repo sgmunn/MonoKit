@@ -97,5 +97,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\whereswalle.jpg" />
+    <Content Include="Images\brushTexture1.png" />
   </ItemGroup>
 </Project>
