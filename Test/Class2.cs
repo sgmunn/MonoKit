@@ -64,7 +64,6 @@ namespace Test
         private CenterHiddenInteractivity centerHiddenInteractivity;
         private bool viewAppeared;
         private bool resizesCenterView;
-        private bool automaticallyUpdateTabBarItems;
 
         private UIViewController slidingController;
 
@@ -78,7 +77,6 @@ namespace Test
         private UIView centerView;
         private UIButton centerTapper;
 
-        private float maxLedge;
         private float offset;
         private float preRotationWidth;
         private float preRotationCenterWidth;
@@ -95,6 +93,10 @@ namespace Test
         private ViewDeckNavigationControllerBehavior _navigationControllerBehavior;
         private ViewDeckPanningMode _panningMode;
         private UIView _panningView;
+        private float _maxLedge;
+        private bool _automaticallyUpdateTabBarItems;
+
+
 
         public ViewDeckController(UIViewController centerController)
         {
@@ -127,6 +129,28 @@ namespace Test
             this.RightController = rightController;
         }
 
+        
+        private static bool II_FLOAT_EQUAL(float a, float b)
+        {
+            return (a - b == 0);
+        }
+        
+        private static float SLIDE_DURATION(bool animated, float duration)
+        {
+            return animated ? duration : 0;
+        }
+
+        private static float CLOSE_SLIDE_DURATION(bool animated)
+        {
+            return SLIDE_DURATION(animated, 0.3f);
+        }
+
+        private static float OPEN_SLIDE_DURATION(bool animated)
+        {
+            return SLIDE_DURATION(animated, 0.3f);
+        }
+
+
         #region Public Properties
 
         /// <summary>
@@ -155,7 +179,12 @@ namespace Test
 
             set
             {
-                this.SetLeftController(value);
+                if (this.LeftController == value) 
+                {
+                    return;
+                }
+
+                this.ApplySideController(ref this._leftController, value, this.RightController, () => { this.RightController = null; });
             }
         }
 
@@ -170,7 +199,12 @@ namespace Test
 
             set
             {
-                this.SetRightController(value);
+                if (this.RightController == value) 
+                {
+                    return;
+                }
+
+                this.ApplySideController(ref this._rightController, value, this.LeftController, () => { this.LeftController = null; });
             }
         }
 
@@ -213,6 +247,38 @@ namespace Test
                 this.SetLeftLedge(value);
             }
         }
+        
+        /// <summary>
+        /// </summary>
+        public float MaxLedge
+        {
+            get
+            {
+                return this._maxLedge;
+            }
+
+            set
+            {
+                this._maxLedge = value;
+
+                if (this.LeftController != null && this.RightController != null) 
+                {
+                    Console.WriteLine("ViewDeckController: warning: setting maxLedge with 2 side controllers. Value will be ignored.");
+                    return;
+                }
+                
+                if (this.LeftController != null && this.LeftLedge > this.MaxLedge) 
+                {
+                    this.LeftLedge = value;
+                }
+                else if (this.RightController != null && this.RightLedge > this.MaxLedge) 
+                {
+                    this.RightLedge = value;
+                }
+                
+                this.SetSlidingFrameForOffset(this.offset);
+            }
+        }
 
         /// <summary>
         /// </summary>
@@ -247,9 +313,9 @@ namespace Test
             {
                 if (this.viewAppeared) 
                 {
-                    this.removePanners();
+                    this.RemovePanners();
                     this._panningMode = value;
-                    this.addPanners();
+                    this.AddPanners();
                 }
                 else
                 {
@@ -279,7 +345,7 @@ namespace Test
                     
                     if (this.viewAppeared && this.PanningMode == ViewDeckPanningMode.PanningViewPanning)
                     {
-                        this.addPanners();
+                        this.AddPanners();
                     }
                 }
             }
@@ -289,6 +355,39 @@ namespace Test
         /// </summary>
         public ViewDeckRotationBehavior RotationBehavior { get; set; }
 
+        /// <summary>
+        /// </summary>
+        public bool AutomaticallyUpdateTabBarItems
+        {
+            get
+            {
+                return this._automaticallyUpdateTabBarItems;
+            }
+
+            set
+            {
+
+//            if (_automaticallyUpdateTabBarItems) {
+//                @try {
+//                    [_centerController removeObserver:self forKeyPath:@"tabBarItem.title"];
+//                    [_centerController removeObserver:self forKeyPath:@"tabBarItem.image"];
+//                    [_centerController removeObserver:self forKeyPath:@"hidesBottomBarWhenPushed"];
+//                }
+//                @catch (NSException *exception) {}
+//            }
+//            
+//            _automaticallyUpdateTabBarItems = automaticallyUpdateTabBarItems;
+//
+//            if (_automaticallyUpdateTabBarItems) {
+//                [_centerController addObserver:self forKeyPath:@"tabBarItem.title" options:0 context:nil];
+//                [_centerController addObserver:self forKeyPath:@"tabBarItem.image" options:0 context:nil];
+//                [_centerController addObserver:self forKeyPath:@"hidesBottomBarWhenPushed" options:0 context:nil];
+//                self.tabBarItem.title = _centerController.tabBarItem.title;
+//                self.tabBarItem.image = _centerController.tabBarItem.image;
+//            }
+                this._automaticallyUpdateTabBarItems = value;
+            }
+        }
 
         #endregion
 
@@ -327,32 +426,109 @@ namespace Test
         {
             get
             {
-                return this.RightController == null || this.SlidingControllerView.Frame.GetMaxX() >= this.referenceBounds.Size.Width;
+                return this.RightController == null || this.SlidingControllerView.Frame.GetMaxX() >= this.ReferenceBounds.Size.Width;
             }
         }
 
         /// <summary>
+        /// todo: unused
         /// </summary>
         private bool LeftControllerIsOpen 
         {
             get
             {
-                return this.LeftController != null && this.SlidingControllerView.Frame.GetMinX() < this.referenceBounds.Size.Width 
+                return this.LeftController != null && this.SlidingControllerView.Frame.GetMinX() < this.ReferenceBounds.Size.Width 
                     && this.SlidingControllerView.Frame.GetMinX() >= this.RightLedge;
             }
         }
 
         /// <summary>
+        /// todo: unused
         /// </summary>
         private bool RightControllerIsOpen 
         {
             get
             {
-            return this.RightController != null && this.SlidingControllerView.Frame.GetMaxX() < this.referenceBounds.Size.Width 
+                return this.RightController != null && this.SlidingControllerView.Frame.GetMaxX() < this.ReferenceBounds.Size.Width 
                     && this.SlidingControllerView.Frame.GetMaxX() >= this.LeftLedge;
             }
         }
 
+        private RectangleF ReferenceBounds
+        {
+            get
+            {
+                if (this.referenceView != null)
+                {
+                    return this.referenceView.Bounds;
+                }
+
+                return RectangleF.Empty;
+            }
+        }
+
+        private float RelativeStatusBarHeight
+        {
+            get
+            {
+                if (!this.referenceView.GetType().IsSubclassOf(typeof(UIWindow)))
+                {
+                    return 0;
+                }   
+
+                return this.StatusBarHeight;
+            }
+        }
+
+        private float StatusBarHeight 
+        {
+            get
+            {
+                switch (UIApplication.SharedApplication.StatusBarOrientation)
+                {
+                    case UIInterfaceOrientation.LandscapeLeft:
+                    case UIInterfaceOrientation.LandscapeRight:
+                        return UIApplication.SharedApplication.StatusBarFrame.Width;
+                    default:
+                        return UIApplication.SharedApplication.StatusBarFrame.Height;
+                }
+            }
+        }
+
+        private static RectangleF II_RectangleFShrink(RectangleF rect, float width, float height)
+        {
+            return new RectangleF(rect.X, rect.Y, rect.Width - width, rect.Height - height);
+        }
+
+        private RectangleF CenterViewBounds 
+        {
+            get
+            {
+                if (this.NavigationControllerBehavior == ViewDeckNavigationControllerBehavior.Contained)
+                    return this.ReferenceBounds;
+            
+                return II_RectangleFShrink(this.ReferenceBounds, 
+                                           0, 
+                                           this.RelativeStatusBarHeight + 
+                                           (this.NavigationController.NavigationBarHidden ? 0 : this.NavigationController.NavigationBar.Frame.Size.Height));
+            }
+        }
+
+        private static RectangleF II_RectangleFOffsetTopAndShrink(RectangleF rect, float offset)
+        {
+            return new RectangleF(rect.X, rect.Y, rect.Width, rect.Height - offset);
+        }
+
+        private RectangleF SideViewBounds 
+        {
+            get
+            {
+                if (this.NavigationControllerBehavior == ViewDeckNavigationControllerBehavior.Contained)
+                    return this.ReferenceBounds;
+            
+                return II_RectangleFOffsetTopAndShrink(this.ReferenceBounds, this.RelativeStatusBarHeight);
+            }
+        }
 
         #endregion
 
@@ -370,6 +546,7 @@ namespace Test
             this.centerTapper = null;
         }
 
+        // todo: rename to dispose
         private void Dealloc()
         {
             this.CleanUp();
@@ -410,201 +587,79 @@ namespace Test
             }
         }
 
-        private List<UIViewController> controllers()
+        public IEnumerable<UIViewController> Controllers()
         {
-            var result = new List<UIViewController>();
-
-            result.Add(this.CenterController);
+            yield return this.CenterController;
 
             if (this.LeftController != null)
             {
-                result.Add(this.LeftController);
+                yield return this.LeftController;
             }
 
             if (this.RightController != null)
             {
-                result.Add(this.RightController);
-            }
-
-            return result;
-        }
-
-        private RectangleF referenceBounds
-        {
-            get
-            {
-                if (this.referenceView != null)
-                {
-                    return this.referenceView.Bounds;
-                }
-
-                return RectangleF.Empty;
+                yield return this.RightController;
             }
         }
 
-        private float relativeStatusBarHeight
-        {
-            get
-            {
-                if (!this.referenceView.GetType().IsSubclassOf(typeof(UIWindow)))
-                {
-                    return 0;
-                }   
-
-                return this.statusBarHeight;
-            }
-        }
-
-        private float statusBarHeight 
-        {
-            get
-            {
-                switch (UIApplication.SharedApplication.StatusBarOrientation)
-                {
-                    case UIInterfaceOrientation.LandscapeLeft:
-                    case UIInterfaceOrientation.LandscapeRight:
-                        return UIApplication.SharedApplication.StatusBarFrame.Width;
-                    default:
-                        return UIApplication.SharedApplication.StatusBarFrame.Height;
-                }
-            }
-        }
-
-        private static RectangleF II_RectangleFShrink(RectangleF rect, float width, float height)
-        {
-            return new RectangleF(rect.X, rect.Y, rect.Width - width, rect.Height - height);
-        }
-
-        private RectangleF centerViewBounds 
-        {
-            get
-            {
-                if (this.NavigationControllerBehavior == ViewDeckNavigationControllerBehavior.Contained)
-                    return this.referenceBounds;
-            
-                return II_RectangleFShrink(this.referenceBounds, 
-                                           0, 
-                                           this.relativeStatusBarHeight + 
-                                           (this.NavigationController.NavigationBarHidden ? 0 : this.NavigationController.NavigationBar.Frame.Size.Height));
-            }
-        }
-
-        private static RectangleF II_RectangleFOffsetTopAndShrink(RectangleF rect, float offset)
-        {
-            return new RectangleF(rect.X, rect.Y, rect.Width, rect.Height - offset);
-        }
-
-        private RectangleF sideViewBounds 
-        {
-            get
-            {
-                if (this.NavigationControllerBehavior == ViewDeckNavigationControllerBehavior.Contained)
-                    return this.referenceBounds;
-            
-                return II_RectangleFOffsetTopAndShrink(this.referenceBounds, this.relativeStatusBarHeight);
-            }
-        }
-
-        private float limitOffset(float offset) 
+        private float LimitOffset(float offset) 
         {
             if (this.LeftController != null && this.RightController != null) 
                 return offset;
             
-            if (this.LeftController != null && this.maxLedge > 0) 
+            if (this.LeftController != null && this.MaxLedge > 0) 
             {
-                float left = this.referenceBounds.Size.Width - this.maxLedge;
+                float left = this.ReferenceBounds.Size.Width - this.MaxLedge;
                 offset = Math.Max(offset, left);
             }
-            else if (this.RightController != null && this.maxLedge > 0) 
+            else if (this.RightController != null && this.MaxLedge > 0) 
             {
-                float right = this.maxLedge - this.referenceBounds.Size.Width;
+                float right = this.MaxLedge - this.ReferenceBounds.Size.Width;
                 offset = Math.Min(offset, right);
             }
             
             return offset;
         }
 
-        private RectangleF slidingRectForOffset(float offset) 
+        private RectangleF SlidingRectForOffset(float offset) 
         {
-            offset = this.limitOffset(offset);
+            offset = this.LimitOffset(offset);
 
-            var sz = this.slidingSizeForOffset(offset);
+            var sz = this.SlidingSizeForOffset(offset);
 
             return new RectangleF(this.resizesCenterView && offset < 0 ? 0 : offset, 0, sz.Width, sz.Height);
         }
 
-        private SizeF slidingSizeForOffset(float offset) 
+        private SizeF SlidingSizeForOffset(float offset) 
         {
             if (!this.resizesCenterView) 
-                return this.referenceBounds.Size;
+                return this.ReferenceBounds.Size;
             
-            offset = this.limitOffset(offset);
+            offset = this.LimitOffset(offset);
 
             if (offset < 0) 
-                return new SizeF(this.centerViewBounds.Size.Width + offset, this.centerViewBounds.Size.Height);
+                return new SizeF(this.CenterViewBounds.Size.Width + offset, this.CenterViewBounds.Size.Height);
             
-            return new SizeF(this.centerViewBounds.Size.Width - offset, this.centerViewBounds.Size.Height);
+            return new SizeF(this.CenterViewBounds.Size.Width - offset, this.CenterViewBounds.Size.Height);
         }
 
-        private void setSlidingFrameForOffset(float offset) 
+        private void SetSlidingFrameForOffset(float offset) 
         {
-            this.offset = this.limitOffset(offset);
-            this.SlidingControllerView.Frame = this.slidingRectForOffset(offset);
+            this.offset = this.LimitOffset(offset);
+            this.SlidingControllerView.Frame = this.SlidingRectForOffset(offset);
 
 //delegate            this.performOffsetDelegate(@selector(viewDeckController:slideOffsetChanged:), this.offset);
         }
 
-        private void hideAppropriateSideViews() 
+        private void HideAppropriateSideViews() 
         {
             this.LeftController.View.Hidden = this.SlidingControllerView.Frame.GetMinX() <= 0;
 
-            this.RightController.View.Hidden = this.SlidingControllerView.Frame.GetMaxX() >= this.referenceBounds.Size.Width;
-        }
-
-        private static bool II_FLOAT_EQUAL(float a, float b)
-        {
-            return (a - b == 0);
-        }
-        
-        private static float SLIDE_DURATION(bool animated, float duration)
-        {
-            return animated ? duration : 0;
-        }
-
-        private static float CLOSE_SLIDE_DURATION(bool animated)
-        {
-            return SLIDE_DURATION(animated, 0.3f);
-        }
-
-        private static float OPEN_SLIDE_DURATION(bool animated)
-        {
-            return SLIDE_DURATION(animated, 0.3f);
+            this.RightController.View.Hidden = this.SlidingControllerView.Frame.GetMaxX() >= this.ReferenceBounds.Size.Width;
         }
 
 
 
-
-        private void setMaxLedge(float maxLedge) 
-        {
-            this.maxLedge = maxLedge;
-
-            if (this.LeftController != null && this.RightController != null) 
-            {
-                Console.WriteLine("ViewDeckController: warning: setting maxLedge with 2 side controllers. Value will be ignored.");
-                return;
-            }
-            
-            if (this.LeftController != null && this.LeftLedge > this.maxLedge) 
-            {
-                this.LeftLedge = this.maxLedge;
-            }
-            else if (this.RightController != null && this.RightLedge > this.maxLedge) 
-            {
-                this.RightLedge = this.maxLedge;
-            }
-            
-            this.setSlidingFrameForOffset(this.offset);
-        }
 
 
         public override void LoadView()
@@ -662,26 +717,26 @@ namespace Test
                 this.RightController.View.RemoveFromSuperview();
                 this.referenceView.InsertSubviewBelow(this.RightController.View, this.SlidingControllerView);
                 
-                this.reapplySideController(this.LeftController);
-                this.reapplySideController(this.RightController);
+                this.ReapplySideController(this.LeftController);
+                this.ReapplySideController(this.RightController);
                 
-                this.setSlidingFrameForOffset(this.offset);
+                this.SetSlidingFrameForOffset(this.offset);
                 this.SlidingControllerView.Hidden = false;
                 
-                this.centerView.Frame = this.centerViewBounds;
+                this.centerView.Frame = this.CenterViewBounds;
                 this.CenterController.View.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
                 this.CenterController.View.Frame = this.centerView.Bounds;
                 
-                this.LeftController.View.Frame = this.sideViewBounds;
+                this.LeftController.View.Frame = this.SideViewBounds;
                 this.LeftController.View.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
                 
-                this.RightController.View.Frame = this.sideViewBounds;
+                this.RightController.View.Frame = this.SideViewBounds;
                 this.RightController.View.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
 
-                this.applyShadowToSlidingView();
+                this.ApplyShadowToSlidingView();
             };
 
-            if (this.setSlidingAndReferenceViews()) 
+            if (this.SetSlidingAndReferenceViews()) 
             {
                 applyViews();
             }
@@ -701,15 +756,15 @@ namespace Test
 //                this.hideAppropriateSideViews();
 //            });
             
-            this.addPanners();
+            this.AddPanners();
             
             if (this.SlidingControllerView.Frame.Location.X == 0.0f) 
             {
-                this.centerViewVisible();
+                this.CenterViewVisible();
             }
             else
             {
-                this.centerViewHidden();
+                this.CenterViewHidden();
             }
 
  //           this.relayAppearanceMethod:^(UIViewController *controller) 
@@ -736,7 +791,7 @@ namespace Test
  //               [controller viewWillDisappear:animated);
  //           });
             
-            this.removePanners();
+            this.RemovePanners();
         }
 
         public override void ViewDidDisappear(bool animated) 
@@ -762,8 +817,8 @@ namespace Test
 
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
         {
-            this.preRotationWidth = this.referenceBounds.Size.Width;
-            this.preRotationCenterWidth = this.centerViewBounds.Size.Width;//todo: was - this.centerView.Bounds.Size.Width;
+            this.preRotationWidth = this.ReferenceBounds.Size.Width;
+            this.preRotationCenterWidth = this.CenterViewBounds.Size.Width;//todo: was - this.centerView.Bounds.Size.Width;
             
             if (this.RotationBehavior == ViewDeckRotationBehavior.KeepsViewSizes) 
            {
@@ -788,13 +843,13 @@ namespace Test
 //                [controller willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration);
 //            });
             
-            this.arrangeViewsAfterRotation();
+            this.ArrangeViewsAfterRotation();
         }
 
          public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
         {
             base.WillRotate(toInterfaceOrientation, duration);
-            this.restoreShadowToSlidingView();
+            this.RestoreShadowToSlidingView();
             
 //            this.relayAppearanceMethod:^(UIViewController *controller) {
 //                [controller willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration);
@@ -804,14 +859,14 @@ namespace Test
          public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
             base.DidRotate(fromInterfaceOrientation);
-            this.applyShadowToSlidingView();
+            this.ApplyShadowToSlidingView();
             
 //            this.relayAppearanceMethod:^(UIViewController *controller) {
 //                [controller didRotateFromInterfaceOrientation:fromInterfaceOrientation);
 //            });
         }
 
-        private void arrangeViewsAfterRotation() 
+        private void ArrangeViewsAfterRotation() 
         {
             if (this.preRotationWidth <= 0) return;
             
@@ -826,49 +881,49 @@ namespace Test
             {
                 if (offset > 0) 
                 {
-                    offset = this.referenceBounds.Size.Width - this.preRotationWidth + offset;
+                    offset = this.ReferenceBounds.Size.Width - this.preRotationWidth + offset;
                 }
                 else if (offset < 0) 
                 {
-                    offset = offset + this.preRotationWidth - this.referenceBounds.Size.Width;
+                    offset = offset + this.preRotationWidth - this.ReferenceBounds.Size.Width;
                 }
             }
             else 
             {
-                this.LeftLedge = this.LeftLedge + this.referenceBounds.Size.Width - this.preRotationWidth; 
-                this.RightLedge = this.RightLedge + this.referenceBounds.Size.Width - this.preRotationWidth; 
-                this.maxLedge = this.maxLedge + this.referenceBounds.Size.Width - this.preRotationWidth; 
+                this.LeftLedge = this.LeftLedge + this.ReferenceBounds.Size.Width - this.preRotationWidth; 
+                this.RightLedge = this.RightLedge + this.ReferenceBounds.Size.Width - this.preRotationWidth; 
+                this.MaxLedge = this.MaxLedge + this.ReferenceBounds.Size.Width - this.preRotationWidth; 
             }
 
-            this.setSlidingFrameForOffset(offset);
+            this.SetSlidingFrameForOffset(offset);
             
             this.preRotationWidth = 0;
         }
 
 
-        private void showCenterView() 
+        private void ShowCenterView() 
         {
-            this.showCenterView(true);
+            this.ShowCenterView(true);
         }
 
-        private void showCenterView(bool animated) 
+        private void ShowCenterView(bool animated) 
         {
-            this.showCenterView(animated, null);
+            this.ShowCenterView(animated, null);
         }
 
-        private void showCenterView(bool animated, Action<ViewDeckController> completed)
+        private void ShowCenterView(bool animated, Action<ViewDeckController> completed)
         {
             bool mustRunCompletion = completed != null;
 
             if (this.LeftController != null&& !this.LeftController.View.Hidden) 
             {
-                this.closeLeftViewAnimated(animated, completed);
+                this.CloseLeftViewAnimated(animated, completed);
                 mustRunCompletion = false;
             }
             
             if (this.RightController != null && !this.RightController.View.Hidden) 
             {
-                this.closeRightViewAnimated(animated, completed);
+                this.CloseRightViewAnimated(animated, completed);
                 mustRunCompletion = false;
             }
             
@@ -876,54 +931,54 @@ namespace Test
                 completed(this);
         }
 
-        private bool toggleLeftView() 
+        public bool ToggleLeftView() 
         {
-            return this.toggleLeftViewAnimated(true);
+            return this.ToggleLeftViewAnimated(true);
         }
 
-        private bool openLeftView() 
+        public bool OpenLeftView() 
         {
-            return this.openLeftViewAnimated(true);
+            return this.OpenLeftViewAnimated(true);
         }
 
-        private bool closeLeftView()
+        public bool CloseLeftView()
         {
-            return this.closeLeftViewAnimated(true);
+            return this.CloseLeftViewAnimated(true);
         }
 
-        private bool toggleLeftViewAnimated(bool animated)
+        public bool ToggleLeftViewAnimated(bool animated)
         {
-            return this.toggleLeftViewAnimated(animated, null);
+            return this.ToggleLeftViewAnimated(animated, null);
         }
 
-        private bool toggleLeftViewAnimated(bool animated, Action<ViewDeckController> completed)
+        public bool ToggleLeftViewAnimated(bool animated, Action<ViewDeckController> completed)
         {
             if (this.LeftControllerIsClosed) 
             {
-                return this.openLeftViewAnimated(animated, completed);
+                return this.OpenLeftViewAnimated(animated, completed);
             }
             else
             {
-                return this.closeLeftViewAnimated(animated, completed);
+                return this.CloseLeftViewAnimated(animated, completed);
             }
         }
 
-        private bool openLeftViewAnimated(bool animated) 
+        public bool OpenLeftViewAnimated(bool animated) 
         {
-            return this.openLeftViewAnimated(animated, null);
+            return this.OpenLeftViewAnimated(animated, null);
         }
 
-        private bool openLeftViewAnimated(bool animated, Action<ViewDeckController> completed)
+        public bool OpenLeftViewAnimated(bool animated, Action<ViewDeckController> completed)
         {
-            return this.openLeftViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, true, completed);
+            return this.OpenLeftViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, true, completed);
         }
 
-        private bool openLeftViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed)
+        private bool OpenLeftViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed)
         {
-            return this.openLeftViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
+            return this.OpenLeftViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
         }
 
-        private bool openLeftViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
+        private bool OpenLeftViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
         {
             if (this.LeftController == null || II_FLOAT_EQUAL(this.SlidingControllerView.Frame.GetMinX(), this.LeftLedge)) return true;
 
@@ -937,8 +992,8 @@ namespace Test
             UIView.Animate(OPEN_SLIDE_DURATION(animated), 0, options | UIViewAnimationOptions.LayoutSubviews | UIViewAnimationOptions.BeginFromCurrentState, () =>
                            {
                 this.LeftController.View.Hidden = false;
-                this.setSlidingFrameForOffset(this.referenceBounds.Size.Width - this.LeftLedge);
-                this.centerViewHidden();
+                this.SetSlidingFrameForOffset(this.ReferenceBounds.Size.Width - this.LeftLedge);
+                this.CenterViewHidden();
             }, () =>
             {
                 if (completed != null) completed(this);
@@ -952,22 +1007,22 @@ namespace Test
             return true;
         }
 
-        private bool openLeftViewBouncing(Action<ViewDeckController> bounced)
+        public bool OpenLeftViewBouncing(Action<ViewDeckController> bounced)
         {
-            return this.openLeftViewBouncing(bounced, null);
+            return this.OpenLeftViewBouncing(bounced, null);
         }
 
-        private bool openLeftViewBouncing(Action<ViewDeckController> bounced, Action<ViewDeckController>completed) 
+        public bool OpenLeftViewBouncing(Action<ViewDeckController> bounced, Action<ViewDeckController>completed) 
         {
-            return this.openLeftViewBouncing(bounced, true, completed);
+            return this.OpenLeftViewBouncing(bounced, true, completed);
         }
 
-        private bool openLeftViewBouncing(Action<ViewDeckController> bounced, bool callDelegate, Action<ViewDeckController> completed) 
+        private bool OpenLeftViewBouncing(Action<ViewDeckController> bounced, bool callDelegate, Action<ViewDeckController> completed) 
         {
-            return this.openLeftViewBouncing(bounced, UIViewAnimationOptions.CurveEaseInOut, true, completed);
+            return this.OpenLeftViewBouncing(bounced, UIViewAnimationOptions.CurveEaseInOut, true, completed);
         }
 
-        private bool openLeftViewBouncing(Action<ViewDeckController> bounced, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
+        private bool OpenLeftViewBouncing(Action<ViewDeckController> bounced, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
         {
             if (this.LeftController == null || II_FLOAT_EQUAL(this.SlidingControllerView.Frame.GetMinX(), this.LeftLedge)) return true;
             
@@ -981,16 +1036,16 @@ namespace Test
             UIView.Animate(OPEN_SLIDE_DURATION(true), 0, UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.LayoutSubviews, () =>
             {
                 this.LeftController.View.Hidden = false;
-                this.setSlidingFrameForOffset(this.referenceBounds.Size.Width);
+                this.SetSlidingFrameForOffset(this.ReferenceBounds.Size.Width);
             }, () => {
                 // run block if it's defined
                 if (bounced != null) bounced(this);
-                this.centerViewHidden();
+                this.CenterViewHidden();
                 
                 // now slide the view back to the ledge position
                 UIView.Animate(OPEN_SLIDE_DURATION(true), 0, options | UIViewAnimationOptions.LayoutSubviews | UIViewAnimationOptions.BeginFromCurrentState,
                                () => {
-                    this.setSlidingFrameForOffset(this.referenceBounds.Size.Width - this.LeftLedge);
+                    this.SetSlidingFrameForOffset(this.ReferenceBounds.Size.Width - this.LeftLedge);
                 }, () => {
                     if (completed != null) completed(this);
 //                    if (callDelegate) this.performDelegate:@selector(viewDeckControllerDidOpenLeftView:animated:) animated:YES);
@@ -1000,22 +1055,22 @@ namespace Test
             return true;
         }
 
-        private bool closeLeftViewAnimated(bool animated) 
+        public bool CloseLeftViewAnimated(bool animated) 
         {
-            return this.closeLeftViewAnimated(animated, null);
+            return this.CloseLeftViewAnimated(animated, null);
         }
 
-        private bool closeLeftViewAnimated(bool animated, Action<ViewDeckController> completed)
+        public bool CloseLeftViewAnimated(bool animated, Action<ViewDeckController> completed)
         {
-            return this.closeLeftViewAnimated(animated,true, completed);
+            return this.CloseLeftViewAnimated(animated,true, completed);
         }
 
-        private bool closeLeftViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed) 
+        private bool CloseLeftViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed) 
         {
-            return this.closeLeftViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
+            return this.CloseLeftViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
         }
 
-        private bool closeLeftViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed) 
+        private bool CloseLeftViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed) 
         {
             if (this.LeftControllerIsClosed) return true;
             
@@ -1023,10 +1078,10 @@ namespace Test
 //            if (callDelegate && !this.checkDelegate:@selector(viewDeckControllerWillCloseLeftView:animated:) animated:animated]) return NO;
             
             UIView.Animate(CLOSE_SLIDE_DURATION(animated), 0, options | UIViewAnimationOptions.LayoutSubviews, () => {
-                this.setSlidingFrameForOffset(0);
-                this.centerViewVisible();
+                this.SetSlidingFrameForOffset(0);
+                this.CenterViewVisible();
             }, () =>  {
-                this.hideAppropriateSideViews();
+                this.HideAppropriateSideViews();
                 if (completed != null) completed(this);
                 if (callDelegate) 
                 {
@@ -1038,17 +1093,17 @@ namespace Test
             return true;
         }
 
-        private bool closeLeftViewBouncing(Action<ViewDeckController> bounced) 
+        public bool CloseLeftViewBouncing(Action<ViewDeckController> bounced) 
         {
-            return this.closeLeftViewBouncing(bounced, null);
+            return this.CloseLeftViewBouncing(bounced, null);
         }
 
-        private bool closeLeftViewBouncing(Action<ViewDeckController> bounced, Action<ViewDeckController> completed) 
+        public bool CloseLeftViewBouncing(Action<ViewDeckController> bounced, Action<ViewDeckController> completed) 
         {
-            return this.closeLeftViewBouncing(bounced, true, completed);
+            return this.CloseLeftViewBouncing(bounced, true, completed);
         }
 
-        private bool closeLeftViewBouncing(Action<ViewDeckController> bounced, bool callDelegate, Action<ViewDeckController> completed) 
+        private bool CloseLeftViewBouncing(Action<ViewDeckController> bounced, bool callDelegate, Action<ViewDeckController> completed) 
         {
             if (this.LeftControllerIsClosed) return true;
             
@@ -1059,7 +1114,7 @@ namespace Test
             UIView.Animate(OPEN_SLIDE_DURATION(true), 0, UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.LayoutSubviews,
                            () => 
                            {
-                this.setSlidingFrameForOffset(this.referenceBounds.Size.Width);
+                this.SetSlidingFrameForOffset(this.ReferenceBounds.Size.Width);
             }, () => 
             {
                 // run block if it's defined
@@ -1069,10 +1124,10 @@ namespace Test
 //                    [this.delegate viewDeckController:self didBounceWithClosingController:this.leftController);
                 
                 UIView.Animate(CLOSE_SLIDE_DURATION(true), 0, UIViewAnimationOptions.CurveEaseOut | UIViewAnimationOptions.LayoutSubviews, () => {
-                    this.setSlidingFrameForOffset(0);
-                    this.centerViewVisible();
+                    this.SetSlidingFrameForOffset(0);
+                    this.CenterViewVisible();
                 } , () => {
-                    this.hideAppropriateSideViews();
+                    this.HideAppropriateSideViews();
                     if (completed != null) completed(this);
                     if (callDelegate) 
                     {
@@ -1086,54 +1141,54 @@ namespace Test
         }
 
 
-        private bool toggleRightView() 
+        public bool ToggleRightView() 
         {
-            return this.toggleRightViewAnimated(true);
+            return this.ToggleRightViewAnimated(true);
         }
 
-        private bool openRightView() 
+        public bool OpenRightView() 
         {
-            return this.openRightViewAnimated(true);
+            return this.OpenRightViewAnimated(true);
         }
 
-        private bool closeRightView() 
+        public bool CloseRightView() 
         {
-            return this.closeRightViewAnimated(true);
+            return this.CloseRightViewAnimated(true);
         }
 
-        private bool toggleRightViewAnimated(bool animated)
+        public bool ToggleRightViewAnimated(bool animated)
         {
-            return this.toggleRightViewAnimated(animated, null);
+            return this.ToggleRightViewAnimated(animated, null);
         }
 
-        private bool toggleRightViewAnimated(bool animated, Action<ViewDeckController> completed) 
+        public bool ToggleRightViewAnimated(bool animated, Action<ViewDeckController> completed) 
         {
             if (this.RightControllerIsClosed) 
                 {
-                return this.openRightViewAnimated(animated, completed);
+                return this.OpenRightViewAnimated(animated, completed);
                 }
                 else
                 {
-                    return this.closeRightViewAnimated(animated, completed);
+                    return this.CloseRightViewAnimated(animated, completed);
                 }
         }
 
-        private bool openRightViewAnimated(bool animated)
+        public bool OpenRightViewAnimated(bool animated)
         {
-            return this.openRightViewAnimated(animated, null);
+            return this.OpenRightViewAnimated(animated, null);
         }
 
-        private bool openRightViewAnimated(bool animated, Action<ViewDeckController> completed) 
+        public bool OpenRightViewAnimated(bool animated, Action<ViewDeckController> completed) 
         {
-            return this.openRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut,true, completed);
+            return this.OpenRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut,true, completed);
         }
 
-        private bool openRightViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed)
+        private bool OpenRightViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed)
         {
-            return this.openRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
+            return this.OpenRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
         }
 
-        private bool openRightViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
+        private bool OpenRightViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
         {
             if (this.RightController == null || II_FLOAT_EQUAL(this.SlidingControllerView.Frame.GetMaxX(), this.RightLedge)) return true;
             
@@ -1145,8 +1200,8 @@ namespace Test
             
             UIView.Animate(OPEN_SLIDE_DURATION(animated), 0, options | UIViewAnimationOptions.LayoutSubviews, () => {
                 this.RightController.View.Hidden = false;
-                this.setSlidingFrameForOffset(this.RightLedge - this.referenceBounds.Size.Width);
-                this.centerViewHidden();
+                this.SetSlidingFrameForOffset(this.RightLedge - this.ReferenceBounds.Size.Width);
+                this.CenterViewHidden();
             }, () => {
                 if (completed != null) completed(this);
 //                if (callDelegate) this.performDelegate:@selector(viewDeckControllerDidOpenRightView:animated:) animated:animated);
@@ -1155,22 +1210,22 @@ namespace Test
             return true;
         }
 
-        private bool openRightViewBouncing(Action<ViewDeckController> bounced) 
+        public bool OpenRightViewBouncing(Action<ViewDeckController> bounced) 
         {
-            return this.openRightViewBouncing(bounced, null);
+            return this.OpenRightViewBouncing(bounced, null);
         }
 
-        private bool openRightViewBouncing(Action<ViewDeckController> bounced, Action<ViewDeckController> completed) 
+        public bool OpenRightViewBouncing(Action<ViewDeckController> bounced, Action<ViewDeckController> completed) 
         {
-            return this.openRightViewBouncing(bounced, true, completed);
+            return this.OpenRightViewBouncing(bounced, true, completed);
         }
 
-        private bool openRightViewBouncing(Action<ViewDeckController> bounced, bool callDelegate, Action<ViewDeckController> completed)
+        private bool OpenRightViewBouncing(Action<ViewDeckController> bounced, bool callDelegate, Action<ViewDeckController> completed)
         {
-            return this.openRightViewBouncing(bounced, UIViewAnimationOptions.CurveEaseInOut, true, completed);
+            return this.OpenRightViewBouncing(bounced, UIViewAnimationOptions.CurveEaseInOut, true, completed);
         }
 
-        private bool openRightViewBouncing(Action<ViewDeckController> bounced, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
+        private bool OpenRightViewBouncing(Action<ViewDeckController> bounced, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
         {
             if (this.RightController == null || II_FLOAT_EQUAL(this.SlidingControllerView.Frame.GetMinX(), this.RightLedge)) return true;
             
@@ -1183,15 +1238,15 @@ namespace Test
             // first open the view completely, run the block (to allow changes)
             UIView.Animate(OPEN_SLIDE_DURATION(true), 0, UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.LayoutSubviews, () => {
                 this.RightController.View.Hidden = false;
-                this.setSlidingFrameForOffset(-this.referenceBounds.Size.Width);
+                this.SetSlidingFrameForOffset(-this.ReferenceBounds.Size.Width);
             }, () =>  {
                 // run block if it's defined
                 if (bounced != null) bounced(this);
-                this.centerViewHidden();
+                this.CenterViewHidden();
                 
                 // now slide the view back to the ledge position
                 UIView.Animate(OPEN_SLIDE_DURATION(true), 0, options | UIViewAnimationOptions.LayoutSubviews | UIViewAnimationOptions.BeginFromCurrentState, () => {
-                    this.setSlidingFrameForOffset(this.RightLedge - this.referenceBounds.Size.Width);
+                    this.SetSlidingFrameForOffset(this.RightLedge - this.ReferenceBounds.Size.Width);
                 }, () => {
                     if (completed != null) completed(this);
 //                    if (callDelegate) this.performDelegate:@selector(viewDeckControllerDidOpenRightView:animated:) animated:YES);
@@ -1201,22 +1256,22 @@ namespace Test
             return true;
         }
 
-        private bool closeRightViewAnimated(bool animated)
+        public bool CloseRightViewAnimated(bool animated)
         {
-            return this.closeRightViewAnimated(animated, null);
+            return this.CloseRightViewAnimated(animated, null);
         }
 
-        private bool closeRightViewAnimated(bool animated, Action<ViewDeckController> completed)
+        public bool CloseRightViewAnimated(bool animated, Action<ViewDeckController> completed)
         {
-            return this.closeRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, true, completed);
+            return this.CloseRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, true, completed);
         }
 
-        private bool closeRightViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed)
+        private bool CloseRightViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed)
         {
-            return this.openRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
+            return this.CloseRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
         }
 
-        private bool closeRightViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed) 
+        private bool CloseRightViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed) 
         {
             if (this.RightControllerIsClosed) return true;
             
@@ -1224,11 +1279,11 @@ namespace Test
 //            if (callDelegate && !this.checkDelegate:@selector(viewDeckControllerWillCloseRightView:animated:) animated:animated]) return NO;
             
             UIView.Animate(CLOSE_SLIDE_DURATION(animated), 0, options | UIViewAnimationOptions.LayoutSubviews, () => {
-                this.setSlidingFrameForOffset(0);
-                this.centerViewVisible();
+                this.SetSlidingFrameForOffset(0);
+                this.CenterViewVisible();
             }, () => {
                 if (completed != null) completed(this);
-                this.hideAppropriateSideViews();
+                this.HideAppropriateSideViews();
                 if (callDelegate) {
 //                    this.performDelegate:@selector(viewDeckControllerDidCloseRightView:animated:) animated:animated);
 //                    this.performDelegate:@selector(viewDeckControllerDidShowCenterView:animated:) animated:animated);
@@ -1238,17 +1293,17 @@ namespace Test
             return true;
         }
 
-        private bool closeRightViewBouncing(Action<ViewDeckController> bounced) 
+        public bool CloseRightViewBouncing(Action<ViewDeckController> bounced) 
         {
-            return this.closeRightViewBouncing(bounced, null);
+            return this.CloseRightViewBouncing(bounced, null);
         }
 
-        private bool closeRightViewBouncing(Action<ViewDeckController> bounced, Action<ViewDeckController> completed) 
+        public bool CloseRightViewBouncing(Action<ViewDeckController> bounced, Action<ViewDeckController> completed) 
         {
-            return this.closeRightViewBouncing(bounced, true, completed);
+            return this.CloseRightViewBouncing(bounced, true, completed);
         }
 
-        private bool closeRightViewBouncing(Action<ViewDeckController> bounced, bool callDelegate, Action<ViewDeckController> completed) 
+        private bool CloseRightViewBouncing(Action<ViewDeckController> bounced, bool callDelegate, Action<ViewDeckController> completed) 
         {
             if (this.RightControllerIsClosed) return true;
             
@@ -1256,17 +1311,17 @@ namespace Test
 //            if (callDelegate && !this.checkDelegate:@selector(viewDeckControllerWillCloseRightView:animated:) animated:YES]) return NO;
             
             UIView.Animate(OPEN_SLIDE_DURATION(true), 0,  UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.LayoutSubviews, () => {
-                this.setSlidingFrameForOffset(-this.referenceBounds.Size.Width);
+                this.SetSlidingFrameForOffset(-this.ReferenceBounds.Size.Width);
             }, () =>  {
                 if (bounced != null) bounced(this);
 //                if (callDelegate && this.delegate && [this.delegate respondsToSelector:@selector(viewDeckController:didBounceWithClosingController:)]) 
 //                    [this.delegate viewDeckController:self didBounceWithClosingController:this.rightController);
                 
                 UIView.Animate(CLOSE_SLIDE_DURATION(true), 0, UIViewAnimationOptions.CurveEaseOut | UIViewAnimationOptions.LayoutSubviews, () => {
-                    this.setSlidingFrameForOffset(0);
-                    this.centerViewVisible();
+                    this.SetSlidingFrameForOffset(0);
+                    this.CenterViewVisible();
                 }, () =>  {
-                    this.hideAppropriateSideViews();
+                    this.HideAppropriateSideViews();
                     if (completed != null) completed(this);
 //                    this.performDelegate:@selector(viewDeckControllerDidCloseRightView:animated:) animated:YES);
 //                    this.performDelegate:@selector(viewDeckControllerDidShowCenterView:animated:) animated:YES);
@@ -1282,7 +1337,7 @@ namespace Test
             return rect.Inset(dx, dy);
         }
 
-        private void rightViewPushViewControllerOverCenterController(UIViewController controller) 
+        public void RightViewPushViewControllerOverCenterController(UIViewController controller) 
         {
             Debug.Assert(this.CenterController.GetType().IsSubclassOf(typeof(UINavigationController)), "cannot rightViewPushViewControllerOverCenterView when center controller is not a navigation controller");
 
@@ -1302,7 +1357,7 @@ namespace Test
 
             this.View.Frame = RectangleFOffset(this.View.Frame, this.View.Frame.Size.Width, 0);
             
-            this.closeRightViewAnimated(true);
+            this.CloseRightViewAnimated(true);
 
             UINavigationController navController = ((UINavigationController)this.CenterController);
             navController.PushViewController(controller, false);
@@ -1322,7 +1377,7 @@ namespace Test
 
        // #pragma mark - Pre iOS5 message relaying
 
-        private void relayAppearanceMethod(Action<UIViewController> relay, bool forced) 
+        private void RelayAppearanceMethod(Action<UIViewController> relay, bool forced) 
         {
 //            bool shouldRelay = ![self respondsToSelector:@selector(automaticallyForwardAppearanceAndRotationMethodsToChildViewControllers)] || ![self performSelector:@selector(automaticallyForwardAppearanceAndRotationMethodsToChildViewControllers)];
 //            
@@ -1335,16 +1390,16 @@ namespace Test
 //            relay(self.rightController);
         }
 
-        private void relayAppearanceMethod(Action<UIViewController> relay)
+        private void RelayAppearanceMethod(Action<UIViewController> relay)
         {
 //            [self relayAppearanceMethod:relay forced:NO];
         }
 
         //#pragma mark - center view hidden stuff
 
-        private void centerViewVisible()
+        private void CenterViewVisible()
         {
-            this.removePanners();
+            this.RemovePanners();
             if (this.centerTapper != null) 
             {
 // todo:                this.centerTapper.RemoveTarget(this, @selector(centerTapped), UIControlEventTouchUpInside);
@@ -1352,15 +1407,15 @@ namespace Test
             }
 
             this.centerTapper = null;
-            this.addPanners();
+            this.AddPanners();
         }
 
-        private void centerViewHidden() 
+        private void CenterViewHidden() 
         {
             if (this.centerHiddenInteractivity == CenterHiddenInteractivity.UserInteractive) 
                 return;
             
-            this.removePanners();
+            this.RemovePanners();
 
             if (this.centerTapper == null) 
             {
@@ -1374,11 +1429,11 @@ namespace Test
             }
 
             this.centerTapper.Frame = this.centerView.Bounds;
-            this.addPanners();
+            this.AddPanners();
         }
 
         [Export("centerTapped")]
-        private void centerTapped() 
+        private void CenterTapped() 
         {
             // todo: handle additinal cases better
             if (this.centerHiddenInteractivity != CenterHiddenInteractivity.UserInteractive) 
@@ -1387,11 +1442,11 @@ namespace Test
                 {
                     if (this.centerHiddenInteractivity == CenterHiddenInteractivity.NotUserInteractiveWithTapToClose) 
                     {
-                        this.closeLeftView();
+                        this.CloseLeftView();
                     }
                     else
                     {
-                        this.closeLeftViewBouncing(null);
+                        this.CloseLeftViewBouncing(null);
                     }
                 }
 
@@ -1399,11 +1454,11 @@ namespace Test
                 {
                     if (this.centerHiddenInteractivity == CenterHiddenInteractivity.NotUserInteractiveWithTapToClose) 
                     {
-                        this.closeRightView();
+                        this.CloseRightView();
                     }
                     else
                     {
-                        this.closeRightViewBouncing(null);
+                        this.CloseRightViewBouncing(null);
                     }
                 }
                 
@@ -1413,38 +1468,38 @@ namespace Test
         //#pragma mark - Panning
 
         [Export("gestureRecognizerShouldBegin:")]
-        private bool gestureRecognizerShouldBegin(UIGestureRecognizer gestureRecognizer)
+        private bool GestureRecognizerShouldBegin(UIGestureRecognizer gestureRecognizer)
         {
             float px = this.SlidingControllerView.Frame.Location.X;
             if (px != 0) return true;
                 
-            float x = this.locationOfPanner((UIPanGestureRecognizer)gestureRecognizer);
+            float x = this.LocationOfPanner((UIPanGestureRecognizer)gestureRecognizer);
             bool ok =  true;
 
             if (x > 0) 
             {
 // todo                ok = [self checkDelegate:@selector(viewDeckControllerWillOpenLeftView:animated:) animated:NO];
                 if (!ok)
-                    this.closeLeftViewAnimated(false);
+                    this.CloseLeftViewAnimated(false);
             }
             else if (x < 0) 
             {
 // todo                ok = [self checkDelegate:@selector(viewDeckControllerWillOpenRightView:animated:) animated:NO];
                 if (!ok)
-                    this.closeRightViewAnimated(false);
+                    this.CloseRightViewAnimated(false);
             }
             
             return ok;
         }
 
         [Export("gestureRecognizer:shouldReceiveTouch:")]
-        private bool gestureRecognizer(UIGestureRecognizer gestureRecognizer, UITouch touch) 
+        private bool GestureRecognizer(UIGestureRecognizer gestureRecognizer, UITouch touch) 
         {
             this.panOrigin = this.SlidingControllerView.Frame.Location.X;
             return true;
         }
 
-        private float locationOfPanner(UIPanGestureRecognizer panner) 
+        private float LocationOfPanner(UIPanGestureRecognizer panner) 
         {
             PointF pan = panner.TranslationInView(this.referenceView);
             float x = pan.X + this.panOrigin;
@@ -1453,7 +1508,7 @@ namespace Test
 
             if (this.RightController == null) x = Math.Max(0, x);
             
-            float w = this.referenceBounds.Size.Width;
+            float w = this.ReferenceBounds.Size.Width;
             float lx = Math.Max(Math.Min(x, w - this.LeftLedge), -w + this.RightLedge);
             
             if (this.Elastic) 
@@ -1471,17 +1526,17 @@ namespace Test
                 x = lx;
             }
             
-            return this.limitOffset(x);
+            return this.LimitOffset(x);
         }
 
         [Export("panned:")]
-        private void panned(UIPanGestureRecognizer panner) 
+        private void Panned(UIPanGestureRecognizer panner) 
         {
             if (!this.Enabled) return;
 
             float px = this.SlidingControllerView.Frame.Location.X;
-            float x = this.locationOfPanner(panner);
-            float w = this.referenceBounds.Size.Width;
+            float x = this.LocationOfPanner(panner);
+            float w = this.ReferenceBounds.Size.Width;
 
             Selector didCloseSelector = null;
             Selector didOpenSelector = null;
@@ -1504,7 +1559,7 @@ namespace Test
                     didOpenSelector = new Selector("viewDeckControllerDidOpenLeftView:animated:");
                     if (!canOpen) 
                     {
-                        this.closeRightViewAnimated(false);
+                        this.CloseRightViewAnimated(false);
                         return;
                     }
                 }
@@ -1528,13 +1583,13 @@ namespace Test
                     didOpenSelector = new Selector("viewDeckControllerDidOpenRightView:animated:");
                     if (!canOpen) 
                     {
-                        this.closeLeftViewAnimated(false);
+                        this.CloseLeftViewAnimated(false);
                         return;
                     }
                 }
             }
             
-            this.setSlidingFrameForOffset(x);
+            this.SetSlidingFrameForOffset(x);
             
             bool rightWasHidden = this.RightController.View.Hidden;
             bool leftWasHidden = this.LeftController.View.Hidden;
@@ -1545,11 +1600,11 @@ namespace Test
             {
                 if (this.SlidingControllerView.Frame.Location.X == 0.0f) 
                 {
-                    this.centerViewVisible();
+                    this.CenterViewVisible();
                 }
                 else
                 {
-                    this.centerViewHidden();
+                    this.CenterViewHidden();
                 }
 
                 float lw3 = (w - this.LeftLedge) / 3.0f;
@@ -1561,15 +1616,15 @@ namespace Test
                     // small velocity, no movement
                     if (x >= w - this.LeftLedge - lw3) 
                     {
-                        this.openLeftViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, false, null);
+                        this.OpenLeftViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, false, null);
                     }
                     else if (x <= this.RightLedge + rw3 - w) 
                     {
-                        this.openRightViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, false, null);
+                        this.OpenRightViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, false, null);
                     }
                     else
                     {
-                        this.showCenterView(true);
+                        this.ShowCenterView(true);
                     }
                 }
                 else if (velocity < 0) 
@@ -1577,11 +1632,11 @@ namespace Test
                     // swipe to the left
                     if (x < 0) 
                     {
-                        this.openRightViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, true, null);
+                        this.OpenRightViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, true, null);
                     }
                     else 
                     {
-                        this.showCenterView(true);
+                        this.ShowCenterView(true);
                     }
                 }
                 else if (velocity > 0) 
@@ -1589,17 +1644,17 @@ namespace Test
                     // swipe to the right
                     if (x > 0) 
                     {
-                        this.openLeftViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, true, null);
+                        this.OpenLeftViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, true, null);
                     }
                     else 
                     {
-                        this.showCenterView(true);
+                        this.ShowCenterView(true);
                     }
                 }
             }
             else
             {
-                this.hideAppropriateSideViews();
+                this.HideAppropriateSideViews();
             }
 
             if (didCloseSelector != null)
@@ -1614,7 +1669,7 @@ namespace Test
         }
 
 
-        private void addPanner(UIView view) 
+        private void AddPanner(UIView view) 
         {
             if (view == null) return;
 
@@ -1628,9 +1683,9 @@ namespace Test
         }
 
 
-        private void addPanners() 
+        private void AddPanners() 
         {
-            this.removePanners();
+            this.RemovePanners();
             
             switch (this.PanningMode) 
             {
@@ -1638,39 +1693,39 @@ namespace Test
                     break;
                     
                 case ViewDeckPanningMode.FullViewPanning:
-                    this.addPanner(this.SlidingControllerView);
+                    this.AddPanner(this.SlidingControllerView);
 
                     // also add to disabled center
                     if (this.centerTapper != null)
-                        this.addPanner(this.centerTapper);
+                        this.AddPanner(this.centerTapper);
 
                     // also add to navigationbar if present
                     if (this.NavigationController != null && !this.NavigationController.NavigationBarHidden) 
-                        this.addPanner(this.NavigationController.NavigationBar);
+                        this.AddPanner(this.NavigationController.NavigationBar);
 
                     break;
                     
                 case ViewDeckPanningMode.NavigationBarPanning:
                     if (this.NavigationController != null && !this.NavigationController.NavigationBarHidden) 
                     {
-                        this.addPanner(this.NavigationController.NavigationBar);
+                        this.AddPanner(this.NavigationController.NavigationBar);
                     }
                     
                     if (this.CenterController.NavigationController != null && !this.CenterController.NavigationController.NavigationBarHidden) 
                     {
-                        this.addPanner(this.CenterController.NavigationController.NavigationBar);
+                        this.AddPanner(this.CenterController.NavigationController.NavigationBar);
                     }
                     
                     if (this.CenterController.GetType().IsSubclassOf(typeof(UINavigationController)) && !((UINavigationController)this.CenterController).NavigationBarHidden) 
                     {
-                        this.addPanner(((UINavigationController)this.CenterController).NavigationBar);
+                        this.AddPanner(((UINavigationController)this.CenterController).NavigationBar);
                     }
 
                     break;
                 case ViewDeckPanningMode.PanningViewPanning:
                     if (this.PanningView != null) 
                     {
-                        this.addPanner(this.PanningView);
+                        this.AddPanner(this.PanningView);
                     }
 
                     break;
@@ -1678,7 +1733,7 @@ namespace Test
         }
 
 
-        private void removePanners() 
+        private void RemovePanners() 
         {
             foreach (var panner in this.panners) 
             {
@@ -1759,8 +1814,7 @@ namespace Test
        // #pragma mark - Properties
 
 
-        // todo: is controllerStore a ref parametsr
-        private void applySideController(ref UIViewController controllerStore, UIViewController newController, UIViewController otherController, 
+        private void ApplySideController(ref UIViewController controllerStore, UIViewController newController, UIViewController otherController, 
                                              NSAction clearOtherController) 
         {
             //void(^beforeBlock)(UIViewController* controller) = ^(UIViewController* controller){};
@@ -1782,7 +1836,7 @@ namespace Test
                 {
 //                    controller.vdc_viewWillAppear(false);
                     controller.View.Hidden = left ? this.SlidingControllerView.Frame.Location.X <= 0 : this.SlidingControllerView.Frame.Location.X >= 0;
-                    controller.View.Frame = this.referenceBounds;
+                    controller.View.Frame = this.ReferenceBounds;
                     controller.View.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
                     if (this.slidingController != null)
                     {
@@ -1854,39 +1908,13 @@ namespace Test
             return null;
         }
 
-        private void reapplySideController(UIViewController controllerStore) 
+        private void ReapplySideController(UIViewController controllerStore) 
         {
-            this.applySideController(ref controllerStore, controllerStore, null, null);
+            this.ApplySideController(ref controllerStore, controllerStore, null, null);
         }
 
 
         #region Property Setters
-
-        /// <summary>
-        /// Sets the left controller, clears the right controller if viewController is already the right controller
-        /// </summary>
-        private void SetLeftController(UIViewController viewController) 
-        {
-            if (this.LeftController == viewController) 
-            {
-                return;
-            }
-
-            this.applySideController(ref this._leftController, viewController, this.RightController, () => { this.RightController = null; });
-        }
-
-        /// <summary>
-        /// Sets the right controller, clears the left controller if viewController is already the left controller
-        /// </summary>
-        private void SetRightController(UIViewController viewController)
-        {
-            if (this.RightController == viewController) 
-            {
-                return;
-            }
-
-            this.applySideController(ref this._rightController, viewController, this.LeftController, () => { this.LeftController = null; });
-        }
 
         /// <summary>
         /// Set the center controller
@@ -1901,15 +1929,15 @@ namespace Test
             Action<UIViewController> beforeBlock = (x) => {};
             Action<UIViewController> afterBlock = (x) => {};
 
-            var currentFrame = this.referenceBounds;
+            var currentFrame = this.ReferenceBounds;
 
             if (this.viewAppeared) 
             {
                 beforeBlock = (controller) => 
                 {
 // todo:                    controller.vdc_viewWillDisappear(false);
-                    this.restoreShadowToSlidingView();
-                    this.removePanners();
+                    this.RestoreShadowToSlidingView();
+                    this.RemovePanners();
                     controller.View.RemoveFromSuperview();
 // todo:                    controller.vdc_viewDidDisappear(false);
                     this.centerView.RemoveFromSuperview();
@@ -1931,7 +1959,7 @@ namespace Test
                         navController.NavigationBarHidden = true;
                     }
                     
-                    this.setSlidingAndReferenceViews();
+                    this.SetSlidingAndReferenceViews();
                     controller.View.Frame = currentFrame;
                     controller.View.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
                     controller.View.Hidden = false;
@@ -1940,8 +1968,8 @@ namespace Test
                     if (barHidden) 
                         navController.NavigationBarHidden = false;
                     
-                    this.addPanners();
-                    this.applyShadowToSlidingView();
+                    this.AddPanners();
+                    this.ApplyShadowToSlidingView();
 // todo:                    controller.vdc_viewDidAppear(false);
                 };
             }
@@ -1961,7 +1989,7 @@ namespace Test
                 try 
                 {
                     this.CenterController.RemoveObserver(this, new NSString("title"));
-                    if (this.automaticallyUpdateTabBarItems) 
+                    if (this.AutomaticallyUpdateTabBarItems) 
                     {
                         this.CenterController.RemoveObserver(this, new NSString("tabBarItem.title"));
                         this.CenterController.RemoveObserver(this, new NSString("tabBarItem.image"));
@@ -1995,7 +2023,7 @@ namespace Test
 
                 this.Title = this.CenterController.Title;
 
-                if (this.automaticallyUpdateTabBarItems) 
+                if (this.AutomaticallyUpdateTabBarItems) 
                 {
                     this.CenterController.AddObserver(this, new NSString("tabBarItem.title"), 0, IntPtr.Zero);
                     this.CenterController.AddObserver(this, new NSString("tabBarItem.image"), 0, IntPtr.Zero);
@@ -2019,23 +2047,23 @@ namespace Test
             // Compute the final ledge in two steps. This prevents a strange bug where
             // nesting MAX(X, MIN(Y, Z)) with miniscule referenceBounds returns a bogus near-zero value.
 
-            float minLedge = Math.Min(this.referenceBounds.Size.Width, rightLedge);
+            float minLedge = Math.Min(this.ReferenceBounds.Size.Width, rightLedge);
             rightLedge = Math.Max(rightLedge, minLedge);
 
-            if (this.viewAppeared && II_FLOAT_EQUAL(this.SlidingControllerView.Frame.Location.X, this.RightLedge - this.referenceBounds.Size.Width)) 
+            if (this.viewAppeared && II_FLOAT_EQUAL(this.SlidingControllerView.Frame.Location.X, this.RightLedge - this.ReferenceBounds.Size.Width)) 
             {
                 if (rightLedge < this.RightLedge) 
                 {
                     UIView.Animate(CLOSE_SLIDE_DURATION(true), () =>
                     {
-                        this.setSlidingFrameForOffset(rightLedge - this.referenceBounds.Size.Width);
+                        this.SetSlidingFrameForOffset(rightLedge - this.ReferenceBounds.Size.Width);
                     });
                 }
                 else if (rightLedge > this.RightLedge) 
                 {
                     UIView.Animate(OPEN_SLIDE_DURATION(true),() =>
                     {
-                        this.setSlidingFrameForOffset(rightLedge - this.referenceBounds.Size.Width);
+                        this.SetSlidingFrameForOffset(rightLedge - this.ReferenceBounds.Size.Width);
                     });
                 }
             }
@@ -2050,23 +2078,23 @@ namespace Test
             // Compute the final ledge in two steps. This prevents a strange bug where
             // nesting MAX(X, MIN(Y, Z)) with miniscule referenceBounds returns a bogus near-zero value.
 
-            float minLedge = Math.Min(this.referenceBounds.Size.Width, rightLedge);
+            float minLedge = Math.Min(this.ReferenceBounds.Size.Width, rightLedge);
             rightLedge = Math.Max(rightLedge, minLedge);
 
-            if (this.viewAppeared && II_FLOAT_EQUAL(this.SlidingControllerView.Frame.Location.X, this.RightLedge - this.referenceBounds.Size.Width)) 
+            if (this.viewAppeared && II_FLOAT_EQUAL(this.SlidingControllerView.Frame.Location.X, this.RightLedge - this.ReferenceBounds.Size.Width)) 
             {
                 if (rightLedge < this.RightLedge) 
                 {
                     UIView.Animate(CLOSE_SLIDE_DURATION(true), () =>
                     {
-                        this.setSlidingFrameForOffset(rightLedge - this.referenceBounds.Size.Width);
+                        this.SetSlidingFrameForOffset(rightLedge - this.ReferenceBounds.Size.Width);
                     }, () => completion(true));
                 }
                 else if (rightLedge > this.RightLedge) 
                 {
                     UIView.Animate(OPEN_SLIDE_DURATION(true),() =>
                     {
-                        this.setSlidingFrameForOffset(rightLedge - this.referenceBounds.Size.Width);
+                        this.SetSlidingFrameForOffset(rightLedge - this.ReferenceBounds.Size.Width);
                     }, () => completion(true));
                 }
             }
@@ -2081,23 +2109,23 @@ namespace Test
             // Compute the final ledge in two steps. This prevents a strange bug where
             // nesting MAX(X, MIN(Y, Z)) with miniscule referenceBounds returns a bogus near-zero value.
 
-            float minLedge = Math.Min(this.referenceBounds.Size.Width, leftLedge);
+            float minLedge = Math.Min(this.ReferenceBounds.Size.Width, leftLedge);
             leftLedge = Math.Max(leftLedge, minLedge);
 
-            if (this.viewAppeared && II_FLOAT_EQUAL(this.SlidingControllerView.Frame.Location.X, this.referenceBounds.Size.Width - this.LeftLedge)) 
+            if (this.viewAppeared && II_FLOAT_EQUAL(this.SlidingControllerView.Frame.Location.X, this.ReferenceBounds.Size.Width - this.LeftLedge)) 
             {
                 if (leftLedge < this.LeftLedge) 
                 {
                     UIView.Animate(CLOSE_SLIDE_DURATION(true), () =>
                     {
-                        this.setSlidingFrameForOffset(this.referenceBounds.Size.Width - leftLedge);
+                        this.SetSlidingFrameForOffset(this.ReferenceBounds.Size.Width - leftLedge);
                     });
                 }
                 else if (leftLedge > this.LeftLedge) 
                 {
                     UIView.Animate(OPEN_SLIDE_DURATION(true),() =>
                    {
-                        this.setSlidingFrameForOffset(this.referenceBounds.Size.Width - leftLedge);
+                        this.SetSlidingFrameForOffset(this.ReferenceBounds.Size.Width - leftLedge);
                     });
                 }
             }
@@ -2112,22 +2140,22 @@ namespace Test
             // Compute the final ledge in two steps. This prevents a strange bug where
             // nesting MAX(X, MIN(Y, Z)) with miniscule referenceBounds returns a bogus near-zero value.
 
-            float minLedge = Math.Min(this.referenceBounds.Size.Width, leftLedge);
+            float minLedge = Math.Min(this.ReferenceBounds.Size.Width, leftLedge);
             leftLedge = Math.Max(leftLedge, minLedge);
 
-            if (this.viewAppeared && II_FLOAT_EQUAL(this.SlidingControllerView.Frame.Location.X, this.referenceBounds.Size.Width - this.LeftLedge)) 
+            if (this.viewAppeared && II_FLOAT_EQUAL(this.SlidingControllerView.Frame.Location.X, this.ReferenceBounds.Size.Width - this.LeftLedge)) 
             {
                 if (leftLedge < this.LeftLedge) 
                 {
                     UIView.Animate(CLOSE_SLIDE_DURATION(true), () =>
                     {
-                        this.setSlidingFrameForOffset(this.referenceBounds.Size.Width - leftLedge);
+                        this.SetSlidingFrameForOffset(this.ReferenceBounds.Size.Width - leftLedge);
                     }, () => completion(true));
                 }
                 else if (leftLedge > this.LeftLedge) {
                     UIView.Animate(OPEN_SLIDE_DURATION(true),() =>
                     {
-                        this.setSlidingFrameForOffset(this.referenceBounds.Size.Width - leftLedge);
+                        this.SetSlidingFrameForOffset(this.ReferenceBounds.Size.Width - leftLedge);
                     }, () => completion(true));
                 }
             }
@@ -2154,32 +2182,10 @@ namespace Test
             }
         }
 
-        private void setAutomaticallyUpdateTabBarItems(bool automaticallyUpdateTabBarItems) 
-        {
-//            if (_automaticallyUpdateTabBarItems) {
-//                @try {
-//                    [_centerController removeObserver:self forKeyPath:@"tabBarItem.title"];
-//                    [_centerController removeObserver:self forKeyPath:@"tabBarItem.image"];
-//                    [_centerController removeObserver:self forKeyPath:@"hidesBottomBarWhenPushed"];
-//                }
-//                @catch (NSException *exception) {}
-//            }
-//            
-//            _automaticallyUpdateTabBarItems = automaticallyUpdateTabBarItems;
-//
-//            if (_automaticallyUpdateTabBarItems) {
-//                [_centerController addObserver:self forKeyPath:@"tabBarItem.title" options:0 context:nil];
-//                [_centerController addObserver:self forKeyPath:@"tabBarItem.image" options:0 context:nil];
-//                [_centerController addObserver:self forKeyPath:@"hidesBottomBarWhenPushed" options:0 context:nil];
-//                self.tabBarItem.title = _centerController.tabBarItem.title;
-//                self.tabBarItem.image = _centerController.tabBarItem.image;
-//            }
-        }
-
 
         #endregion
 
-        private bool setSlidingAndReferenceViews() 
+        private bool SetSlidingAndReferenceViews() 
         {
             if (this.NavigationController != null && this.NavigationControllerBehavior == ViewDeckNavigationControllerBehavior.Integrated) 
             {
@@ -2246,7 +2252,7 @@ namespace Test
 
        // #pragma mark - Shadow
 
-        private void restoreShadowToSlidingView() 
+        private void RestoreShadowToSlidingView() 
         {
 //            UIView* shadowedView = self.slidingControllerView;
 //            if (!shadowedView) return;
@@ -2258,7 +2264,7 @@ namespace Test
 //            shadowedView.layer.shadowPath = [self.LocationalShadowPath CGPath];
         }
 
-        private void applyShadowToSlidingView() 
+        private void ApplyShadowToSlidingView() 
         {
             UIView shadowedView = this.SlidingControllerView;
             if (shadowedView == null) return;
