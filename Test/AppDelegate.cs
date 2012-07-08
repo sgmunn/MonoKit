@@ -54,7 +54,7 @@ namespace Test
             var centerController = new Center();
 
             var deckController = new ViewDeckController(centerController, leftController, rightController);
-            deckController.setRightLedge(100);
+            deckController.RightLedge = 100;
 
             window.RootViewController = deckController;
 
