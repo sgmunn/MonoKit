@@ -74,6 +74,7 @@
     <Compile Include="UI\Metro\UIPanoramaViewController.cs" />
     <Compile Include="UI\Metro\PanoramaConstants.cs" />
     <Compile Include="UI\Metro\ContentItem.cs" />
+    <Compile Include="UI\ViewControllers\SlidingViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
@@ -87,6 +88,7 @@
     <Folder Include="Threading\Tasks\" />
     <Folder Include="Reactive\Concurrency\" />
     <Folder Include="UI\Metro\" />
+    <Folder Include="UI\ViewControllers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKit\MonoKit.csproj">

@@ -156,8 +156,10 @@ namespace iPhoneTest
             /// make yours views styled better ! :)
 
 
-            this.InitPanoramaSample();
-            //this.InitSamplesWithPanoramaView();
+            // choose one of these
+
+            //this.InitPanoramaSample();
+            this.InitSamplesWithPanoramaView();
             //this.InitSamples();
 
             return true;
@@ -175,7 +177,7 @@ namespace iPhoneTest
         {
             this.window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            this.controller = new UINavigationController();
+            this.controller = new Test();
             //this.controller.NavigationBarHidden = true;
 
             this.window.RootViewController = this.controller;
@@ -201,6 +203,25 @@ namespace iPhoneTest
 
             this.window.RootViewController = this.controller;
             this.window.MakeKeyAndVisible();
+        }
+    }
+
+    public class Test : UINavigationController
+    {
+        public override void LoadView()
+        {
+            base.LoadView();
+
+
+        }
+
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+
+            var f = this.NavigationBar.Frame;
+            f.Y -= 20;
+            this.NavigationBar.Frame = f;
         }
     }
 }
