@@ -48,7 +48,7 @@ namespace Test
             // create a new window instance based on the screen size
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            window.RootViewController = sample0();
+            window.RootViewController = sample1();
 
 
             // make the window visible

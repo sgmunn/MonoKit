@@ -213,6 +213,23 @@ namespace Test
                 this.ApplySideController(ref this._rightController, value, this.LeftController, () => { this.LeftController = null; });
             }
         }
+        
+        public override string Title
+        {
+            get
+            {
+                return base.Title;
+            }
+
+            set
+            {
+                if (base.Title != value)
+                {
+                    base.Title = value;
+                    this.CenterController.Title = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether the view deck is enabled.
@@ -517,26 +534,6 @@ namespace Test
             return new RectangleF(rect.X, rect.Y, rect.Width - width, rect.Height - height);
         }
 
-        private UINavigationController testNavigationController
-        {
-            get
-            {
-                return this.NavigationController;
-
-                if (this.CenterController is UINavigationController)
-                {
-                    return (UINavigationController)this.CenterController;
-                }
-
-                if (this.NavigationController != null)
-                {
-                    return this.NavigationController;
-                }
-
-                return this.CenterController.NavigationController;
-            }
-        }
-
         private RectangleF CenterViewBounds 
         {
             get
@@ -544,12 +541,10 @@ namespace Test
                 if (this.NavigationControllerBehavior == ViewDeckNavigationControllerBehavior.Contained)
                     return this.ReferenceBounds;
             
-//                throw new NotSupportedException("Integrated behaviour not supported yet");
-                // this.NavigationController is null because of absence of method swizzling
                 var height = 0f;
-                if (this.testNavigationController != null)
+                if (this.NavigationController != null)
                 {
-                    height = this.testNavigationController.NavigationBarHidden ? 0 : this.testNavigationController.NavigationBar.Frame.Size.Height;
+                    height = this.NavigationController.NavigationBarHidden ? 0 : this.NavigationController.NavigationBar.Frame.Size.Height;
                 }
 
                 return II_RectangleFShrink(this.ReferenceBounds, 0, this.RelativeStatusBarHeight + height);
@@ -1786,15 +1781,15 @@ namespace Test
                         this.AddPanner(this.centerTapper);
 
                     // also add to navigationbar if present
-                    if (this.testNavigationController != null && !this.testNavigationController.NavigationBarHidden) 
-                        this.AddPanner(this.testNavigationController.NavigationBar);
+                    if (this.NavigationController != null && !this.NavigationController.NavigationBarHidden) 
+                        this.AddPanner(this.NavigationController.NavigationBar);
 
                     break;
                     
                 case ViewDeckPanningMode.NavigationBarPanning:
-                    if (this.testNavigationController != null && !this.testNavigationController.NavigationBarHidden) 
+                    if (this.NavigationController != null && !this.NavigationController.NavigationBarHidden) 
                     {
-                        this.AddPanner(this.testNavigationController.NavigationBar);
+                        this.AddPanner(this.NavigationController.NavigationBar);
                     }
                     
                     if (this.CenterController.NavigationController != null && !this.CenterController.NavigationController.NavigationBarHidden) 
@@ -2252,25 +2247,6 @@ namespace Test
             this._leftLedge = leftLedge;
         }
 
-        private string __title;
-        public override string Title
-        {
-            get
-            {
-                return this.CenterController.Title;
-            }
-
-            set
-            {
-                if (this.__title != value)
-                {
-                    this.__title = value;
-                    base.Title = value;
-                    this.CenterController.Title = value;
-                }
-            }
-        }
-
 
         #endregion
 
@@ -2320,41 +2296,46 @@ namespace Test
                     return;
                 }
             }
-//
-//            if ([@"title" isEqualToString:keyPath]) {
-//                if (!II_STRING_EQUAL([super title], self.centerController.title)) {
-//                    self.title = self.centerController.title;
-//                }
-//                return;
-//            }
-//            
-//            if ([keyPath isEqualToString:@"bounds"]) {
-//                CGFloat offset = self.slidingControllerView.Frame.Location.X;
-//                [self setSlidingFrameForOffset:offset];
-//                self.slidingControllerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.referenceBounds].CGPath;
-//                UINavigationController* navController = [self.centerController isKindOfClass:[UINavigationController class]] 
-//                ? (UINavigationController*)self.centerController 
-//                : nil;
-//                if (navController != nil && !navController.navigationBarHidden) {
-//                    navController.navigationBarHidden = YES;
-//                    navController.navigationBarHidden = NO;
-//                }
-//                return;
-//            }
+
+            if (keyPath.Equals(new NSString("title"))) 
+            {
+                if (this.Title != this.CenterController.Title) 
+                {
+                    this.Title = this.CenterController.Title;
+                }
+                return;
+            }
+            
+            if (keyPath.Equals(new NSString("bounds"))) 
+            {
+                float offset = this.SlidingControllerView.Frame.Location.X;
+                this.SetSlidingFrameForOffset(offset);
+
+                this.SlidingControllerView.Layer.ShadowPath = UIBezierPath.FromRect(this.ReferenceBounds).CGPath;
+                UINavigationController navController = this.CenterController.GetType().IsSubclassOf(typeof(UINavigationController)) ? (UINavigationController)this.CenterController : null;
+
+                if (navController != null && !navController.NavigationBarHidden) 
+                {
+                    navController.NavigationBarHidden = true;
+                    navController.NavigationBarHidden = false;
+                }
+
+                return;
+            }
         }
 
        // #pragma mark - Shadow
 
         private void RestoreShadowToSlidingView() 
         {
-//            UIView* shadowedView = self.slidingControllerView;
-//            if (!shadowedView) return;
-//            
-//            shadowedView.layer.shadowRadius = self.LocationalShadowRadius;
-//            shadowedView.layer.shadowOpacity = self.LocationalShadowOpacity;
-//            shadowedView.layer.shadowColor = [self.LocationalShadowColor CGColor]; 
-//            shadowedView.layer.shadowOffset = self.LocationalShadowOffset;
-//            shadowedView.layer.shadowPath = [self.LocationalShadowPath CGPath];
+            UIView shadowedView = this.SlidingControllerView;
+            if (shadowedView == null) return;
+            
+            shadowedView.Layer.ShadowRadius = this.originalShadowRadius;
+            shadowedView.Layer.ShadowOpacity = this.originalShadowOpacity;
+            shadowedView.Layer.ShadowColor = this.originalShadowColor.CGColor; 
+            shadowedView.Layer.ShadowOffset = this.originalShadowOffset;
+            shadowedView.Layer.ShadowPath = this.originalShadowPath != null ? this.originalShadowPath.CGPath : null;
         }
 
         private void ApplyShadowToSlidingView() 
@@ -2366,7 +2347,7 @@ namespace Test
             this.originalShadowOpacity = shadowedView.Layer.ShadowOpacity;
             this.originalShadowColor = shadowedView.Layer.ShadowColor != null ? UIColor.FromCGColor(this.SlidingControllerView.Layer.ShadowColor) : null;
             this.originalShadowOffset = shadowedView.Layer.ShadowOffset;
-//            this.originalShadowPath = shadowedView.Layer.ShadowPath  != null  ? UIBezierPath.FromPath(this.slidingControllerView.Layer.ShadowPath) : null;
+            this.originalShadowPath = shadowedView.Layer.ShadowPath != null ? UIBezierPath.FromPath(this.SlidingControllerView.Layer.ShadowPath) : null;
             
 //            if ([this.delegate respondsToSelector:@selector(viewDeckController:applyShadow:withBounds:)]) 
 //            {
