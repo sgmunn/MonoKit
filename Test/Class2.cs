@@ -825,6 +825,17 @@ namespace Test
 //                this.setSlidingFrameForOffset(this.offset);
 //                this.hideAppropriateSideViews();
 //            });
+            this.PerformSelector(() => 
+                {
+                    if (this.referenceView != null) 
+                    {
+                        this.SetSlidingAndReferenceViews();
+                        applyViews();
+                    }
+
+                    this.SetSlidingFrameForOffset(this.offset);
+                    this.HideAppropriateSideViews();
+                }, 0.01f);
             
             this.AddPanners();
             
@@ -841,6 +852,27 @@ namespace Test
  //               {
  //               [controller viewWillAppear:animated);
  //           } forced:wasntAppeared);
+        }
+
+        private void PerformSelector(NSAction action, float delay)
+        {
+            int d = (int)(1000 * delay);
+            
+            var thread = new System.Threading.Thread(new System.Threading.ThreadStart(() =>
+            {
+                System.Threading.Thread.Sleep(d);
+                this.InvokeOnMainThread(action);
+                action = null;
+            }));
+            
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+
+        [Export("test:")]
+        private void testMe()
+        {
         }
 
         public override void ViewDidAppear(bool animated) 
