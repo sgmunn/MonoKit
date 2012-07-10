@@ -17,7 +17,13 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-//
+
+
+
+// changed to support iOS 5 only - view containment issues
+
+
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -366,26 +372,37 @@ namespace Test
 
             set
             {
-
-//            if (_automaticallyUpdateTabBarItems) {
-//                @try {
-//                    [_centerController removeObserver:self forKeyPath:@"tabBarItem.title"];
-//                    [_centerController removeObserver:self forKeyPath:@"tabBarItem.image"];
-//                    [_centerController removeObserver:self forKeyPath:@"hidesBottomBarWhenPushed"];
-//                }
-//                @catch (NSException *exception) {}
-//            }
-//            
-//            _automaticallyUpdateTabBarItems = automaticallyUpdateTabBarItems;
-//
-//            if (_automaticallyUpdateTabBarItems) {
-//                [_centerController addObserver:self forKeyPath:@"tabBarItem.title" options:0 context:nil];
-//                [_centerController addObserver:self forKeyPath:@"tabBarItem.image" options:0 context:nil];
-//                [_centerController addObserver:self forKeyPath:@"hidesBottomBarWhenPushed" options:0 context:nil];
-//                self.tabBarItem.title = _centerController.tabBarItem.title;
-//                self.tabBarItem.image = _centerController.tabBarItem.image;
-//            }
+                if (this._automaticallyUpdateTabBarItems) 
+                {
+                    try 
+                    {
+                        this.CenterController.RemoveObserver(this, new NSString("tabBarItem.title"));
+                        this.CenterController.RemoveObserver(this, new NSString("tabBarItem.image"));
+                        this.CenterController.RemoveObserver(this, new NSString("hidesBottomBarWhenPushed"));
+                    }
+                    catch (Exception ex) 
+                    {
+                    }
+                }
+                
                 this._automaticallyUpdateTabBarItems = value;
+
+                if (value) 
+                {
+                    this.CenterController.AddObserver(this, new NSString("tabBarItem.title"), 0, IntPtr.Zero);
+                    this.CenterController.AddObserver(this, new NSString("tabBarItem.image"), 0, IntPtr.Zero);
+                    this.CenterController.AddObserver(this, new NSString("hidesBottomBarWhenPushed"), 0, IntPtr.Zero);
+
+                    if (this.CenterController.TabBarItem.Title != null)
+                    {
+                        this.TabBarItem.Title = this.CenterController.TabBarItem.Title;
+                    }
+
+                    if (this.CenterController.TabBarItem.Image != null)
+                    {
+                        this.TabBarItem.Image = this.CenterController.TabBarItem.Image;
+                    }
+                }
             }
         }
 
@@ -471,7 +488,7 @@ namespace Test
         {
             get
             {
-                if (!this.referenceView.GetType().IsSubclassOf(typeof(UIWindow)))
+                if (this.referenceView != null && !this.referenceView.GetType().IsSubclassOf(typeof(UIWindow)))
                 {
                     return 0;
                 }   
@@ -500,6 +517,26 @@ namespace Test
             return new RectangleF(rect.X, rect.Y, rect.Width - width, rect.Height - height);
         }
 
+        private UINavigationController testNavigationController
+        {
+            get
+            {
+                return this.NavigationController;
+
+                if (this.CenterController is UINavigationController)
+                {
+                    return (UINavigationController)this.CenterController;
+                }
+
+                if (this.NavigationController != null)
+                {
+                    return this.NavigationController;
+                }
+
+                return this.CenterController.NavigationController;
+            }
+        }
+
         private RectangleF CenterViewBounds 
         {
             get
@@ -507,16 +544,22 @@ namespace Test
                 if (this.NavigationControllerBehavior == ViewDeckNavigationControllerBehavior.Contained)
                     return this.ReferenceBounds;
             
-                return II_RectangleFShrink(this.ReferenceBounds, 
-                                           0, 
-                                           this.RelativeStatusBarHeight + 
-                                           (this.NavigationController.NavigationBarHidden ? 0 : this.NavigationController.NavigationBar.Frame.Size.Height));
+//                throw new NotSupportedException("Integrated behaviour not supported yet");
+                // this.NavigationController is null because of absence of method swizzling
+                var height = 0f;
+                if (this.testNavigationController != null)
+                {
+                    height = this.testNavigationController.NavigationBarHidden ? 0 : this.testNavigationController.NavigationBar.Frame.Size.Height;
+                }
+
+                return II_RectangleFShrink(this.ReferenceBounds, 0, this.RelativeStatusBarHeight + height);
+
             }
         }
 
         private static RectangleF II_RectangleFOffsetTopAndShrink(RectangleF rect, float offset)
         {
-            return new RectangleF(rect.X, rect.Y, rect.Width, rect.Height - offset);
+            return new RectangleF(rect.X, rect.Y + offset, rect.Width, rect.Height - offset);
         }
 
         private RectangleF SideViewBounds 
@@ -546,7 +589,8 @@ namespace Test
             this.centerTapper = null;
         }
 
-        // todo: rename to dispose
+
+
         private void Dealloc()
         {
             this.CleanUp();
@@ -693,7 +737,19 @@ namespace Test
         public override void ViewDidUnload()
         {
             this.CleanUp();
+
             base.ViewDidUnload();
+        }
+
+        private void TryRemoveObserver(NSObject @object, string key)
+        {
+            try
+            {
+                @object.RemoveObserver(this, new NSString(key));
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
 
@@ -791,6 +847,7 @@ namespace Test
  //               [controller viewWillDisappear:animated);
  //           });
             
+
             this.RemovePanners();
         }
 
@@ -798,14 +855,24 @@ namespace Test
         {
             base.ViewDidDisappear(animated);
             
-            try 
+            this.TryRemoveObserver(this.View, "bounds");
+            this.TryRemoveObserver(this.CenterController, "title");
+
+            if (this.AutomaticallyUpdateTabBarItems)
             {
-                this.View.RemoveObserver(this, new NSString("bounds"));
+                this.TryRemoveObserver(this.CenterController, "tabBarItem.title");
+                this.TryRemoveObserver(this.CenterController, "tabBarItem.image");
+                this.TryRemoveObserver(this.CenterController, "hidesBottomBarWhenPushed");
             }
-            catch(Exception ex)
-            {
-                //do nothing, obviously it wasn't attached because an exception was thrown
-            }
+
+//            try 
+//            {
+//                this.View.RemoveObserver(this, new NSString("bounds"));
+//            }
+//            catch(Exception ex)
+//            {
+//                //do nothing, obviously it wasn't attached because an exception was thrown
+//            }
             
 //            this.relayAppearanceMethod:^(UIViewController *controller) {
 //                [controller viewDidDisappear:animated);
@@ -1700,15 +1767,15 @@ namespace Test
                         this.AddPanner(this.centerTapper);
 
                     // also add to navigationbar if present
-                    if (this.NavigationController != null && !this.NavigationController.NavigationBarHidden) 
-                        this.AddPanner(this.NavigationController.NavigationBar);
+                    if (this.testNavigationController != null && !this.testNavigationController.NavigationBarHidden) 
+                        this.AddPanner(this.testNavigationController.NavigationBar);
 
                     break;
                     
                 case ViewDeckPanningMode.NavigationBarPanning:
-                    if (this.NavigationController != null && !this.NavigationController.NavigationBarHidden) 
+                    if (this.testNavigationController != null && !this.testNavigationController.NavigationBarHidden) 
                     {
-                        this.AddPanner(this.NavigationController.NavigationBar);
+                        this.AddPanner(this.testNavigationController.NavigationBar);
                     }
                     
                     if (this.CenterController.NavigationController != null && !this.CenterController.NavigationController.NavigationBarHidden) 
@@ -2208,25 +2275,29 @@ namespace Test
 
         //#pragma mark - observation
 
-        public override void ObserveValue(NSString keyPath, NSObject ofObject, NSDictionary change, IntPtr context)
+        public override void ObserveValue(NSString keyPath, NSObject @object, NSDictionary change, IntPtr context)
         {
-//            if (object == _centerController) {
-//                if ([@"tabBarItem.title" isEqualToString:keyPath]) {
-//                    self.tabBarItem.title = _centerController.tabBarItem.title;
-//                    return;
-//                }
-//                
-//                if ([@"tabBarItem.image" isEqualToString:keyPath]) {
-//                    self.tabBarItem.image = _centerController.tabBarItem.image;
-//                    return;
-//                }
-//
-//                if ([@"hidesBottomBarWhenPushed" isEqualToString:keyPath]) {
-//                    self.hidesBottomBarWhenPushed = _centerController.hidesBottomBarWhenPushed;
-//                    self.tabBarController.hidesBottomBarWhenPushed = _centerController.hidesBottomBarWhenPushed;
-//                    return;
-//                }
-//            }
+            if (@object == this.CenterController) 
+            {
+                if (keyPath.Equals(new NSString("tabBarItem.title"))) 
+                {
+                    this.TabBarItem.Title = this.CenterController.TabBarItem.Title;
+                    return;
+                }
+                
+                if (keyPath.Equals(new NSString("tabBarItem.image"))) 
+                {
+                    this.TabBarItem.Image = this.CenterController.TabBarItem.Image;
+                    return;
+                }
+
+                if (keyPath.Equals(new NSString("hidesBottomBarWhenPushed"))) 
+                {
+                    this.HidesBottomBarWhenPushed = this.CenterController.HidesBottomBarWhenPushed;
+                    this.TabBarController.HidesBottomBarWhenPushed = this.CenterController.HidesBottomBarWhenPushed;
+                    return;
+                }
+            }
 //
 //            if ([@"title" isEqualToString:keyPath]) {
 //                if (!II_STRING_EQUAL([super title], self.centerController.title)) {
