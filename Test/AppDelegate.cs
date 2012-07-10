@@ -48,13 +48,23 @@ namespace Test
             // create a new window instance based on the screen size
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            window.RootViewController = sample2();
+            window.RootViewController = sample0();
 
 
             // make the window visible
             window.MakeKeyAndVisible();
             
             return true;
+        }
+
+        private UIViewController sample0()
+        {
+            var centerController = new Center();
+
+            var deckController = new ViewDeckController(centerController);
+            deckController.RightLedge = 100;
+
+            return deckController;
         }
 
         private UIViewController sample1()
@@ -74,6 +84,23 @@ namespace Test
         private UIViewController sample2()
         {
             return new NavStart();
+        }
+
+        private UIViewController sample3()
+        {
+            var leftController = new Left(); 
+            var bottomController = new Right();
+
+            var centerController = new Center();
+            centerController.Title = "Center 1";
+
+            var secondDeckController = new ViewDeckController(leftController, bottomController);
+            secondDeckController.LeftLedge = 100;
+
+            var deckController = new ViewDeckController(centerController, secondDeckController);
+            deckController.LeftLedge = 30;
+
+            return deckController;
         }
     }
 

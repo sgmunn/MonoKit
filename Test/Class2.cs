@@ -697,9 +697,15 @@ namespace Test
 
         private void HideAppropriateSideViews() 
         {
-            this.LeftController.View.Hidden = this.SlidingControllerView.Frame.GetMinX() <= 0;
+            if (this.LeftController != null)
+            {
+                this.LeftController.View.Hidden = this.SlidingControllerView.Frame.GetMinX() <= 0;
+            }
 
-            this.RightController.View.Hidden = this.SlidingControllerView.Frame.GetMaxX() >= this.ReferenceBounds.Size.Width;
+            if (this.RightController != null)
+            {
+                this.RightController.View.Hidden = this.SlidingControllerView.Frame.GetMaxX() >= this.ReferenceBounds.Size.Width;
+            }
         }
 
 
@@ -767,12 +773,19 @@ namespace Test
             {        
                 this.CenterController.View.RemoveFromSuperview();
                 this.centerView.AddSubview(this.CenterController.View);
-                this.LeftController.View.RemoveFromSuperview();
-                this.referenceView.InsertSubviewBelow(this.LeftController.View, this.SlidingControllerView);
 
-                this.RightController.View.RemoveFromSuperview();
-                this.referenceView.InsertSubviewBelow(this.RightController.View, this.SlidingControllerView);
-                
+                if (this.LeftController != null)
+                {
+                    this.LeftController.View.RemoveFromSuperview();
+                    this.referenceView.InsertSubviewBelow(this.LeftController.View, this.SlidingControllerView);
+                }
+
+                if (this.RightController != null)
+                {
+                    this.RightController.View.RemoveFromSuperview();
+                    this.referenceView.InsertSubviewBelow(this.RightController.View, this.SlidingControllerView);
+                }
+
                 this.ReapplySideController(this.LeftController);
                 this.ReapplySideController(this.RightController);
                 
@@ -782,12 +795,18 @@ namespace Test
                 this.centerView.Frame = this.CenterViewBounds;
                 this.CenterController.View.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
                 this.CenterController.View.Frame = this.centerView.Bounds;
-                
-                this.LeftController.View.Frame = this.SideViewBounds;
-                this.LeftController.View.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
-                
-                this.RightController.View.Frame = this.SideViewBounds;
-                this.RightController.View.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+
+                if (this.LeftController != null)
+                {
+                    this.LeftController.View.Frame = this.SideViewBounds;
+                    this.LeftController.View.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+                }
+
+                if (this.RightController != null)
+                {
+                    this.RightController.View.Frame = this.SideViewBounds;
+                    this.RightController.View.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+                }
 
                 this.ApplyShadowToSlidingView();
             };
@@ -1658,8 +1677,8 @@ namespace Test
             
             this.SetSlidingFrameForOffset(x);
             
-            bool rightWasHidden = this.RightController.View.Hidden;
-            bool leftWasHidden = this.LeftController.View.Hidden;
+            bool rightWasHidden = this.RightController != null && this.RightController.View.Hidden;
+            bool leftWasHidden = this.LeftController != null && this.LeftController.View.Hidden;
             
             // todo: [self performOffsetDelegate:@selector(viewDeckController:didPanToOffset:) offset:x];
             
@@ -1977,7 +1996,10 @@ namespace Test
 
         private void ReapplySideController(UIViewController controllerStore) 
         {
-            this.ApplySideController(ref controllerStore, controllerStore, null, null);
+            if (controllerStore != null)
+            {
+                this.ApplySideController(ref controllerStore, controllerStore, null, null);
+            }
         }
 
 
