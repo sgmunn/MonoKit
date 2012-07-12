@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{117E23FD-8455-43C2-A54E-B530DE5B88AF}</ProjectGuid>
+    <ProjectGuid>{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Test</RootNamespace>
-    <AssemblyName>Test</AssemblyName>
+    <RootNamespace>ViewDeckSample</RootNamespace>
+    <AssemblyName>ViewDeckSample</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -86,9 +86,12 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="Class1.cs" />
-    <Compile Include="Class2.cs" />
-    <Compile Include="Class3.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\MonoKit.iOS\MonoKit.iOS.csproj">
+      <Project>{ABE22D63-B716-4C58-9A59-5915F47968D4}</Project>
+      <Name>MonoKit.iOS</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

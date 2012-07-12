@@ -75,6 +75,8 @@
     <Compile Include="UI\Metro\PanoramaConstants.cs" />
     <Compile Include="UI\Metro\ContentItem.cs" />
     <Compile Include="UI\ViewControllers\SlidingViewController.cs" />
+    <Compile Include="UI\ViewDeck\ViewDeckControllerDelegate.cs" />
+    <Compile Include="UI\ViewDeck\ViewDeckController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
@@ -89,6 +91,7 @@
     <Folder Include="Reactive\Concurrency\" />
     <Folder Include="UI\Metro\" />
     <Folder Include="UI\ViewControllers\" />
+    <Folder Include="UI\ViewDeck\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKit\MonoKit.csproj">

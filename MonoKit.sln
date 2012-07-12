@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKit.iOS", "MonoKit.iOS\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{117E23FD-8455-43C2-A54E-B530DE5B88AF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{84CBAC2D-25BB-40EF-8F13-1E616587AFA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewDeckSample", "Samples\ViewDeckSample\ViewDeckSample.csproj", "{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -38,6 +42,20 @@ Global
 		{117E23FD-8455-43C2-A54E-B530DE5B88AF}.Release|iPhone.Build.0 = Release|iPhone
 		{117E23FD-8455-43C2-A54E-B530DE5B88AF}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{117E23FD-8455-43C2-A54E-B530DE5B88AF}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Debug|iPhone.Build.0 = Debug|iPhone
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Default|Any CPU.ActiveCfg = Debug|iPhoneSimulator
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Default|Any CPU.Build.0 = Debug|iPhoneSimulator
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Release|iPhone.ActiveCfg = Release|iPhone
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Release|iPhone.Build.0 = Release|iPhone
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{754DBAF0-63A8-45A9-A390-86F2FF5556A1}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{754DBAF0-63A8-45A9-A390-86F2FF5556A1}.Debug|iPhone.Build.0 = Debug|iPhone
 		{754DBAF0-63A8-45A9-A390-86F2FF5556A1}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
@@ -85,7 +103,10 @@ Global
 		{D1EE78E4-82A0-4BB9-A699-2F0038395243}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{D1EE78E4-82A0-4BB9-A699-2F0038395243}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692} = {84CBAC2D-25BB-40EF-8F13-1E616587AFA4}
+	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Test\Test.csproj
+		StartupItem = Samples\ViewDeckSample\ViewDeckSample.csproj
 	EndGlobalSection
 EndGlobal
