@@ -1683,6 +1683,11 @@ namespace MonoKit.UI.ViewDeck
         [Export("gestureRecognizer:shouldReceiveTouch:")]
         private bool GestureRecognizer(UIGestureRecognizer gestureRecognizer, UITouch touch) 
         {
+            if (touch.View.GetType().IsSubclassOf(typeof(UISlider)))
+            {
+                return false;
+            }
+
             this.panOrigin = this.SlidingControllerView.Frame.Location.X;
             return true;
         }

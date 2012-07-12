@@ -43,7 +43,6 @@ namespace MonoKit.UI.ViewDeck
         {
         }
 
-
         public virtual void DidBounceWithClosingController(ViewDeckController viewDeckController, UIViewController openController) 
         {
         }
