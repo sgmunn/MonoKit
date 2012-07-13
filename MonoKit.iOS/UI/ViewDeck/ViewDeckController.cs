@@ -814,44 +814,44 @@ namespace MonoKit.UI.ViewDeck
 
         public bool ToggleLeftView() 
         {
-            return this.ToggleLeftViewAnimated(true);
+            return this.ToggleLeftView(true);
         }
 
         public bool OpenLeftView() 
         {
-            return this.OpenLeftViewAnimated(true);
+            return this.OpenLeftView(true);
         }
 
         public bool CloseLeftView()
         {
-            return this.CloseLeftViewAnimated(true);
+            return this.CloseLeftView(true);
         }
 
-        public bool ToggleLeftViewAnimated(bool animated)
+        public bool ToggleLeftView(bool animated)
         {
-            return this.ToggleLeftViewAnimated(animated, null);
+            return this.ToggleLeftView(animated, null);
         }
 
-        public bool ToggleLeftViewAnimated(bool animated, Action<ViewDeckController> completed)
+        public bool ToggleLeftView(bool animated, Action<ViewDeckController> completed)
         {
             if (this.LeftControllerIsClosed) 
             {
-                return this.OpenLeftViewAnimated(animated, completed);
+                return this.OpenLeftView(animated, completed);
             }
             else
             {
-                return this.CloseLeftViewAnimated(animated, completed);
+                return this.CloseLeftView(animated, completed);
             }
         }
 
-        public bool OpenLeftViewAnimated(bool animated) 
+        public bool OpenLeftView(bool animated) 
         {
-            return this.OpenLeftViewAnimated(animated, null);
+            return this.OpenLeftView(animated, null);
         }
 
-        public bool OpenLeftViewAnimated(bool animated, Action<ViewDeckController> completed)
+        public bool OpenLeftView(bool animated, Action<ViewDeckController> completed)
         {
-            return this.OpenLeftViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, true, completed);
+            return this.OpenLeftView(animated, UIViewAnimationOptions.CurveEaseInOut, true, completed);
         }
         
         public bool OpenLeftViewBouncing(Action<ViewDeckController> bounced)
@@ -864,14 +864,14 @@ namespace MonoKit.UI.ViewDeck
             return this.OpenLeftViewBouncing(bounced, true, completed);
         }
         
-        public bool CloseLeftViewAnimated(bool animated) 
+        public bool CloseLeftView(bool animated) 
         {
-            return this.CloseLeftViewAnimated(animated, null);
+            return this.CloseLeftView(animated, null);
         }
 
-        public bool CloseLeftViewAnimated(bool animated, Action<ViewDeckController> completed)
+        public bool CloseLeftView(bool animated, Action<ViewDeckController> completed)
         {
-            return this.CloseLeftViewAnimated(animated,true, completed);
+            return this.CloseLeftView(animated,true, completed);
         }
         
         public bool CloseLeftViewBouncing(Action<ViewDeckController> bounced) 
@@ -886,44 +886,44 @@ namespace MonoKit.UI.ViewDeck
         
         public bool ToggleRightView() 
         {
-            return this.ToggleRightViewAnimated(true);
+            return this.ToggleRightView(true);
         }
 
         public bool OpenRightView() 
         {
-            return this.OpenRightViewAnimated(true);
+            return this.OpenRightView(true);
         }
 
         public bool CloseRightView() 
         {
-            return this.CloseRightViewAnimated(true);
+            return this.CloseRightView(true);
         }
 
-        public bool ToggleRightViewAnimated(bool animated)
+        public bool ToggleRightView(bool animated)
         {
-            return this.ToggleRightViewAnimated(animated, null);
+            return this.ToggleRightView(animated, null);
         }
 
-        public bool ToggleRightViewAnimated(bool animated, Action<ViewDeckController> completed) 
+        public bool ToggleRightView(bool animated, Action<ViewDeckController> completed) 
         {
             if (this.RightControllerIsClosed) 
             {
-                return this.OpenRightViewAnimated(animated, completed);
+                return this.OpenRightView(animated, completed);
             }
             else
             {
-                return this.CloseRightViewAnimated(animated, completed);
+                return this.CloseRightView(animated, completed);
             }
         }
 
-        public bool OpenRightViewAnimated(bool animated)
+        public bool OpenRightView(bool animated)
         {
-            return this.OpenRightViewAnimated(animated, null);
+            return this.OpenRightView(animated, null);
         }
 
-        public bool OpenRightViewAnimated(bool animated, Action<ViewDeckController> completed) 
+        public bool OpenRightView(bool animated, Action<ViewDeckController> completed) 
         {
-            return this.OpenRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut,true, completed);
+            return this.OpenRightView(animated, UIViewAnimationOptions.CurveEaseInOut,true, completed);
         }
         
         public bool CloseRightViewBouncing(Action<ViewDeckController> bounced) 
@@ -946,14 +946,14 @@ namespace MonoKit.UI.ViewDeck
             return this.OpenRightViewBouncing(bounced, true, completed);
         }
         
-        public bool CloseRightViewAnimated(bool animated)
+        public bool CloseRightView(bool animated)
         {
-            return this.CloseRightViewAnimated(animated, null);
+            return this.CloseRightView(animated, null);
         }
 
-        public bool CloseRightViewAnimated(bool animated, Action<ViewDeckController> completed)
+        public bool CloseRightView(bool animated, Action<ViewDeckController> completed)
         {
-            return this.CloseRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, true, completed);
+            return this.CloseRightView(animated, UIViewAnimationOptions.CurveEaseInOut, true, completed);
         }
         
         public void RightViewPushViewControllerOverCenterController(UIViewController controller) 
@@ -976,7 +976,7 @@ namespace MonoKit.UI.ViewDeck
 
             this.View.Frame = RectangleFOffset(this.View.Frame, this.View.Frame.Size.Width, 0);
             
-            this.CloseRightViewAnimated(true);
+            this.CloseRightView(true);
 
             UINavigationController navController = ((UINavigationController)this.CenterController);
             navController.PushViewController(controller, false);
@@ -1201,13 +1201,13 @@ namespace MonoKit.UI.ViewDeck
 
             if (this.LeftController != null&& !this.LeftController.View.Hidden) 
             {
-                this.CloseLeftViewAnimated(animated, completed);
+                this.CloseLeftView(animated, completed);
                 mustRunCompletion = false;
             }
             
             if (this.RightController != null && !this.RightController.View.Hidden) 
             {
-                this.CloseRightViewAnimated(animated, completed);
+                this.CloseRightView(animated, completed);
                 mustRunCompletion = false;
             }
             
@@ -1217,12 +1217,12 @@ namespace MonoKit.UI.ViewDeck
             }
         }
 
-        private bool OpenLeftViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed)
+        private bool OpenLeftView(bool animated, bool callDelegate, Action<ViewDeckController> completed)
         {
-            return this.OpenLeftViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
+            return this.OpenLeftView(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
         }
 
-        private bool OpenLeftViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
+        private bool OpenLeftView(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
         {
             if (this.LeftController == null || FloatEqual(this.SlidingControllerView.Frame.GetMinX(), this.LeftLedge)) return true;
 
@@ -1233,7 +1233,7 @@ namespace MonoKit.UI.ViewDeck
             }
 
             // also close the right view if it's open. Since the delegate can cancel the close, check the result.
-            if (!this.CloseRightViewAnimated(animated, options, callDelegate, completed))
+            if (!this.CloseRightView(animated, options, callDelegate, completed))
             {
                 return false;
             }
@@ -1271,7 +1271,7 @@ namespace MonoKit.UI.ViewDeck
             }
 
             // also close the right view if it's open. Since the delegate can cancel the close, check the result.
-            if (!this.CloseRightViewAnimated(true, options, callDelegate, completed))
+            if (!this.CloseRightView(true, options, callDelegate, completed))
             {
                 return false;
             }
@@ -1308,12 +1308,12 @@ namespace MonoKit.UI.ViewDeck
             return true;
         }
 
-        private bool CloseLeftViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed) 
+        private bool CloseLeftView(bool animated, bool callDelegate, Action<ViewDeckController> completed) 
         {
-            return this.CloseLeftViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
+            return this.CloseLeftView(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
         }
 
-        private bool CloseLeftViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed) 
+        private bool CloseLeftView(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed) 
         {
             if (this.LeftControllerIsClosed) return true;
             
@@ -1393,12 +1393,12 @@ namespace MonoKit.UI.ViewDeck
             return true;
         }
 
-        private bool OpenRightViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed)
+        private bool OpenRightView(bool animated, bool callDelegate, Action<ViewDeckController> completed)
         {
-            return this.OpenRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
+            return this.OpenRightView(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
         }
 
-        private bool OpenRightViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
+        private bool OpenRightView(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed)
         {
             if (this.RightController == null || FloatEqual(this.SlidingControllerView.Frame.GetMaxX(), this.RightLedge)) return true;
             
@@ -1409,7 +1409,7 @@ namespace MonoKit.UI.ViewDeck
             }
 
             // also close the left view if it's open. Since the delegate can cancel the close, check the result.
-            if (!this.CloseLeftViewAnimated(animated, options, callDelegate, completed))
+            if (!this.CloseLeftView(animated, options, callDelegate, completed))
             {
                 return false;
             }
@@ -1451,7 +1451,7 @@ namespace MonoKit.UI.ViewDeck
             }
 
             // also close the right view if it's open. Since the delegate can cancel the close, check the result.
-            if (!this.CloseLeftViewAnimated(true, options, true, completed))
+            if (!this.CloseLeftView(true, options, true, completed))
             {
                 return false;
             }
@@ -1488,12 +1488,12 @@ namespace MonoKit.UI.ViewDeck
             return true;
         }
 
-        private bool CloseRightViewAnimated(bool animated, bool callDelegate, Action<ViewDeckController> completed)
+        private bool CloseRightView(bool animated, bool callDelegate, Action<ViewDeckController> completed)
         {
-            return this.CloseRightViewAnimated(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
+            return this.CloseRightView(animated, UIViewAnimationOptions.CurveEaseInOut, callDelegate, completed);
         }
 
-        private bool CloseRightViewAnimated(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed) 
+        private bool CloseRightView(bool animated, UIViewAnimationOptions options, bool callDelegate, Action<ViewDeckController> completed) 
         {
             if (this.RightControllerIsClosed) return true;
             
@@ -1661,7 +1661,7 @@ namespace MonoKit.UI.ViewDeck
 
                 if (!ok)
                 {
-                    this.CloseLeftViewAnimated(false);
+                    this.CloseLeftView(false);
                 }
             }
             else if (x < 0) 
@@ -1673,7 +1673,7 @@ namespace MonoKit.UI.ViewDeck
 
                 if (!ok)
                 {
-                    this.CloseRightViewAnimated(false);
+                    this.CloseRightView(false);
                 }
             }
             
@@ -1772,7 +1772,7 @@ namespace MonoKit.UI.ViewDeck
 
                     if (!canOpen) 
                     {
-                        this.CloseRightViewAnimated(false);
+                        this.CloseRightView(false);
                         return;
                     }
                 }
@@ -1808,7 +1808,7 @@ namespace MonoKit.UI.ViewDeck
 
                     if (!canOpen) 
                     {
-                        this.CloseLeftViewAnimated(false);
+                        this.CloseLeftView(false);
                         return;
                     }
                 }
@@ -1841,11 +1841,11 @@ namespace MonoKit.UI.ViewDeck
                     // small velocity, no movement
                     if (x >= w - this.LeftLedge - lw3) 
                     {
-                        this.OpenLeftViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, false, null);
+                        this.OpenLeftView(true, UIViewAnimationOptions.CurveEaseOut, false, null);
                     }
                     else if (x <= this.RightLedge + rw3 - w) 
                     {
-                        this.OpenRightViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, false, null);
+                        this.OpenRightView(true, UIViewAnimationOptions.CurveEaseOut, false, null);
                     }
                     else
                     {
@@ -1857,7 +1857,7 @@ namespace MonoKit.UI.ViewDeck
                     // swipe to the left
                     if (x < 0) 
                     {
-                        this.OpenRightViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, true, null);
+                        this.OpenRightView(true, UIViewAnimationOptions.CurveEaseOut, true, null);
                     }
                     else 
                     {
@@ -1869,7 +1869,7 @@ namespace MonoKit.UI.ViewDeck
                     // swipe to the right
                     if (x > 0) 
                     {
-                        this.OpenLeftViewAnimated(true, UIViewAnimationOptions.CurveEaseOut, true, null);
+                        this.OpenLeftView(true, UIViewAnimationOptions.CurveEaseOut, true, null);
                     }
                     else 
                     {
@@ -2332,7 +2332,7 @@ namespace MonoKit.UI.ViewDeck
             this.originalShadowOffset = shadowedView.Layer.ShadowOffset;
             this.originalShadowPath = shadowedView.Layer.ShadowPath != null ? UIBezierPath.FromPath(this.SlidingControllerView.Layer.ShadowPath) : null;
 
-            if (this.Delegate != null && !this.Delegate.ApplyShadow(this, shadowedView.Layer, this.ReferenceBounds))
+            if (this.Delegate == null || !this.Delegate.ApplyShadow(this, shadowedView.Layer, this.ReferenceBounds))
             {
                 shadowedView.Layer.MasksToBounds = false;
                 shadowedView.Layer.ShadowRadius = 10;
