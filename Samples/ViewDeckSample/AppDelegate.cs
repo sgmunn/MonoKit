@@ -18,13 +18,12 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoKit.UI.ViewDeck;
+using MonoKit.UI;
+using MonoKit.UI.Elements;
 
 namespace ViewDeckSample
 {
@@ -49,54 +48,72 @@ namespace ViewDeckSample
             // create a new window instance based on the screen size
             window = new UIWindow(UIScreen.MainScreen.Bounds);
             
-            window.RootViewController = sample2();
+            window.RootViewController = new MainSampleController();
 
-            // If you have defined a view, add it here:
-            // window.AddSubview (navigationController.View);
-            
             // make the window visible
             window.MakeKeyAndVisible();
             
             return true;
         }
+    }
 
-        
-        private UIViewController sample0()
+
+    public class MainSampleController : TableViewController
+    {
+        public MainSampleController() : base(UITableViewStyle.Plain)
         {
-            var centerController = new Center();
-
-            var deckController = new ViewDeckController(centerController);
-            deckController.RightLedge = 100;
-
-            return deckController;
         }
 
-        private UIViewController sample1()
+        public override void LoadView()
         {
+            base.LoadView();
+            this.InitSample();
+        }
 
-            var leftController = new Left(); // << subclass and create a view
-            var rightController = new Right();
+        public void InitSample()
+        {
+            var section1 = new TableViewSection(this.Source);
+            section1.Add(new StringElement("Simple") { Command = this.StartSimpleSample });
+            section1.Add(new StringElement("Navigation (Contained)") { Command = this.StartContainedSample });
+            section1.Add(new StringElement("Navigation (Integrated)") { Command = this.StartIntegratedSample });
+            section1.Add(new StringElement("Multi-Deck") { Command = this.StartMultiDeckSample });
+        }
 
-            var centerController = new Center();
+        public void StartSimpleSample(Element element)
+        {
+            var leftController = new LeftController();
+            var rightController = new RightController();
+
+            var centerController = new CenterController(true);
 
             var deckController = new ViewDeckController(centerController, leftController, rightController);
-            deckController.RightLedge = 100;
+            deckController.RightLedge = 40;
+            deckController.LeftLedge = 100;
 
-            return deckController;
+            this.PresentViewController(deckController, true, null);
+
         }
 
-        private UIViewController sample2()
+        public void StartContainedSample(Element element)
         {
-            return new NavStart();
+            var nav = new UINavigationController(new NavigationStartController(true));
+
+            this.PresentViewController(nav, true, null);
         }
 
-        private UIViewController sample3()
+        public void StartIntegratedSample(Element element)
         {
-            var leftController = new Left(); 
-            var bottomController = new Right();
+            var nav = new UINavigationController(new NavigationStartController(false));
 
-            var centerController = new Center();
-            centerController.Title = "Center 1";
+            this.PresentViewController(nav, true, null);
+        }
+
+        public void StartMultiDeckSample(Element element)
+        {
+            var leftController = new MultiLeftController(); 
+            var bottomController = new MultiBottomController();
+
+            var centerController = new MultiCenterController();
 
             var secondDeckController = new ViewDeckController(leftController, bottomController);
             secondDeckController.LeftLedge = 100;
@@ -104,31 +121,7 @@ namespace ViewDeckSample
             var deckController = new ViewDeckController(centerController, secondDeckController);
             deckController.LeftLedge = 30;
 
-            return deckController;
-        }
-
-    }
-
-    
-    public class NavStart : UIViewController
-    {
-        public override void LoadView()
-        {
-            base.LoadView();
-            this.View = new UIView();
-            this.View.BackgroundColor = UIColor.Gray;
-            var btn = new UIButton(UIButtonType.RoundedRect);
-            btn.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
-            btn.SetTitle("nav start", UIControlState.Normal);
-            this.View.AddSubview(btn);
-
-            this.NavigationItem.Title = "nav start";
-
-            btn.TouchUpInside += delegate(object sender, EventArgs e) {
-                var center = new NavCenter();
-                // behaviour = integration
-                this.PresentViewController(new UINavigationController(center), true, null);
-            };
+            this.PresentViewController(deckController, true, null);
         }
 
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
@@ -137,78 +130,235 @@ namespace ViewDeckSample
         }
     }
 
-    public class NavCenter : UIViewController
+    public class CenterController : TableViewController
     {
+        private bool addCloseButton;
+
+        public CenterController(bool addCloseButton) : base(UITableViewStyle.Grouped)
+        {
+            this.addCloseButton = addCloseButton;
+        }
+
         public override void LoadView()
         {
             base.LoadView();
-            this.View = new UIView();
-            this.View.BackgroundColor = UIColor.Gray;
-            var btn = new UIButton(UIButtonType.RoundedRect);
-            btn.Frame = new System.Drawing.RectangleF(0,0,100, 50);
-            //btn.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
-            btn.SetTitle("nav center", UIControlState.Normal);
-            this.View.AddSubview(btn);
-
-            this.NavigationItem.Title = "nav center";
-
-            btn.TouchUpInside += delegate(object sender, EventArgs e) {
-                this.Test();
-                if (this.NavigationController != null)
-                {
-//                    this.NavigationController.PushViewController(new SubView(), true);
-                }
-            };
+            this.InitController();
         }
 
-        private void Test()
+        public void InitController()
         {
-            var leftController = new Left(); 
-            var rightController = new Right();
+            if (this.addCloseButton)
+            {
+                var section1 = new TableViewSection(this.Source);
+                section1.Add(new StringElement("Close") { Command = this.Close });
+            }
 
-            var centerController = new Center();
-            centerController.Title = "Center 1";
+            var section2 = new TableViewSection(this.Source);
+            section2.Add(new StringElement("Open Left") { Command = this.OpenLeft });
+            section2.Add(new StringElement("Open Right") { Command = this.OpenRight });
+
+            var section3 = new TableViewSection(this.Source);
+            section3.Add(new StringElement("Swap Left & Right") { Command = this.Swap });
+
+            // for navigation sample
+            if (this.NavigationController != null)
+            {
+                var section4 = new TableViewSection(this.Source);
+                section4.Add(new StringElement("Some other controller") { Command = this.GoNext });
+            }
+        }
+        
+        public void Close(Element element)
+        {
+            this.DismissViewController(true, null);
+        }
+        
+        public void OpenLeft(Element element)
+        {
+            var deck = this.ParentViewController as ViewDeckController;
+            deck.OpenLeftView();
+        }
+                
+        public void OpenRight(Element element)
+        {
+            var deck = this.ParentViewController as ViewDeckController;
+            deck.OpenRightView();
+        }
+                
+        public void Swap(Element element)
+        {
+            var deck = this.ParentViewController as ViewDeckController;
+            var left = deck.LeftController;
+            var right = deck.RightController;
+            deck.LeftController = right;
+            deck.RightController = left;
+        }
+                
+        public void GoNext(Element element)
+        {
+            this.NavigationController.PushViewController(new SomeOtherController(), true);
+        }
+
+        public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
+        {
+            return true;
+        }
+    }
+
+    public class LeftController : TableViewController
+    {
+        public LeftController() : base(UITableViewStyle.Grouped)
+        {
+        }
+
+        public override void LoadView()
+        {
+            base.LoadView();
+            this.InitController();
+        }
+
+        public void InitController()
+        {
+            var section1 = new TableViewSection(this.Source);
+            section1.Header = "Left";
+            section1.Add(new StringElement("Show Center") { Command = this.ShowCenter });
+        }
+                
+        public void ShowCenter(Element element)
+        {
+            var deck = this.ParentViewController as ViewDeckController;
+            if (deck != null)
+            {
+                deck.ShowCenterView();
+            }
+        }
+
+        public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
+        {
+            return true;
+        }
+    }
+
+    public class RightController : TableViewController
+    {
+        public RightController() : base(UITableViewStyle.Grouped)
+        {
+        }
+
+        public override void LoadView()
+        {
+            base.LoadView();
+            this.InitController();
+        }
+
+        public void InitController()
+        {
+            var section1 = new TableViewSection(this.Source);
+            section1.Header = "Right";
+            section1.Add(new StringElement("Show Center") { Command = this.ShowCenter });
+        }
+                
+        public void ShowCenter(Element element)
+        {
+            var deck = this.ParentViewController as ViewDeckController;
+            if (deck != null)
+            {
+                deck.ShowCenterView();
+            }
+        }
+
+        public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
+        {
+            return true;
+        }
+    }
+
+
+    public class NavigationStartController : TableViewController
+    {
+        private bool contained;
+
+        public NavigationStartController(bool contained) : base(UITableViewStyle.Grouped)
+        {
+            this.contained = contained;
+            this.Title = "Start";
+        }
+
+        public override void LoadView()
+        {
+            base.LoadView();
+            this.InitController();
+        }
+
+        public void InitController()
+        {
+            var section1 = new TableViewSection(this.Source);
+            section1.Header = "";
+            section1.Add(new StringElement("Close") { Command = this.Close });
+
+            var section2 = new TableViewSection(this.Source);
+            section2.Header = "";
+            section2.Add(new StringElement("Go to Deck") { Command = this.GotoDeck });
+        }
+
+        public void Close(Element element)
+        {
+            this.DismissViewController(true, null);
+        }   
+
+        public void GotoDeck(Element element)
+        {
+            var leftController = new LeftController(); 
+            var rightController = new RightController();
+
+            var centerController = new CenterController(false);
+            centerController.Title = "Center";
 
             var deckController = new ViewDeckController(centerController, leftController, rightController);
-            deckController.RightLedge = 100;
+            deckController.RightLedge = 40;
+            deckController.LeftLedge = 100;
 
-            deckController.NavigationControllerBehavior = ViewDeckNavigationControllerBehavior.Contained;
+            if (this.contained)
+            {
+                deckController.NavigationControllerBehavior = ViewDeckNavigationControllerBehavior.Contained;
+            }
+            else
+            {
+                deckController.NavigationControllerBehavior = ViewDeckNavigationControllerBehavior.Integrated;
+            }
 
             this.NavigationController.PushViewController(deckController, true);
-           // return deckController;
-
         }
 
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
         {
             return true;
         }
-
     }
 
 
-
-
-    public class Center : UIViewController
+    public class SomeOtherController : TableViewController
     {
+        public SomeOtherController() : base(UITableViewStyle.Grouped)
+        {
+            this.Title = "Someother View";
+        }
+
         public override void LoadView()
         {
             base.LoadView();
-            this.View = new UIView();
-            this.View.BackgroundColor = UIColor.Gray;
-            var btn = new UIButton(UIButtonType.RoundedRect);
-            btn.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
-            btn.SetTitle("hello", UIControlState.Normal);
-            this.View.AddSubview(btn);
+            this.InitController();
+        }
 
-            this.NavigationItem.Title = "Center";
-
-            btn.TouchUpInside += delegate(object sender, EventArgs e) {
-                if (this.NavigationController != null)
-                {
-                    this.NavigationController.PushViewController(new SubView(), true);
-                }
-            };
+        public void InitController()
+        {
+            var section1 = new TableViewSection(this.Source);
+            section1.Header = "Something";
+            section1.Add(new StringElement("Hello") { Command = this.Hello });
+        }
+                
+        public void Hello(Element element)
+        {
         }
 
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
@@ -217,17 +367,30 @@ namespace ViewDeckSample
         }
     }
 
-    public class Left : UIViewController
+
+    public class MultiLeftController : TableViewController
     {
+        public MultiLeftController() : base(UITableViewStyle.Grouped)
+        {
+        }
+
         public override void LoadView()
         {
             base.LoadView();
-            this.View = new UIView();
-            this.View.BackgroundColor = UIColor.White;
-            var btn = new UIButton(UIButtonType.RoundedRect);
-            btn.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
-            btn.SetTitle("hello", UIControlState.Normal);
-            this.View.AddSubview(btn);
+            this.InitController();
+        }
+
+        public void InitController()
+        {
+            var section1 = new TableViewSection(this.Source);
+            section1.Header = "Left (Middle)";
+            section1.Add(new StringElement("Open Left") { Command = this.Hello });
+        }
+                
+        public void Hello(Element element)
+        {
+            var deck = this.ParentViewController as ViewDeckController;
+            deck.OpenLeftView();
         }
 
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
@@ -236,13 +399,27 @@ namespace ViewDeckSample
         }
     }
 
-    public class Right : UIViewController
+    public class MultiBottomController : TableViewController
     {
+        public MultiBottomController() : base(UITableViewStyle.Grouped)
+        {
+        }
+
         public override void LoadView()
         {
             base.LoadView();
-            this.View = new UIView();
-            this.View.BackgroundColor = UIColor.Blue;
+            this.InitController();
+        }
+
+        public void InitController()
+        {
+            var section1 = new TableViewSection(this.Source);
+            section1.Header = "Bottom";
+            section1.Add(new StringElement("Hello") { Command = this.Hello });
+        }
+                
+        public void Hello(Element element)
+        {
         }
 
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
@@ -251,24 +428,29 @@ namespace ViewDeckSample
         }
     }
 
-    public class SubView : UIViewController
+    public class MultiCenterController : TableViewController
     {
+        public MultiCenterController() : base(UITableViewStyle.Grouped)
+        {
+        }
+
         public override void LoadView()
         {
             base.LoadView();
-            this.View = new UIView();
-            this.View.BackgroundColor = UIColor.Green;
-            this.NavigationItem.Title = "Sub";
+            this.InitController();
+        }
 
-            var btn = new UIButton(UIButtonType.RoundedRect);
-            btn.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
-            btn.SetTitle("hello", UIControlState.Normal);
-            this.View.AddSubview(btn);
-
-            btn.TouchUpInside += delegate(object sender, EventArgs e) {
-                this.NavigationController.PopViewControllerAnimated(true);
-            };
-
+        public void InitController()
+        {
+            var section1 = new TableViewSection(this.Source);
+            section1.Header = "Center (Top)";
+            section1.Add(new StringElement("Open Left") { Command = this.Hello });
+        }
+                
+        public void Hello(Element element)
+        {
+            var deck = this.ParentViewController as ViewDeckController;
+            deck.OpenLeftView();
         }
 
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
@@ -276,6 +458,5 @@ namespace ViewDeckSample
             return true;
         }
     }
-
 }
 
