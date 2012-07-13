@@ -444,7 +444,15 @@ namespace ViewDeckSample
         {
             var section1 = new TableViewSection(this.Source);
             section1.Header = "Center (Top)";
-            section1.Add(new StringElement("Open Left") { Command = this.Hello });
+            section1.Add(new StringElement("Close") { Command = this.Close });
+
+            var section2 = new TableViewSection(this.Source);
+            section2.Add(new StringElement("Open Left") { Command = this.Hello });
+        }
+                
+        public void Close(Element element)
+        {
+            this.DismissViewController(true, null);
         }
                 
         public void Hello(Element element)
