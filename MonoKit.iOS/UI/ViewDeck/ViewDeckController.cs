@@ -601,7 +601,7 @@ namespace MonoKit.UI.ViewDeck
         {
             base.ViewWillAppear(animated);
             
-            this.View.AddObserver(this, new NSString("bounds"),  NSKeyValueObservingOptions.Initial, IntPtr.Zero);
+            this.View.AddObserver(this, new NSString("bounds"),  NSKeyValueObservingOptions.New, IntPtr.Zero);
 
             NSAction applyViews = () => 
             {        
@@ -2328,9 +2328,10 @@ namespace MonoKit.UI.ViewDeck
             
             this.originalShadowRadius = shadowedView.Layer.ShadowRadius;
             this.originalShadowOpacity = shadowedView.Layer.ShadowOpacity;
-            this.originalShadowColor = shadowedView.Layer.ShadowColor != null ? UIColor.FromCGColor(this.SlidingControllerView.Layer.ShadowColor) : null;
+            this.originalShadowColor = shadowedView.Layer.ShadowColor != null ? UIColor.FromCGColor(shadowedView.Layer.ShadowColor) : null;
             this.originalShadowOffset = shadowedView.Layer.ShadowOffset;
-            this.originalShadowPath = shadowedView.Layer.ShadowPath != null ? UIBezierPath.FromPath(this.SlidingControllerView.Layer.ShadowPath) : null;
+
+            this.originalShadowPath = shadowedView.Layer.ShadowPath.Handle != IntPtr.Zero ? UIBezierPath.FromPath(shadowedView.Layer.ShadowPath) : null;
 
             if (this.Delegate == null || !this.Delegate.ApplyShadow(this, shadowedView.Layer, this.ReferenceBounds))
             {
