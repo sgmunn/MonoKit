@@ -1,22 +1,20 @@
 MonoKit
 =======
 
-MonoTouch library akin to MonoTouch.Dialog
+MonoKit originally started out as a library in a similar vein to MonoTouch.Dialog.  It has some elements of this, but has diverged to include other features as well.  It is still in progress :)
 
-- So far this project has the basic framework for handling UITableViews in a manner similar to MonoTouch.Dialog.
-It also has some lightweight binding support.
+- A TableViewSource to build table views using a binding framework and "templating cells".  This is probably about 50% done.
 
-- Work in progress at the moment includes a framework for CQRS and Event Sourcing.  I hope
-to add in synchronisation features as well.
+- A CQRS / Event Sourcing framework.  This is about 75% - quite functional just missing some extras.
 
-There are 2 sample applications, iPhone and iPad that show most of the features of the library at present.  
+- A port of ViewDeck (https://github.com/Inferis/ViewDeck).  This is complete and functional.  There is a sample in the samples folder that shows how to use this.  Also the original ViewDeck project has some good documentation as well.
 
-I'll be adding more samples and work on base features over the next while.  
+- A Panorama View, just started and about to be reworked to support contained View Controllers and an animation to navigate to another controller.
 
-- Work started on a port of ViewDeck, currently implemented in the "Test" app.
+
 
 I look forward to any comments you might have.
 
-License is MIT, just need to update headers.
+License is MIT.
 
 Cheers.
