@@ -22,7 +22,50 @@
 namespace MonoKit.Metro
 {
     using System;
+    using System.Drawing;
     using MonoTouch.UIKit;
+
+
+    /// <summary>
+    /// </summary>
+    internal sealed class PanoramaItem
+    {
+        private float width;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MonoKit.Metro.PanoramaItem"/> class.
+        /// </summary>
+        public PanoramaItem(UIViewController controller, float width)
+        {
+            this.Controller = controller;
+            this.width = width;
+            //this.Width = width != 0 ? width : UIScreen.MainScreen.Bounds.Width - PanoramaConstants.NextContentItemPreviewSize;
+        }
+
+        /// <summary>
+        /// Gets the controller for the item
+        /// </summary>
+        public UIViewController Controller { get; private set; }
+
+        /// <summary>
+        /// Gets the width of the item
+        /// </summary>
+        public float GetWidth(float frameWidth)
+        {
+            return this.width != 0 ? this.width : frameWidth - PanoramaConstants.NextContentItemPreviewSize;
+        }
+
+        // used by controller to manage state
+        public UILabel LabelView { get; set;}
+
+        public PointF Origin { get; set; }
+
+        public SizeF Size { get; set; }
+    }
+
+
+
+
 
     /// <summary>
     /// An item of content in a Panorama or Pivot
@@ -39,13 +82,11 @@ namespace MonoKit.Metro
         /// <summary>
         /// Initializes a new instance of the <see cref="MonoKit.Metro.ContentItem"/> class.
         /// </summary>
-        /// <param name='title'>The title of the content</param>
-        /// <param name='create'>A function to create the view that represents the content</param>
         /// <param name='width'>The desired width of the content, zero defaults to standard</param>
-        public ContentItem(string title, Func<UIView> create, float width)
+        public ContentItem(float width)
         {
-            this.Title = title;
-            this.create = create;
+//            this.Title = title;
+//            this.create = create;
 
             this.Width = width != 0 ? width : UIScreen.MainScreen.Bounds.Width - PanoramaConstants.NextContentItemPreviewSize;
         }
@@ -53,7 +94,9 @@ namespace MonoKit.Metro
         /// <summary>
         /// Gets the title for the content
         /// </summary>
-        public string Title { get; private set; }
+        public string Title { get{
+                return this.Controller.Title;
+            }}
 
         /// <summary>
         /// Gets the width of the item
@@ -68,7 +111,10 @@ namespace MonoKit.Metro
         /// </returns>
         public UIView CreateView()
         {
-            return this.create();
+            Console.WriteLine("Create view");
+            return this.Controller.View;
         }
+
+        public UIViewController Controller { get; set; }
     }
 }

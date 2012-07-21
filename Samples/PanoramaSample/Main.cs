@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="PanoramaConstants.cs" company="sgmunn">
+//  <copyright file=".cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,47 +18,23 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace MonoKit.Metro
+using MonoTouch.Foundation;
+using MonoTouch.UIKit;
+
+namespace PanoramaSample
 {
-    using System;
-    using MonoTouch.UIKit;
-
-    /// <summary>
-    /// Constants for panorama views
-    /// </summary>
-    public static class PanoramaConstants
+    public class Application
     {
-        /// <summary>
-        /// The amount of the next content item that is visible 
-        /// </summary>
-        public static float NextContentItemPreviewSize = 60;
-
-        public static float DefaultBackgroundMotionRate = 0.1f;
-
-        /// <summary>
-        /// The name of the default font to use for titles
-        /// </summary>
-        public static string DefaultFontName = "Thonburi";
-
-        /// <summary>
-        /// The default font size for titles
-        /// </summary>
-        public static float DefaultTitleFontSize = 46;
-
-        /// <summary>
-        /// The default font size for titles
-        /// </summary>
-        public static float DefaultHeaderFontSize = 36;
-
-        /// <summary>
-        /// The default text color for titles
-        /// </summary>
-        public static UIColor DefaultTextColor = UIColor.White;
-
-        /// <summary>
-        /// The left margin between content items and titles
-        /// </summary>
-        public static float LeftMargin = 5;
+        // This is the main entry point of the application.
+        static void Main(string[] args)
+        {
+            // if you want to use a different Application Delegate class from "AppDelegate"
+            // you can specify it here.
+            UIApplication.Main(args, null, "AppDelegate");
+        }
     }
 }

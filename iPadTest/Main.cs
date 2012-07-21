@@ -33,14 +33,14 @@ namespace iPadTest
         {
             base.LoadView();
 
-            Func<UIView> createView = () => new UIView() { BackgroundColor = UIColor.Green };
-
-            this.Panorama.TitleText = "my minions";
-            this.Panorama.TextColor = UIColor.DarkGray;
-
-            this.Panorama.ContentItems.Add(new ContentItem("item 1", createView, 0));
-            this.Panorama.ContentItems.Add(new ContentItem("item 2", createView, 600));
-            this.Panorama.ContentItems.Add(new ContentItem("item 3", createView, 0));
+//            Func<UIView> createView = () => new UIView() { BackgroundColor = UIColor.Green };
+//
+//            this.Panorama.TitleText = "my minions";
+//            this.Panorama.TextColor = UIColor.DarkGray;
+//
+//            this.Panorama.ContentItems.Add(new ContentItem("item 1", createView, 0));
+//            this.Panorama.ContentItems.Add(new ContentItem("item 2", createView, 600));
+//            this.Panorama.ContentItems.Add(new ContentItem("item 3", createView, 0));
 
             var tiledBackground = true;
 
@@ -48,19 +48,19 @@ namespace iPadTest
             {
                 var img = UIImage.FromBundle("Images/brushTexture1.png");
 
-                this.Panorama.BackgroundView.AddSubview(
-                    new UIView(new RectangleF(0, 0, 1200, 1000)) { BackgroundColor = UIColor.FromPatternImage(img)}
-                );
+//                this.Panorama.BackgroundView.AddSubview(
+//                    new UIView(new RectangleF(0, 0, 1200, 1000)) { BackgroundColor = UIColor.FromPatternImage(img)}
+//                );
 
             }
             else
             {
                 var img = UIImage.FromBundle("Images/whereswalle.jpg");
 
-                this.Panorama.BackgroundView.BackgroundColor = UIColor.FromPatternImage(img);
-                this.Panorama.BackgroundView.AddSubview(
-                    new UIImageView(img) { AutoresizingMask = UIViewAutoresizing.FlexibleDimensions, }
-                );
+//                this.Panorama.BackgroundView.BackgroundColor = UIColor.FromPatternImage(img);
+//                this.Panorama.BackgroundView.AddSubview(
+//                    new UIImageView(img) { AutoresizingMask = UIViewAutoresizing.FlexibleDimensions, }
+//                );
             }
         }
 

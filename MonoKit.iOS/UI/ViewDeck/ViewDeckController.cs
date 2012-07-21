@@ -61,7 +61,13 @@ namespace MonoKit.UI.ViewDeck
         KeepsViewSizes
     }
 
-    public class ViewDeckController : UIViewController
+    /// <summary>
+    /// View deck controller.
+    /// </summary>
+    /// <remarks>
+    /// It is sealed because it uses weakdelegates which don't work in sub-classes
+    /// </remarks>
+    public sealed class ViewDeckController : UIViewController
     {
         #region Private Fields
 
@@ -1696,7 +1702,7 @@ namespace MonoKit.UI.ViewDeck
         {
             PointF pan = panner.TranslationInView(this.referenceView);
             float x = pan.X + this.panOrigin;
-            
+
             if (this.LeftController == null) 
             {
                 x = Math.Min(0, x);
