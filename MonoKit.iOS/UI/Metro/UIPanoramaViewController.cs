@@ -192,42 +192,32 @@ namespace MonoKit.Metro
 
         private UIViewController presentedController;
 
-        private UIImageView snapshot;
-
         public void Present(UIViewController controller)
         {
-
-
-            UIGraphics.BeginImageContext(this.View.Bounds.Size);
-            this.View.Layer.RenderInContext(UIGraphics.GetCurrentContext());
-            var image = UIGraphics.GetImageFromCurrentImageContext();
-            UIGraphics.EndImageContext();
-
             this.AddChildViewController(controller);
             this.presentedController = controller;
-
-            this.snapshot = new UIImageView(image);
-            this.snapshot.Frame = this.View.Bounds;
-            this.View.AddSubview(this.snapshot);
 
             presentedController.View.Alpha = 0;
             presentedController.View.Frame = this.View.Bounds;
             this.View.AddSubview(controller.View);
 
+            var scale1 = MonoTouch.CoreGraphics.CGAffineTransform.MakeScale(0.8f, 0.8f);
+            var translate1 = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation(100, 0);
 
-            this.ContentView.Hidden = true;
-            this.TitleView.Hidden = true;
+            presentedController.View.Transform = MonoTouch.CoreGraphics.CGAffineTransform.Multiply(scale1, translate1);
 
-
-
-            /// make a screen grab of the View, add it as a subview and then scale it down.
-
-            UIView.Animate(0.5f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
+            UIView.Animate(0.4f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
             {
-                //this.snapshot.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeScale(1f, 0.8f);
-                this.snapshot.Frame = new RectangleF(-this.snapshot.Frame.Width, this.snapshot.Frame.Y, this.snapshot.Frame.Width, this.snapshot.Frame.Height);
+                var scale = MonoTouch.CoreGraphics.CGAffineTransform.MakeScale(1.2f, 1.2f);
+                var translate = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation(-100, 0);
+
+                this.ContentView.Transform = MonoTouch.CoreGraphics.CGAffineTransform.Multiply(scale, translate);
+                this.ContentView.Alpha = 0;
+
+                this.TitleView.Alpha = 0;
 
                 presentedController.View.Alpha = 1f;
+                presentedController.View.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeIdentity();
 
             }, () =>
             {
@@ -245,24 +235,22 @@ namespace MonoKit.Metro
 
                 UIView.Animate(0.5f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
                 {
-                this.snapshot.Frame = new RectangleF(0, this.snapshot.Frame.Y, this.snapshot.Frame.Width, this.snapshot.Frame.Height);
-                    presentedController.View.Alpha = 0;
+                    this.TitleView.Alpha = 1;
 
+                    this.ContentView.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeIdentity();
+                    this.ContentView.Alpha = 1;
+
+                    var scale1 = MonoTouch.CoreGraphics.CGAffineTransform.MakeScale(0.8f, 0.8f);
+                    var translate1 = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation(100, 0);
+
+                    presentedController.View.Transform = MonoTouch.CoreGraphics.CGAffineTransform.Multiply(scale1, translate1);
+                    presentedController.View.Alpha = 0;
                 }, () =>
                 {
-            this.ContentView.Hidden = false;
-            this.TitleView.Hidden = false;
-                    this.snapshot.RemoveFromSuperview();
-                    this.snapshot = null;
-
-
                     presentedController.View.RemoveFromSuperview();
                     presentedController.RemoveFromParentViewController();
                     this.presentedController = null;
-
-
                 });
-
             }
         }
         

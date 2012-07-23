@@ -205,11 +205,13 @@ namespace PanoramaSample
         {
             base.LoadView();
             this.InitController();
+            this.View.BackgroundColor = UIColor.Clear;
         }
 
         public void InitController()
         {
             var section1 = new TableViewSection(this.Source);
+            section1.Header = " ";
             section1.Add(new StringElement("Close") { Command = this.Close });
         }
         
