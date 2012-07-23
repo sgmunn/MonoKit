@@ -47,11 +47,11 @@
     <Compile Include="Samples2.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MonoKit\MonoKit.csproj">
+    <ProjectReference Include="..\..\MonoKit\MonoKit.csproj">
       <Project>{7BA35695-77B9-4237-AE28-396B0E5DDF7F}</Project>
       <Name>MonoKit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MonoKit.iOS\MonoKit.iOS.csproj">
+    <ProjectReference Include="..\..\MonoKit.iOS\MonoKit.iOS.csproj">
       <Project>{ABE22D63-B716-4C58-9A59-5915F47968D4}</Project>
       <Name>MonoKit.iOS</Name>
     </ProjectReference>

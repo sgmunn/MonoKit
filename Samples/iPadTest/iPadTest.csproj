@@ -5,25 +5,27 @@
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D1EE78E4-82A0-4BB9-A699-2F0038395243}</ProjectGuid>
+    <ProjectGuid>{754DBAF0-63A8-45A9-A390-86F2FF5556A1}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>iPhoneTest</RootNamespace>
-    <AssemblyName>iPhoneTest</AssemblyName>
+    <RootNamespace>iPadTest</RootNamespace>
+    <AssemblyName>iPadTest</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
+    <ConsolePause>false</ConsolePause>
     <MtouchProfiling>true</MtouchProfiling>
-    <MtouchI18n />
+    <MtouchUseSGen>true</MtouchUseSGen>
     <MtouchArch>ARMv7</MtouchArch>
+    <MtouchI18n />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -31,25 +33,20 @@
     <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
     <MtouchLink>None</MtouchLink>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhone\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
-    <MtouchProfiling>true</MtouchProfiling>
-    <MtouchI18n />
-    <IpaPackageName />
-    <MtouchArch>ARMv7</MtouchArch>
-    <MtouchUseSGen>true</MtouchUseSGen>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -59,10 +56,6 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <MtouchUseLlvm>true</MtouchUseLlvm>
-    <MtouchI18n />
-    <MtouchUseSGen>true</MtouchUseSGen>
-    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -74,26 +67,28 @@
     <None Include="Info.plist" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MainWindow.xib.designer.cs">
+      <DependentUpon>MainWindow.xib</DependentUpon>
+    </Compile>
     <Compile Include="Main.cs" />
-    <Compile Include="AppDelegate.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="MainWindow.xib" xmlns="" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\MonoKit\MonoKit.csproj">
+    <ProjectReference Include="..\..\MonoKit\MonoKit.csproj">
       <Project>{7BA35695-77B9-4237-AE28-396B0E5DDF7F}</Project>
       <Name>MonoKit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MonoKit.iOS\MonoKit.iOS.csproj">
+      <Project>{ABE22D63-B716-4C58-9A59-5915F47968D4}</Project>
+      <Name>MonoKit.iOS</Name>
     </ProjectReference>
     <ProjectReference Include="..\MonoKitSample\MonoKitSample.csproj">
       <Project>{93EB339A-DFF9-48FA-A490-E53069BD1B66}</Project>
       <Name>MonoKitSample</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MonoKit.iOS\MonoKit.iOS.csproj">
-      <Project>{ABE22D63-B716-4C58-9A59-5915F47968D4}</Project>
-      <Name>MonoKit.iOS</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Images\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\whereswalle.jpg" />

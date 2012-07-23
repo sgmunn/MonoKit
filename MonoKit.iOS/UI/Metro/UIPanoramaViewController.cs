@@ -189,6 +189,82 @@ namespace MonoKit.Metro
             this.LayoutContent(this.currentScrolledOffset);
             Console.WriteLine("panorama appear");
         }
+
+        private UIViewController presentedController;
+
+        private UIImageView snapshot;
+
+        public void Present(UIViewController controller)
+        {
+
+
+            UIGraphics.BeginImageContext(this.View.Bounds.Size);
+            this.View.Layer.RenderInContext(UIGraphics.GetCurrentContext());
+            var image = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+
+            this.AddChildViewController(controller);
+            this.presentedController = controller;
+
+            this.snapshot = new UIImageView(image);
+            this.snapshot.Frame = this.View.Bounds;
+            this.View.AddSubview(this.snapshot);
+
+            presentedController.View.Alpha = 0;
+            presentedController.View.Frame = this.View.Bounds;
+            this.View.AddSubview(controller.View);
+
+
+            this.ContentView.Hidden = true;
+            this.TitleView.Hidden = true;
+
+
+
+            /// make a screen grab of the View, add it as a subview and then scale it down.
+
+            UIView.Animate(0.5f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
+            {
+                //this.snapshot.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeScale(1f, 0.8f);
+                this.snapshot.Frame = new RectangleF(-this.snapshot.Frame.Width, this.snapshot.Frame.Y, this.snapshot.Frame.Width, this.snapshot.Frame.Height);
+
+                presentedController.View.Alpha = 1f;
+
+            }, () =>
+            {
+                presentedController.DidMoveToParentViewController(this);
+            });
+        }
+
+        public void Dismiss()
+        {
+            if (this.presentedController != null)
+            {
+                presentedController.WillMoveToParentViewController(null);
+                    
+
+
+                UIView.Animate(0.5f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
+                {
+                this.snapshot.Frame = new RectangleF(0, this.snapshot.Frame.Y, this.snapshot.Frame.Width, this.snapshot.Frame.Height);
+                    presentedController.View.Alpha = 0;
+
+                }, () =>
+                {
+            this.ContentView.Hidden = false;
+            this.TitleView.Hidden = false;
+                    this.snapshot.RemoveFromSuperview();
+                    this.snapshot = null;
+
+
+                    presentedController.View.RemoveFromSuperview();
+                    presentedController.RemoveFromParentViewController();
+                    this.presentedController = null;
+
+
+                });
+
+            }
+        }
         
         private void Init()
         {
@@ -337,7 +413,7 @@ namespace MonoKit.Metro
         private void ScrollContent(float offset)
         {
 
-            UIView.Animate(0.2f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.LayoutSubviews | UIViewAnimationOptions.BeginFromCurrentState, () =>
+            UIView.Animate(0.2f, 0, UIViewAnimationOptions.CurveEaseOut | UIViewAnimationOptions.LayoutSubviews | UIViewAnimationOptions.BeginFromCurrentState, () =>
             {
                 this.LayoutContent(offset);
             }, () =>

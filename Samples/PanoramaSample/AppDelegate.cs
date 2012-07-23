@@ -75,7 +75,7 @@ namespace PanoramaSample
             this.Title = "my minions";
             this.AddController(new Item2Controller(), 0);
             this.AddController(new Item1Controller(), 0);
-            //this.AddController(new Item3Controller(), 0);
+            this.AddController(new Item3Controller(), 0);
         }
 
         public override void LoadView()
@@ -142,7 +142,8 @@ namespace PanoramaSample
 
         private void DoTest(Element element)
         {
-            this.PresentViewController(new OtherController(), true, null);
+            var p = this.ParentViewController as UIPanoramaViewController;
+            p.Present(new OtherController());
         }
 
         private void DoAdd(Element element)
@@ -214,7 +215,12 @@ namespace PanoramaSample
         
         public void Close(Element element)
         {
-            this.DismissViewController(true, null);
+            var p = this.ParentViewController as UIPanoramaViewController;
+            p.Dismiss();
+
+
+
+            //this.DismissViewController(true, null);
         }
 
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
