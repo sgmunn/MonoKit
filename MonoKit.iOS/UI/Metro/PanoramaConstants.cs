@@ -42,6 +42,11 @@ namespace MonoKit.Metro
         public static string DefaultFontName = "Thonburi";
 
         /// <summary>
+        /// The name of the default font to use for titles
+        /// </summary>
+        public static string DefaultFontBoldName = "Thonburi-Bold";
+
+        /// <summary>
         /// The default font size for titles
         /// </summary>
         public static float DefaultTitleFontSize = 46;

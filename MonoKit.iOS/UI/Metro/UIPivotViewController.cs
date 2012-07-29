@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="UIPanoramaViewController.cs" company="sgmunn">
+//  <copyright file="UIPivotViewController.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -24,18 +24,17 @@ namespace MonoKit.Metro
     using System.Collections.Generic;
     using System.Drawing;
     using System.Linq;
+    using MonoTouch.Foundation;
     using MonoTouch.UIKit;
 
-    // todo:use margins correctly - don't use the static one
-
     /// <summary>
-    /// Controller for panorama views
+    /// Controller for pivot views
     /// </summary>
-    public class UIPanoramaViewController : UIViewController
+    public class UIPivotViewController : UIViewController
     {
         private readonly List<PanoramaItem> items;
 
-        private readonly List<UIPanGestureRecognizer> panners;
+        private readonly List<UIGestureRecognizer> panners;
 
         /// <summary>
         /// The rate at which the title slides in relation to the content
@@ -54,29 +53,31 @@ namespace MonoKit.Metro
         private float contentWidth;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.Metro.UIPanoramaViewController"/> class.
+        /// Initializes a new instance of the <see cref="MonoKit.Metro.UIPivotViewController"/> class.
         /// </summary>
-        public UIPanoramaViewController()
+        public UIPivotViewController()
         {
             this.items = new List<PanoramaItem>();
-            this.panners = new List<UIPanGestureRecognizer>();
+            this.panners = new List<UIGestureRecognizer>();
             this.Init();
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.Metro.UIPanoramaViewController"/> class.
+        /// Initializes a new instance of the <see cref="MonoKit.Metro.UIPivotViewController"/> class.
         /// </summary>
         /// <param name='handle'>Handle to the underlying UIKit object</param>
-        public UIPanoramaViewController(IntPtr handle) : base(handle)
+        public UIPivotViewController(IntPtr handle) : base(handle)
         {
             this.items = new List<PanoramaItem>();
-            this.panners = new List<UIPanGestureRecognizer>();
+            this.panners = new List<UIGestureRecognizer>();
             this.Init();
         }
                         
         public UIFont TitleFont { get; set; }
 
         public UIFont HeaderFont { get; set; }
+
+        public UIFont HeaderBoldFont { get; set; }
 
         public UIColor TextColor { get; set; }
 
@@ -134,7 +135,6 @@ namespace MonoKit.Metro
         public override void LoadView()
         {
             base.LoadView();
-            Console.WriteLine("panorama load");
 
             this.hasAppeared = false;
 
@@ -167,7 +167,6 @@ namespace MonoKit.Metro
         public override void ViewDidUnload()
         {
             this.hasAppeared = false;
-            Console.WriteLine("panorama unload");
 
             foreach (var item in this.items)
             {
@@ -189,7 +188,8 @@ namespace MonoKit.Metro
             this.CalculateItemMetrics(this.titleSize.Height + this.headerHeight + 2);
 
             this.LayoutContent(this.currentScrolledOffset);
-            Console.WriteLine("panorama appear");
+            this.LayoutItemTitlesInContent(this.currentScrolledOffset);
+            this.BoldCurrentItem();
         }
 
         private UIViewController presentedController;
@@ -294,8 +294,9 @@ namespace MonoKit.Metro
             this.TitleFont = UIFont.FromName(PanoramaConstants.DefaultFontName, PanoramaConstants.DefaultTitleFontSize);
             this.TextColor = PanoramaConstants.DefaultTextColor;
             this.HeaderFont = UIFont.FromName(PanoramaConstants.DefaultFontName, PanoramaConstants.DefaultHeaderFontSize);
+            this.HeaderBoldFont = UIFont.FromName(PanoramaConstants.DefaultFontBoldName, PanoramaConstants.DefaultHeaderFontSize);
 
-            this.BackgroundMotionRate = PanoramaConstants.DefaultBackgroundMotionRate;
+            this.BackgroundMotionRate = 0;
         }
 
         private void AddPanner(UIView view) 
@@ -431,6 +432,20 @@ namespace MonoKit.Metro
             return 0;
         }
 
+        private PanoramaItem GetCurrentItem(float currentOffset)
+        {
+            var currentItems = from item in this.items.Where(v => Math.Abs(v.Origin.X - currentOffset) < 10)
+                select item;
+
+            var nextItem = currentItems.FirstOrDefault();
+            if (nextItem != null)
+            {
+                return nextItem;
+            }
+
+            return null;
+        }
+
         private void ScrollContent(float offset)
         {
 
@@ -439,20 +454,20 @@ namespace MonoKit.Metro
                 this.LayoutContent(offset);
             }, () =>
             {
+                this.LayoutItemTitlesInContent(this.currentScrolledOffset);
+                this.BoldCurrentItem();
                 //if (completed != null) completed(this);
                 //if (callDelegate && this.Delegate != null) 
                 //{
                 //    this.Delegate.DidOpenLeftView(this, animated);
                 //}
             });
-
         }
 
         private void LayoutContent(float offset)
         {
             this.LayoutTitleView(offset);
             this.LayoutBackgroundView(offset);
-            this.LayoutItemTitlesInContent(offset);
             this.LayoutItemsInContent(offset);
         }
 
@@ -474,9 +489,27 @@ namespace MonoKit.Metro
             this.BackgroundView.Frame = new RectangleF(left, 0, this.View.Bounds.Width, this.View.Bounds.Height);
         }
 
+        private void BoldCurrentItem()
+        {
+            var currentItem = this.GetCurrentItem(this.currentScrolledOffset);
+            foreach (var item in this.items)
+            {
+                if (item == currentItem)
+                {
+                    item.LabelView.Font = this.HeaderBoldFont;
+                }
+                else
+                {
+                    item.LabelView.Font = this.HeaderFont;
+                }
+            }
+        }
+
 
         private void LayoutItemTitlesInContent(float offset)
         {
+            // todo: use something similar for tap navigation rather than the current slide -
+            // or a slide to the left - just like the headers, not to the right
             foreach (var item in this.items)
             {
                 if (item.LabelView == null)
@@ -486,12 +519,124 @@ namespace MonoKit.Metro
                     item.LabelView.TextColor = this.TextColor;
                     item.LabelView.Text = item.Controller.Title;
                     item.LabelView.BackgroundColor = UIColor.Clear;
+                        item.LabelView.UserInteractionEnabled = true;
+
+                        var gesture = new UITapGestureRecognizer(this.LabelTapped);
+                        item.LabelView.AddGestureRecognizer(gesture);
+                        this.panners.Add(gesture);
 
                     this.ContentView.AddSubview(item.LabelView);
                 }
-
-                item.LabelView.Frame = new RectangleF(this.leftMargin + item.Origin.X - offset, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
             }
+
+            var currentItem = this.GetCurrentItem(this.currentScrolledOffset);
+
+            NSAction slideCurrentToFirstPosition = () => 
+            {
+                foreach (var item in this.items)
+                {
+                    if (item == currentItem)
+                    {
+                        item.LabelView.Frame = new RectangleF(this.leftMargin, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+
+                        item.LabelView.Alpha = 1;
+                    }
+                    else
+                    {
+                        item.LabelView.Alpha = 0;
+                    }
+                }
+            };
+
+            NSAction makeOthersVisibleAgain = () =>
+            {
+                foreach (var item in this.items)
+                {
+                    if (item != currentItem)
+                    {
+                        item.LabelView.Alpha = 1;
+                    }
+                }
+
+            };
+
+            NSAction arrangeOtherFrames = () =>
+            {
+                float currentX = this.leftMargin;
+
+                var doneFirst = false;
+                foreach (var item in this.items)
+                {
+
+                    if (item == currentItem)
+                    {
+                        doneFirst = true;
+                        currentX = this.leftMargin + item.LabelSize.Width + this.leftMargin;
+                    }
+                    else
+                    {
+                        if (doneFirst)
+                        {
+                            item.LabelView.Frame = new RectangleF(currentX, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+
+                            currentX += (item.LabelSize.Width + this.leftMargin);
+                        }
+                        else
+                        {
+                            //item.LabelView.Frame = new RectangleF(currentX - item.LabelSize.Width, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+
+                            //currentX -= (item.LabelSize.Width + this.leftMargin);
+                        }
+                    }
+                }
+
+                doneFirst = false;
+                foreach (var item in this.items)
+                {
+
+                    if (item == currentItem)
+                    {
+                        doneFirst = true;
+                        //currentX = this.leftMargin + item.LabelSize.Width + this.leftMargin;
+                    }
+                    else
+                    {
+                        if (!doneFirst)
+                        {
+                            item.LabelView.Frame = new RectangleF(currentX, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+
+                            currentX += (item.LabelSize.Width + this.leftMargin);
+                        }
+                        else
+                        {
+                            ////item.LabelView.Frame = new RectangleF(currentX - item.LabelSize.Width, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+
+                            //currentX -= (item.LabelSize.Width + this.leftMargin);
+                        }
+                    }
+                }
+            };
+
+
+            // animate the current label to place
+            UIView.Animate(0.2f, slideCurrentToFirstPosition, () => 
+            {
+                arrangeOtherFrames();
+                UIView.Animate(0.2f, makeOthersVisibleAgain);
+            });
+        }
+
+        private void LabelTapped(UITapGestureRecognizer gesture)
+        {
+            foreach (var item in this.items)
+            {
+                if (gesture.View == item.LabelView)
+                {
+                    this.currentScrolledOffset = item.Origin.X;
+                    this.ScrollContent(this.currentScrolledOffset);
+                }
+            }
+
         }
 
         private void LayoutItemsInContent(float offset)
@@ -530,9 +675,13 @@ namespace MonoKit.Metro
             foreach (var item in this.items)
             {
                 item.Origin = new PointF(left, top);
-                item.Size = new SizeF(item.GetWidth(this.View.Bounds.Width - (2 * this.leftMargin), PanoramaConstants.NextContentItemPreviewSize), this.View.Bounds.Height - top - 50);
+                item.Size = new SizeF(item.GetWidth(this.View.Bounds.Width - (2 * this.leftMargin), 0), this.View.Bounds.Height - top - 50);
                 left += item.Size.Width + this.leftMargin;
-                item.LabelSize = new SizeF(item.Size.Width, this.headerHeight);
+
+
+                var titleSize = this.View.StringSize(item.Controller.Title, this.HeaderFont);
+
+                item.LabelSize = new SizeF(titleSize.Width + this.leftMargin, this.headerHeight);
             }
             
             var totalWidth = left;
@@ -555,7 +704,7 @@ namespace MonoKit.Metro
                 // titleWidth * rate = (totalWidth - titleWidth)
                 // rate = (totalWidth - titleWidth) / titleWidth
 
-                this.titleRate = 1 / ((totalWidth - this.titleSize.Width) / this.titleSize.Width);
+                //this.titleRate = 1 / ((totalWidth - this.titleSize.Width) / this.titleSize.Width);
             }
         }
     }

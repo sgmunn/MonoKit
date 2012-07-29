@@ -77,6 +77,7 @@
     <Compile Include="UI\ViewControllers\SlidingViewController.cs" />
     <Compile Include="UI\ViewDeck\ViewDeckControllerDelegate.cs" />
     <Compile Include="UI\ViewDeck\ViewDeckController.cs" />
+    <Compile Include="UI\Metro\UIPivotViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />

@@ -50,9 +50,9 @@ namespace MonoKit.Metro
         /// <summary>
         /// Gets the width of the item
         /// </summary>
-        public float GetWidth(float frameWidth)
+        public float GetWidth(float frameWidth, float previewSize)
         {
-            return this.width != 0 ? this.width : frameWidth - PanoramaConstants.NextContentItemPreviewSize;
+            return this.width != 0 ? this.width : frameWidth - previewSize;
         }
 
         // used by controller to manage state
@@ -61,60 +61,7 @@ namespace MonoKit.Metro
         public PointF Origin { get; set; }
 
         public SizeF Size { get; set; }
-    }
 
-
-
-
-
-    /// <summary>
-    /// An item of content in a Panorama or Pivot
-    /// </summary>
-    public sealed class ContentItem
-    {
-        // todo: make disposable to let go of view ??
-
-        /// <summary>
-        /// function to create the view
-        /// </summary>
-        private Func<UIView> create;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.Metro.ContentItem"/> class.
-        /// </summary>
-        /// <param name='width'>The desired width of the content, zero defaults to standard</param>
-        public ContentItem(float width)
-        {
-//            this.Title = title;
-//            this.create = create;
-
-            this.Width = width != 0 ? width : UIScreen.MainScreen.Bounds.Width - PanoramaConstants.NextContentItemPreviewSize;
-        }
-
-        /// <summary>
-        /// Gets the title for the content
-        /// </summary>
-        public string Title { get{
-                return this.Controller.Title;
-            }}
-
-        /// <summary>
-        /// Gets the width of the item
-        /// </summary>
-        public float Width { get; private set; }
-
-        /// <summary>
-        /// Creates the view for the item.
-        /// </summary>
-        /// <returns>
-        /// Returns a new UIView
-        /// </returns>
-        public UIView CreateView()
-        {
-            Console.WriteLine("Create view");
-            return this.Controller.View;
-        }
-
-        public UIViewController Controller { get; set; }
+        public SizeF LabelSize { get; set; }
     }
 }

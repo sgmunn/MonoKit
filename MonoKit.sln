@@ -142,6 +142,6 @@ Global
 		{117E23FD-8455-43C2-A54E-B530DE5B88AF} = {84CBAC2D-25BB-40EF-8F13-1E616587AFA4}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\PanoramaSample\PanoramaSample.csproj
+		StartupItem = Samples\ViewDeckSample\ViewDeckSample.csproj
 	EndGlobalSection
 EndGlobal
