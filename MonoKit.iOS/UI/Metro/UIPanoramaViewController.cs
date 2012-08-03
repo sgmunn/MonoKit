@@ -42,16 +42,19 @@ namespace MonoKit.Metro
         /// </summary>
         private float titleRate;
 
-        /// <summary>
-        /// The space between the title and content items, and the left edge of the view  
-        /// </summary>
-        private float leftMargin = PanoramaConstants.LeftMargin;
-
         private float currentScrolledOffset;
+
         private bool hasAppeared;
+
         private SizeF titleSize;
+
         private float headerHeight;
+
         private float contentWidth;
+
+        private float headerTop;
+
+        private float contentTop;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MonoKit.Metro.UIPanoramaViewController"/> class.
@@ -74,20 +77,32 @@ namespace MonoKit.Metro
             this.Init();
         }
                         
-        public UIFont TitleFont { get; set; }
-
-        public UIFont HeaderFont { get; set; }
 
         public UIColor TextColor { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether to animate the background when the user pans the panorama
-        /// </summary>
-        /// <remarks>Should only be set prior to the view being loaded</remarks>
-        //public bool AnimateBackground { get; set; }
+        public bool ShowTitle { get; set; }
 
+        public bool AnimateTitle { get; set; }
+
+        public UIFont TitleFont { get; set; }
+
+
+        public bool ShowHeaders { get; set; }
+
+        public UIFont HeaderFont { get; set; }
+
+
+        public bool AnimateBackground { get; set; }
 
         public float BackgroundMotionRate { get; set; }
+
+        public bool ShadowEnabled { get; set; }
+
+        public float PreviewSize { get; set; }
+
+        public float BottomMargin { get; set; }
+
+        public float Margin { get; set; }
 
                 
         /// <summary>
@@ -121,7 +136,7 @@ namespace MonoKit.Metro
 
             if (this.hasAppeared)
             {
-                this.CalculateItemMetrics(this.titleSize.Height + this.headerHeight + 2);
+                this.CalculateItemMetrics(this.contentTop);
                 this.LayoutContent(this.currentScrolledOffset);
             }
 
@@ -154,10 +169,17 @@ namespace MonoKit.Metro
             this.TitleView.BackgroundColor = UIColor.Clear;
             this.View.AddSubview(this.TitleView);
 
+            if (this.ShadowEnabled)
+            {
+                this.ApplyShadow(this.TitleView);
+            }
+
             this.AddPanner(this.ContentView);
 
-            this.titleSize = this.ConfigureTitle();
-            this.headerHeight = this.CalculateHeaderHeight();
+            this.titleSize = this.ConfigureTitle(this.ShowTitle);
+            this.headerTop = this.titleSize.Height + (this.ShowTitle ? 2f : 0); // todo: header margin
+            this.headerHeight = this.CalculateHeaderHeight(this.ShowHeaders);
+            this.contentTop = this.headerTop + this.headerHeight + (this.ShowHeaders ? 2f : 0);// todo: content margin top
         }
 
         
@@ -172,7 +194,7 @@ namespace MonoKit.Metro
             foreach (var item in this.items)
             {
                 item.Controller.View.RemoveFromSuperview();
-                item.LabelView.RemoveFromSuperview();
+                item.HeaderView.RemoveFromSuperview();
             }
 
             this.panners.Clear();
@@ -186,7 +208,7 @@ namespace MonoKit.Metro
 
             this.hasAppeared = true;
 
-            this.CalculateItemMetrics(this.titleSize.Height + this.headerHeight + 2);
+            this.CalculateItemMetrics(this.contentTop);
 
             this.LayoutContent(this.currentScrolledOffset);
             Console.WriteLine("panorama appear");
@@ -286,11 +308,26 @@ namespace MonoKit.Metro
                 });
             }
         }
+
+        protected void ApplyShadow(UIView view)
+        {
+            view.Layer.MasksToBounds = false;
+            view.Layer.ShadowRadius = 10;
+            //view.Layer.ShadowOffset = new SizeF(5,5);
+            view.Layer.ShadowOpacity = 0.5f;
+        }
         
         private void Init()
         {
+            this.ShowTitle = true;
+            this.ShowHeaders = true;
+            this.ShadowEnabled = true;
+
             this.currentScrolledOffset = 0;
 
+            this.BottomMargin = PanoramaConstants.Margin;
+            this.Margin = PanoramaConstants.Margin;
+            this.PreviewSize = PanoramaConstants.NextContentItemPreviewSize;
             this.TitleFont = UIFont.FromName(PanoramaConstants.DefaultFontName, PanoramaConstants.DefaultTitleFontSize);
             this.TextColor = PanoramaConstants.DefaultTextColor;
             this.HeaderFont = UIFont.FromName(PanoramaConstants.DefaultFontName, PanoramaConstants.DefaultHeaderFontSize);
@@ -459,12 +496,20 @@ namespace MonoKit.Metro
 
         private void LayoutTitleView(float offset)
         {
-            this.TitleView.Frame = new RectangleF(this.leftMargin - (offset * this.titleRate), 0, this.titleSize.Width, this.titleSize.Height);
+            if (this.ShowTitle)
+            {
+                this.TitleView.Hidden = false;
+                this.TitleView.Frame = new RectangleF(this.Margin - (offset * (this.AnimateTitle ? this.titleRate : 0)), 0, this.titleSize.Width, this.titleSize.Height);
+            }
+            else
+            {
+                this.TitleView.Hidden = true;
+            }
         }
 
         private void LayoutBackgroundView(float offset)
         {
-            var left = 0 - (offset * this.BackgroundMotionRate);
+            float left = 0 - (this.AnimateBackground ? (offset * this.BackgroundMotionRate) : 0);
 
             if (left > 0)
             {
@@ -479,18 +524,23 @@ namespace MonoKit.Metro
         {
             foreach (var item in this.items)
             {
-                if (item.LabelView == null)
+                if (item.HeaderView == null)
                 {
-                    item.LabelView = new UILabel();
-                    item.LabelView.Font = this.HeaderFont;
-                    item.LabelView.TextColor = this.TextColor;
-                    item.LabelView.Text = item.Controller.Title;
-                    item.LabelView.BackgroundColor = UIColor.Clear;
+                    item.HeaderView = new UILabel();
+                    item.HeaderView.Font = this.HeaderFont;
+                    item.HeaderView.TextColor = this.TextColor;
+                    item.HeaderView.Text = item.Controller.Title;
+                    item.HeaderView.BackgroundColor = UIColor.Clear;
 
-                    this.ContentView.AddSubview(item.LabelView);
+                    this.ContentView.AddSubview(item.HeaderView);
+
+                    if (this.ShadowEnabled)
+                    {
+                        this.ApplyShadow(item.HeaderView);
+                    }
                 }
 
-                item.LabelView.Frame = new RectangleF(this.leftMargin + item.Origin.X - offset, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+                item.HeaderView.Frame = new RectangleF(this.Margin + item.Origin.X - offset, this.headerTop, item.HeaderSize.Width, item.HeaderSize.Height);
             }
         }
 
@@ -500,17 +550,33 @@ namespace MonoKit.Metro
             {
                 if (item.Controller.View.Superview == null)
                 {
-                    this.ContentView.AddSubview(item.Controller.View);
+                    item.Controller.View.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
+
+                    item.ContentView = new UIView();
+                    this.ContentView.AddSubview(item.ContentView);
+
+                    item.ContentView.AddSubview(item.Controller.View);
+                    item.Controller.View.Frame = item.ContentView.Bounds;
+
+                    if (this.ShadowEnabled)
+                    {
+                        this.ApplyShadow(item.ContentView);
+                    }
                 }
 
-                item.Controller.View.Frame = new RectangleF(this.leftMargin + item.Origin.X - offset, item.Origin.Y, item.Size.Width, item.Size.Height);
+                item.ContentView.Frame = new RectangleF(this.Margin + item.Origin.X - offset, item.Origin.Y, item.Size.Width, item.Size.Height);
             
             
             }
         }
 
-        private SizeF ConfigureTitle()
+        private SizeF ConfigureTitle(bool shouldShow)
         {
+            if (!shouldShow)
+            {
+                return new SizeF(0, 0);
+            }
+
             this.TitleView.Font = this.TitleFont;
             this.TitleView.TextColor = this.TextColor;
             this.TitleView.Text = this.Title;
@@ -518,9 +584,9 @@ namespace MonoKit.Metro
             return this.View.StringSize(this.Title, this.TitleFont);
         }
 
-        private float CalculateHeaderHeight()
+        private float CalculateHeaderHeight(bool shouldShow)
         {
-            return this.View.StringSize(this.Title, this.HeaderFont).Height;
+            return shouldShow ? this.View.StringSize(this.Title, this.HeaderFont).Height : 0;
         }
 
         private void CalculateItemMetrics(float top)
@@ -530,9 +596,9 @@ namespace MonoKit.Metro
             foreach (var item in this.items)
             {
                 item.Origin = new PointF(left, top);
-                item.Size = new SizeF(item.GetWidth(this.View.Bounds.Width - (2 * this.leftMargin), PanoramaConstants.NextContentItemPreviewSize), this.View.Bounds.Height - top - 50);
-                left += item.Size.Width + this.leftMargin;
-                item.LabelSize = new SizeF(item.Size.Width, this.headerHeight);
+                item.Size = new SizeF(item.GetWidth(this.View.Bounds.Width - (2 * this.Margin), this.PreviewSize), this.View.Bounds.Height - top - this.BottomMargin);
+                left += item.Size.Width + this.Margin;
+                item.HeaderSize = new SizeF(item.Size.Width, this.headerHeight);
             }
             
             var totalWidth = left;

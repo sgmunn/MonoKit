@@ -56,12 +56,15 @@ namespace MonoKit.Metro
         }
 
         // used by controller to manage state
-        public UILabel LabelView { get; set;}
+        public UILabel HeaderView { get; set;}
+
+        public UIView ContentView { get; set; }
 
         public PointF Origin { get; set; }
 
         public SizeF Size { get; set; }
 
-        public SizeF LabelSize { get; set; }
+        public SizeF HeaderSize { get; set; }
+
     }
 }

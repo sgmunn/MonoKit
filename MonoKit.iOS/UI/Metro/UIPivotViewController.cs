@@ -171,7 +171,7 @@ namespace MonoKit.Metro
             foreach (var item in this.items)
             {
                 item.Controller.View.RemoveFromSuperview();
-                item.LabelView.RemoveFromSuperview();
+                item.HeaderView.RemoveFromSuperview();
             }
 
             this.panners.Clear();
@@ -188,7 +188,7 @@ namespace MonoKit.Metro
             this.CalculateItemMetrics(this.titleSize.Height + this.headerHeight + 2);
 
             this.LayoutContent(this.currentScrolledOffset);
-            this.LayoutItemTitlesInContent(this.currentScrolledOffset);
+            //this.LayoutItemTitlesInContent(this.currentScrolledOffset);
             this.BoldCurrentItem();
         }
 
@@ -454,7 +454,7 @@ namespace MonoKit.Metro
                 this.LayoutContent(offset);
             }, () =>
             {
-                this.LayoutItemTitlesInContent(this.currentScrolledOffset);
+                //this.LayoutItemTitlesInContent(this.currentScrolledOffset);
                 this.BoldCurrentItem();
                 //if (completed != null) completed(this);
                 //if (callDelegate && this.Delegate != null) 
@@ -467,6 +467,7 @@ namespace MonoKit.Metro
         private void LayoutContent(float offset)
         {
             this.LayoutTitleView(offset);
+            this.LayoutItemTitlesInContent(offset);
             this.LayoutBackgroundView(offset);
             this.LayoutItemsInContent(offset);
         }
@@ -496,11 +497,11 @@ namespace MonoKit.Metro
             {
                 if (item == currentItem)
                 {
-                    item.LabelView.Font = this.HeaderBoldFont;
+                    item.HeaderView.Font = this.HeaderBoldFont;
                 }
                 else
                 {
-                    item.LabelView.Font = this.HeaderFont;
+                    item.HeaderView.Font = this.HeaderFont;
                 }
             }
         }
@@ -510,6 +511,9 @@ namespace MonoKit.Metro
         {
             // todo: use something similar for tap navigation rather than the current slide -
             // or a slide to the left - just like the headers, not to the right
+            var left = this.leftMargin;
+            var currentItem = this.GetCurrentItem(this.currentScrolledOffset);
+
             foreach (var item in this.items)
             {
                 if (item.LabelView == null)
@@ -529,101 +533,121 @@ namespace MonoKit.Metro
                 }
             }
 
-            var currentItem = this.GetCurrentItem(this.currentScrolledOffset);
+            float labelRate = 1;
+            bool foundCurrent = false;
+            float totalOffset = 0;
 
-            NSAction slideCurrentToFirstPosition = () => 
+            foreach (var item in this.items)
             {
-                foreach (var item in this.items)
+                if (item == currentItem)
                 {
-                    if (item == currentItem)
-                    {
-                        item.LabelView.Frame = new RectangleF(this.leftMargin, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
-
-                        item.LabelView.Alpha = 1;
-                    }
-                    else
-                    {
-                        item.LabelView.Alpha = 0;
-                    }
-                }
-            };
-
-            NSAction makeOthersVisibleAgain = () =>
-            {
-                foreach (var item in this.items)
-                {
-                    if (item != currentItem)
-                    {
-                        item.LabelView.Alpha = 1;
-                    }
+                    foundCurrent = true;
+                    labelRate = item.LabelRate;
                 }
 
-            };
+                //Console.WriteLine(labelRate);
 
-            NSAction arrangeOtherFrames = () =>
-            {
-                float currentX = this.leftMargin;
-
-                var doneFirst = false;
-                foreach (var item in this.items)
-                {
-
-                    if (item == currentItem)
-                    {
-                        doneFirst = true;
-                        currentX = this.leftMargin + item.LabelSize.Width + this.leftMargin;
-                    }
-                    else
-                    {
-                        if (doneFirst)
-                        {
-                            item.LabelView.Frame = new RectangleF(currentX, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
-
-                            currentX += (item.LabelSize.Width + this.leftMargin);
-                        }
-                        else
-                        {
-                            //item.LabelView.Frame = new RectangleF(currentX - item.LabelSize.Width, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
-
-                            //currentX -= (item.LabelSize.Width + this.leftMargin);
-                        }
-                    }
-                }
-
-                doneFirst = false;
-                foreach (var item in this.items)
-                {
-
-                    if (item == currentItem)
-                    {
-                        doneFirst = true;
-                        //currentX = this.leftMargin + item.LabelSize.Width + this.leftMargin;
-                    }
-                    else
-                    {
-                        if (!doneFirst)
-                        {
-                            item.LabelView.Frame = new RectangleF(currentX, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
-
-                            currentX += (item.LabelSize.Width + this.leftMargin);
-                        }
-                        else
-                        {
-                            ////item.LabelView.Frame = new RectangleF(currentX - item.LabelSize.Width, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
-
-                            //currentX -= (item.LabelSize.Width + this.leftMargin);
-                        }
-                    }
-                }
-            };
+                totalOffset = totalOffset + ((offset - totalOffset) * item.LabelRate);
 
 
-            // animate the current label to place
-            UIView.Animate(0.2f, slideCurrentToFirstPosition, () => 
-            {
-                arrangeOtherFrames();
-                UIView.Animate(0.2f, makeOthersVisibleAgain);
-            });
+                item.LabelView.Frame = new RectangleF(left - totalOffset, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+                left += item.LabelSize.Width;    
+            }
+
+
+//            NSAction slideCurrentToFirstPosition = () => 
+//            {
+//                foreach (var item in this.items)
+//                {
+//                    if (item == currentItem)
+//                    {
+//                        item.LabelView.Frame = new RectangleF(this.leftMargin, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+//
+//                        item.LabelView.Alpha = 1;
+//                    }
+//                    else
+//                    {
+//                        item.LabelView.Alpha = 0;
+//                    }
+//                }
+//            };
+//
+//            NSAction makeOthersVisibleAgain = () =>
+//            {
+//                foreach (var item in this.items)
+//                {
+//                    if (item != currentItem)
+//                    {
+//                        item.LabelView.Alpha = 1;
+//                    }
+//                }
+//
+//            };
+//
+//            NSAction arrangeOtherFrames = () =>
+//            {
+//                float currentX = this.leftMargin;
+//
+//                var doneFirst = false;
+//                foreach (var item in this.items)
+//                {
+//
+//                    if (item == currentItem)
+//                    {
+//                        doneFirst = true;
+//                        currentX = this.leftMargin + item.LabelSize.Width + this.leftMargin;
+//                    }
+//                    else
+//                    {
+//                        if (doneFirst)
+//                        {
+//                            item.LabelView.Frame = new RectangleF(currentX, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+//
+//                            currentX += (item.LabelSize.Width + this.leftMargin);
+//                        }
+//                        else
+//                        {
+//                            //item.LabelView.Frame = new RectangleF(currentX - item.LabelSize.Width, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+//
+//                            //currentX -= (item.LabelSize.Width + this.leftMargin);
+//                        }
+//                    }
+//                }
+//
+//                doneFirst = false;
+//                foreach (var item in this.items)
+//                {
+//
+//                    if (item == currentItem)
+//                    {
+//                        doneFirst = true;
+//                        //currentX = this.leftMargin + item.LabelSize.Width + this.leftMargin;
+//                    }
+//                    else
+//                    {
+//                        if (!doneFirst)
+//                        {
+//                            item.LabelView.Frame = new RectangleF(currentX, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+//
+//                            currentX += (item.LabelSize.Width + this.leftMargin);
+//                        }
+//                        else
+//                        {
+//                            ////item.LabelView.Frame = new RectangleF(currentX - item.LabelSize.Width, this.titleSize.Height, item.LabelSize.Width, item.LabelSize.Height);
+//
+//                            //currentX -= (item.LabelSize.Width + this.leftMargin);
+//                        }
+//                    }
+//                }
+//            };
+//
+//
+//            // animate the current label to place
+//            UIView.Animate(0.2f, slideCurrentToFirstPosition, () => 
+//            {
+//                arrangeOtherFrames();
+//                UIView.Animate(0.2f, makeOthersVisibleAgain);
+//            });
         }
 
         private void LabelTapped(UITapGestureRecognizer gesture)
@@ -682,6 +706,7 @@ namespace MonoKit.Metro
                 var titleSize = this.View.StringSize(item.Controller.Title, this.HeaderFont);
 
                 item.LabelSize = new SizeF(titleSize.Width + this.leftMargin, this.headerHeight);
+                item.LabelRate = 0;
             }
             
             var totalWidth = left;
@@ -705,6 +730,15 @@ namespace MonoKit.Metro
                 // rate = (totalWidth - titleWidth) / titleWidth
 
                 //this.titleRate = 1 / ((totalWidth - this.titleSize.Width) / this.titleSize.Width);
+            }
+
+            foreach (var item in this.items)
+            {
+//                item.LabelSize = new SizeF(titleSize.Width + this.leftMargin, this.headerHeight);
+                if (this.View.Bounds.Width != 0)
+                {
+                    item.LabelRate = item.LabelSize.Width / this.View.Bounds.Width;
+                }
             }
         }
     }

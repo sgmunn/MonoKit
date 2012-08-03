@@ -64,6 +64,6 @@ namespace MonoKit.Metro
         /// <summary>
         /// The left margin between content items and titles
         /// </summary>
-        public static float LeftMargin = 5;
+        public static float Margin = 10;
     }
 }
