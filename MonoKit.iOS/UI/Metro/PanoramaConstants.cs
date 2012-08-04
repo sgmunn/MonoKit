@@ -32,7 +32,7 @@ namespace MonoKit.Metro
         /// <summary>
         /// The amount of the next content item that is visible 
         /// </summary>
-        public static float NextContentItemPreviewSize = 60;
+        public static float NextContentItemPreviewSize = 50;
 
         public static float DefaultBackgroundMotionRate = 0.1f;
 

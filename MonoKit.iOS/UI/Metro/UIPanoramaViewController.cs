@@ -26,21 +26,14 @@ namespace MonoKit.Metro
     using System.Linq;
     using MonoTouch.UIKit;
 
-    // todo: optimise the shadows.  layout the items without the content controllers. snapshot the 
-    // content view and add as a shadow view.  add to content and then turn off shadows
+    // todo: smooth out the presentation animations
 
-    /// <summary>
-    /// Controller for panorama views
-    /// </summary>
     public class UIPanoramaViewController : UIViewController
     {
         private readonly List<PanoramaItem> items;
 
         private readonly List<UIPanGestureRecognizer> panners;
 
-        /// <summary>
-        /// The rate at which the title slides in relation to the content
-        /// </summary>
         private float titleRate;
 
         private float currentScrolledOffset;
@@ -87,11 +80,9 @@ namespace MonoKit.Metro
 
         public UIFont TitleFont { get; set; }
 
-
         public bool ShowHeaders { get; set; }
 
         public UIFont HeaderFont { get; set; }
-
 
         public bool AnimateBackground { get; set; }
 
@@ -105,24 +96,11 @@ namespace MonoKit.Metro
 
         public float Margin { get; set; }
 
-                
-        /// <summary>
-        /// Gets the title view
-        /// </summary>
         public UILabel TitleView { get; private set; } 
 
-        /// <summary>
-        /// Gets the content view
-        /// </summary>
         public UIView ContentView { get; private set; } 
 
-        /// <summary>
-        /// Gets the background view
-        /// </summary>
         public UIView BackgroundView { get; private set; } 
-
-
-
 
         public void AddController(UIViewController controller)
         {
@@ -161,19 +139,14 @@ namespace MonoKit.Metro
             this.View.AddSubview(this.BackgroundView);
             this.BackgroundView.BackgroundColor = UIColor.Black;
 
-            this.ContentView = new UIView();
-            this.ContentView.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
-            this.View.AddSubview(this.ContentView);
-
             this.TitleView = new UILabel();
             this.TitleView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
             this.TitleView.BackgroundColor = UIColor.Clear;
             this.View.AddSubview(this.TitleView);
 
-            if (this.ShadowEnabled && this.ShouldApplyShadow(this.TitleView))
-            {
-                this.ApplyShadow(this.TitleView);
-            }
+            this.ContentView = new UIView();
+            this.ContentView.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
+            this.View.AddSubview(this.ContentView);
 
             this.AddPanner(this.ContentView);
 
@@ -212,9 +185,50 @@ namespace MonoKit.Metro
 
             this.CalculateItemMetrics(this.contentTop);
 
+            this.InitViews();
+
+            this.TitleView.Hidden = !this.ShowTitle;
+
             this.LayoutContent(this.currentScrolledOffset);
             Console.WriteLine("panorama appear");
+
+            if (this.ShadowEnabled)
+            {
+                foreach (var item in this.items)
+                {
+                    this.ApplyShadow(item.ContentView);
+                }
+            }
         }
+        
+        private void InitViews()
+        {
+            foreach (var item in this.items)
+            {
+                if (item.HeaderView == null)
+                {
+                    item.HeaderView = new UILabel();
+                    item.HeaderView.Font = this.HeaderFont;
+                    item.HeaderView.TextColor = this.TextColor;
+                    item.HeaderView.Text = item.Controller.Title;
+                    item.HeaderView.BackgroundColor = UIColor.Clear;
+
+                    this.ContentView.AddSubview(item.HeaderView);
+                }
+
+                if (item.Controller.View.Superview == null)
+                {
+                    item.Controller.View.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
+
+                    item.ContentView = new UIView();
+                    this.ContentView.AddSubview(item.ContentView);
+
+                    item.ContentView.AddSubview(item.Controller.View);
+                    item.Controller.View.Frame = item.ContentView.Bounds;
+                }
+            }
+        }
+
 
         private UIViewController presentedController;
 
@@ -223,83 +237,22 @@ namespace MonoKit.Metro
             this.AddChildViewController(controller);
             this.presentedController = controller;
 
-
-            // todo: make content view contain headers
-            // make content view sit underneath title.
-            // snapshot a copy of the content view and animate that, not the content view
-            // then the tables will appear to fade correctly
-
             presentedController.View.Alpha = 0;
             presentedController.View.Frame = new RectangleF(this.ContentView.Bounds.Width, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
-            this.View.InsertSubviewBelow(controller.View, this.ContentView);
 
+            this.View.InsertSubviewAbove(controller.View, this.ContentView);
 
-
-            UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState, () =>
+            UIView.Animate(0.4f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
             {
-                    presentedController.View.Alpha = 0.4f;
-                    presentedController.View.Frame = new RectangleF(this.ContentView.Bounds.Width - 100, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
-
-                    this.TitleView.Alpha = 0.3f;
-                    this.ContentView.Alpha = 0.7f;
-
+                this.ContentView.Frame = new RectangleF(0 - this.contentWidth + this.currentScrolledOffset, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
+                this.TitleView.Alpha = 0f;
+                presentedController.View.Alpha = 1f;
+                presentedController.View.Frame = this.View.Bounds;
+            
             }, () =>
             {
-                UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
-                {
-                    this.TitleView.Alpha = 0f;
-                    this.ContentView.Alpha = 0f;
-                    presentedController.View.Alpha = 1f;
-                    presentedController.View.Frame = this.View.Bounds;
-
-                }, () =>
-                {
-                    presentedController.DidMoveToParentViewController(this);
-                });
+                presentedController.DidMoveToParentViewController(this);
             });
-
-
-
-
-
-//            var scale1 = MonoTouch.CoreGraphics.CGAffineTransform.MakeScale(0.9f, 0.9f);
-//            var translate1 = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation(30, this.headerHeight);
-//
-//            presentedController.View.Transform = MonoTouch.CoreGraphics.CGAffineTransform.Multiply(scale1, translate1);
-//
-//            UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState, () =>
-//            {
-//                var scale = MonoTouch.CoreGraphics.CGAffineTransform.MakeScale(1.1f, 1.1f);
-//                var translate = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation(-100, -this.headerHeight);
-//
-//                this.ContentView.Transform = MonoTouch.CoreGraphics.CGAffineTransform.Multiply(scale, translate);
-//                this.ContentView.Alpha = 0;
-//
-//                this.TitleView.Alpha = 0.3f;
-//
-//                //presentedController.View.Alpha = 1f;
-//                //presentedController.View.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeIdentity();
-//
-//            }, () =>
-//            {
-//                UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
-//                {
-//                    //var scale = MonoTouch.CoreGraphics.CGAffineTransform.MakeScale(1.1f, 1.1f);
-//                    //var translate = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation(-100, -70);
-//
-//                    //this.ContentView.Transform = MonoTouch.CoreGraphics.CGAffineTransform.Multiply(scale, translate);
-//                    //this.ContentView.Alpha = 0;
-//
-//                    this.TitleView.Alpha = 0;
-//
-//                    presentedController.View.Alpha = 1f;
-//                    presentedController.View.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeIdentity();
-//
-//                }, () =>
-//                {
-//                    presentedController.DidMoveToParentViewController(this);
-//                });
-//            });
         }
 
         public void Dismiss()
@@ -307,86 +260,31 @@ namespace MonoKit.Metro
             if (this.presentedController != null)
             {
                 presentedController.WillMoveToParentViewController(null);
-                    
 
-                UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState, () =>
+                UIView.Animate(0.4f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
                 {
-                    presentedController.View.Alpha = 0.7f;
-                    presentedController.View.Frame = new RectangleF(this.ContentView.Bounds.Width - 100, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
-
-                    this.TitleView.Alpha = 0.5f;
-                    this.ContentView.Alpha = 0.3f;
-
+                    this.TitleView.Alpha = 1f;
+                    this.ContentView.Alpha = 1f;
+                    presentedController.View.Frame = new RectangleF(this.ContentView.Bounds.Width, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
+                    this.ContentView.Frame = new RectangleF(0, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
+                    this.ContentView.Alpha = 1f;
                 }, () =>
                 {
-                    UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
-                    {
-                        this.TitleView.Alpha = 1f;
-                        this.ContentView.Alpha = 1f;
-                        presentedController.View.Alpha = 0f;
-                        presentedController.View.Frame = new RectangleF(this.ContentView.Bounds.Width, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
-
-                    }, () =>
-                    {
-                        presentedController.View.RemoveFromSuperview();
-                        presentedController.RemoveFromParentViewController();
-                        this.presentedController = null;
-                    });
+                    presentedController.View.RemoveFromSuperview();
+                    presentedController.RemoveFromParentViewController();
+                    this.presentedController = null;
                 });
-
-
-//                UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState, () =>
-//                {
-//                    this.TitleView.Alpha = 0.3f;
-//
-//                    //this.ContentView.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeIdentity();
-//                    //this.ContentView.Alpha = 1;
-//
-//                    var scale1 = MonoTouch.CoreGraphics.CGAffineTransform.MakeScale(0.9f, 0.9f);
-//                    var translate1 = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation(30, this.headerHeight);
-//
-//                    presentedController.View.Transform = MonoTouch.CoreGraphics.CGAffineTransform.Multiply(scale1, translate1);
-//                    presentedController.View.Alpha = 0;
-//                }, () =>
-//                {
-//                    UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
-//                    {
-//                        this.TitleView.Alpha = 1;
-//
-//                        this.ContentView.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeIdentity();
-//                        this.ContentView.Alpha = 1;
-//
-//                        //var scale1 = MonoTouch.CoreGraphics.CGAffineTransform.MakeScale(0.8f, 0.9f);
-//                        //var translate1 = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation(200, 0);
-//                        //
-//                        //presentedController.View.Transform = MonoTouch.CoreGraphics.CGAffineTransform.Multiply(scale1, translate1);
-//                        //presentedController.View.Alpha = 0;
-//                    }, () =>
-//                    {
-//                        presentedController.View.RemoveFromSuperview();
-//                        presentedController.RemoveFromParentViewController();
-//                        this.presentedController = null;
-//                    });
-//                });
             }
         }
 
         protected virtual void ApplyShadow(UIView view)
         {
             view.Layer.MasksToBounds = false;
-            //view.Layer.ShadowRadius = 5;
-            //view.Layer.ShadowOffset = new SizeF(5,5);
+            view.Layer.ShadowColor = UIColor.Black.CGColor;
+            view.Layer.ShadowRadius = 5;
+            view.Layer.ShadowOffset = SizeF.Empty;
             view.Layer.ShadowOpacity = 0.5f;
-        }
-
-        protected virtual bool ShouldApplyShadow(UIView view)
-        {
-            if (!this.AnimateTitle)
-            {
-                return view != this.TitleView;
-            }
-
-            return true;
+            view.Layer.ShadowPath = UIBezierPath.FromRect(view.Bounds).CGPath;
         }
         
         private void Initialize()
@@ -458,7 +356,7 @@ namespace MonoKit.Metro
 
             var velocity = gestureRecognizer.VelocityInView(this.View).X;
 
-            if (Math.Abs(velocity) < 500)
+            if (Math.Abs(velocity) < 700)
             {
                 this.currentScrolledOffset = this.CalculatePannedLocation(offset, panLocation.X);
                 this.ScrollContent(currentScrolledOffset);
@@ -560,23 +458,14 @@ namespace MonoKit.Metro
 
         private void LayoutContent(float offset)
         {
-            this.LayoutTitleView(offset);
             this.LayoutBackgroundView(offset);
-            this.LayoutItemTitlesInContent(offset);
-            this.LayoutItemsInContent(offset);
-        }
 
+            this.TitleView.Frame = new RectangleF(this.Margin - (offset * (this.AnimateTitle ? this.titleRate : 0)), 0, this.titleSize.Width, this.titleSize.Height);
 
-        private void LayoutTitleView(float offset)
-        {
-            if (this.ShowTitle)
+            foreach (var item in this.items)
             {
-                this.TitleView.Hidden = false;
-                this.TitleView.Frame = new RectangleF(this.Margin - (offset * (this.AnimateTitle ? this.titleRate : 0)), 0, this.titleSize.Width, this.titleSize.Height);
-            }
-            else
-            {
-                this.TitleView.Hidden = true;
+                item.HeaderView.Frame = new RectangleF(this.Margin + item.Origin.X - offset, this.headerTop, item.HeaderSize.Width, item.HeaderSize.Height);
+                item.ContentView.Frame = new RectangleF(this.Margin + item.Origin.X - offset, item.Origin.Y, item.Size.Width, item.Size.Height);
             }
         }
 
@@ -590,57 +479,6 @@ namespace MonoKit.Metro
             }
 
             this.BackgroundView.Frame = new RectangleF(left, 0, this.View.Bounds.Width, this.View.Bounds.Height);
-        }
-
-
-        private void LayoutItemTitlesInContent(float offset)
-        {
-            foreach (var item in this.items)
-            {
-                if (item.HeaderView == null)
-                {
-                    item.HeaderView = new UILabel();
-                    item.HeaderView.Font = this.HeaderFont;
-                    item.HeaderView.TextColor = this.TextColor;
-                    item.HeaderView.Text = item.Controller.Title;
-                    item.HeaderView.BackgroundColor = UIColor.Clear;
-
-                    this.ContentView.AddSubview(item.HeaderView);
-
-                    if (this.ShadowEnabled && this.ShouldApplyShadow(item.HeaderView))
-                    {
-                        this.ApplyShadow(item.HeaderView);
-                    }
-                }
-
-                item.HeaderView.Frame = new RectangleF(this.Margin + item.Origin.X - offset, this.headerTop, item.HeaderSize.Width, item.HeaderSize.Height);
-            }
-        }
-
-        private void LayoutItemsInContent(float offset)
-        {
-            foreach (var item in this.items)
-            {
-                if (item.Controller.View.Superview == null)
-                {
-                    item.Controller.View.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
-
-                    item.ContentView = new UIView();
-                    this.ContentView.AddSubview(item.ContentView);
-
-                    item.ContentView.AddSubview(item.Controller.View);
-                    item.Controller.View.Frame = item.ContentView.Bounds;
-
-                    if (this.ShadowEnabled && this.ShouldApplyShadow(item.ContentView))
-                    {
-                        this.ApplyShadow(item.ContentView);
-                    }
-                }
-
-                item.ContentView.Frame = new RectangleF(this.Margin + item.Origin.X - offset, item.Origin.Y, item.Size.Width, item.Size.Height);
-            
-            
-            }
         }
 
         private SizeF ConfigureTitle(bool shouldShow)
