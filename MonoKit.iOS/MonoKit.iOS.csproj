@@ -77,6 +77,10 @@
     <Compile Include="UI\ViewControllers\SlidingViewController.cs" />
     <Compile Include="UI\ViewDeck\ViewDeckControllerDelegate.cs" />
     <Compile Include="UI\ViewDeck\ViewDeckController.cs" />
+    <Compile Include="UI\AwesomeMenu\MenuItem.cs" />
+    <Compile Include="UI\AwesomeMenu\Menu.cs" />
+    <Compile Include="UI\AwesomeMenu\MenuDefaults.cs" />
+    <Compile Include="UI\AwesomeMenu\MenuItemSelectedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
@@ -92,6 +96,7 @@
     <Folder Include="UI\Metro\" />
     <Folder Include="UI\ViewControllers\" />
     <Folder Include="UI\ViewDeck\" />
+    <Folder Include="UI\AwesomeMenu\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKit\MonoKit.csproj">

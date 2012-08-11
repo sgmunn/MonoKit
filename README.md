@@ -9,8 +9,9 @@ MonoKit originally started out as a library in a similar vein to MonoTouch.Dialo
 
 - A port of ViewDeck (https://github.com/Inferis/ViewDeck).  This is complete and functional.  There is a sample in the samples folder that shows how to use this.  Also the original ViewDeck project has some good documentation as well.
 
-- A Panorama View, just started and about to be reworked to support contained View Controllers and an animation to navigate to another controller.
+- A Panorama View.
 
+- A port of AwesomeMenu (https://github.com/levey/AwesomeMenu).
 
 
 I look forward to any comments you might have.

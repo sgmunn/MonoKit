@@ -102,6 +102,7 @@ namespace MonoKit.Metro
 
         public UIView BackgroundView { get; private set; } 
 
+
         public void AddController(UIViewController controller)
         {
             this.AddController(controller, 0);
@@ -240,6 +241,11 @@ namespace MonoKit.Metro
             presentedController.View.Alpha = 0;
             presentedController.View.Frame = new RectangleF(this.ContentView.Bounds.Width, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
 
+            if (this.ShadowEnabled)
+            {
+                // ? maybe this.ApplyShadow(presentedController.View);
+            }
+
             this.View.InsertSubviewAbove(controller.View, this.ContentView);
 
             UIView.Animate(0.4f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
@@ -268,6 +274,7 @@ namespace MonoKit.Metro
                     presentedController.View.Frame = new RectangleF(this.ContentView.Bounds.Width, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
                     this.ContentView.Frame = new RectangleF(0, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
                     this.ContentView.Alpha = 1f;
+                    presentedController.View.Alpha = 0f;
                 }, () =>
                 {
                     presentedController.View.RemoveFromSuperview();
@@ -456,11 +463,21 @@ namespace MonoKit.Metro
 
         }
 
+        protected virtual float CalculateTitleOffset(float offset)
+        {
+            return this.Margin - (offset * (this.AnimateTitle ? this.titleRate : 0));
+        }
+
+        protected void LayoutContent()
+        {
+            this.LayoutContent(this.currentScrolledOffset);
+        }
+
         private void LayoutContent(float offset)
         {
             this.LayoutBackgroundView(offset);
 
-            this.TitleView.Frame = new RectangleF(this.Margin - (offset * (this.AnimateTitle ? this.titleRate : 0)), 0, this.titleSize.Width, this.titleSize.Height);
+            this.TitleView.Frame = new RectangleF(this.CalculateTitleOffset(offset), 0, this.titleSize.Width, this.titleSize.Height);
 
             foreach (var item in this.items)
             {
