@@ -24,8 +24,8 @@ namespace MonoKit.Domain
 
     public interface ICommand
     {
+        Identity AggregateId { get; }
+
         Guid CommandId { get; }
-        
-        Guid AggregateId { get; }
     }
 }

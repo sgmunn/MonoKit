@@ -25,7 +25,7 @@ namespace MonoKit.Domain
 
     public interface IAggregateRoot
     {
-        Guid AggregateId { get; }
+        Identity AggregateId { get; }
         
         int Version { get; }
 

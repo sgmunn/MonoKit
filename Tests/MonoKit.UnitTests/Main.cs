@@ -18,64 +18,23 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace MonoKit.Domain
+using MonoTouch.Foundation;
+using MonoTouch.UIKit;
+
+namespace MonoKit.UnitTests
 {
-    using System;
-
-    public class Identity : IEquatable<Identity>, IEquatable<Guid>
+    public class Application
     {
-        public Identity(Guid id)
+        // This is the main entry point of the application.
+        static void Main(string[] args)
         {
-            this.Id = id;
-        }
-
-        public Guid Id { get; private set; }
-
-        public static implicit operator Guid(Identity id)
-        {
-            return object.ReferenceEquals(id, null) ? Guid.Empty : id.Id;
-        }
-
-//        public static bool operator ==(Identity a, Identity b)
-//        {
-//            return a.Id == b.Id;
-//        }
-//
-//        public static bool operator !=(Identity a, Identity b)
-//        {
-//            return !(a.Id == b.Id);            
-//        }
-
-        public bool Equals(Identity other)
-        {
-            return this == other;
-        }
-
-        public bool Equals(Guid other)
-        {
-            return this.Id == other;
-        }
-
-        public override bool Equals(object obj)
-        {
-            var other = obj as Identity;
-            if (object.ReferenceEquals(other, null))
-            {
-                return false;
-            }
-
-            return this.Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            return this.Id.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return this.GetType().Name + "[" + this.Id + "]";
+            // if you want to use a different Application Delegate class from "AppDelegate"
+            // you can specify it here.
+            UIApplication.Main(args, null, "AppDelegate");
         }
     }
 }

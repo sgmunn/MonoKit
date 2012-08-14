@@ -24,7 +24,7 @@ namespace MonoKit.Domain.Events
     using System;
     using System.Runtime.Serialization;
 
-    [DataContract(Name="Deleted", Namespace=DomainNamespace.Namespace)]
+    [DataContract(Name="DeletedEvt", Namespace=DomainNamespace.Namespace)]
     public class DeletedEvent : EventBase
     {
     }

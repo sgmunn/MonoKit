@@ -221,7 +221,7 @@ namespace MonoKitSample
 
             var id = new Guid("{4332b5a6-ab99-49dc-b37f-216c67247f14}");
             var cmd = new DomainCommandExecutor<EventSourcedTestRoot>(context);
-            cmd.Execute(new CreateCommand() { AggregateId = id });
+            cmd.Execute(new CreateCommand() { AggregateId = new Identity(id) });
  
             // not supported at the moment
 //            var scope = context.BeginUnitOfWork();
@@ -252,7 +252,7 @@ namespace MonoKitSample
             // the commanding bit
             var id = new Guid("{c239587e-c8bc-4654-9f28-6a79a7feb12a}");
             var cmd = new DomainCommandExecutor<SnapshotTestRoot>(context);
-            cmd.Execute(new CreateCommand() { AggregateId = id });
+            cmd.Execute(new CreateCommand() { AggregateId = new Identity(id) });
  
             // not supported at the moment
 //            var scope = context.BeginUnitOfWork();
@@ -284,7 +284,7 @@ namespace MonoKitSample
             // the commanding bit
             var id = new Guid("{b6dc9675-a6ca-4767-8b49-e24b4262ac93}");
             var cmd = context.NewCommandExecutor<Minion>();
-            cmd.Execute(new CreateCommand() { AggregateId = id });
+            cmd.Execute(new CreateCommand() { AggregateId = new Identity(id) });
  
             // not supported just yet
 //            var scope = context.BeginUnitOfWork();
@@ -296,7 +296,7 @@ namespace MonoKitSample
 //                    new EarnPocketMoneyCommand() { AggregateId = id, Date = DateTime.Today, Amount = 10, });
 //                scope.Commit();
 //            }
-            cmd.Execute(new EarnPocketMoneyCommand() { AggregateId = id, Date = DateTime.Today, Amount = 10, });
+            cmd.Execute(new EarnPocketMoneyCommand() { AggregateId = new Identity(id), Date = DateTime.Today, Amount = 10, });
         }
                 
         protected void DoSqliteTest(Element element)

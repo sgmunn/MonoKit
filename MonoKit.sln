@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Samples\Test\Test.c
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AwesomeMenuSample", "Samples\AwesomeMenuSample\AwesomeMenuSample.csproj", "{3E337B3C-13E2-4C78-8824-980135A35646}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AE9D84D2-7B39-4154-95D4-169BCCAA6021}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKit.UnitTests", "Tests\MonoKit.UnitTests\MonoKit.UnitTests.csproj", "{D7937D75-2807-4BE4-9F34-5DDF4823A25F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -148,6 +152,20 @@ Global
 		{D1EE78E4-82A0-4BB9-A699-2F0038395243}.Release|iPhone.Build.0 = Release|iPhone
 		{D1EE78E4-82A0-4BB9-A699-2F0038395243}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{D1EE78E4-82A0-4BB9-A699-2F0038395243}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Debug|iPhone.Build.0 = Debug|iPhone
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Default|Any CPU.ActiveCfg = Debug|iPhoneSimulator
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Default|Any CPU.Build.0 = Debug|iPhoneSimulator
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Release|iPhone.ActiveCfg = Release|iPhone
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Release|iPhone.Build.0 = Release|iPhone
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3AC5EB97-7DC9-43BC-8074-0DC29A97B692} = {84CBAC2D-25BB-40EF-8F13-1E616587AFA4}
@@ -157,8 +175,9 @@ Global
 		{D1EE78E4-82A0-4BB9-A699-2F0038395243} = {84CBAC2D-25BB-40EF-8F13-1E616587AFA4}
 		{117E23FD-8455-43C2-A54E-B530DE5B88AF} = {84CBAC2D-25BB-40EF-8F13-1E616587AFA4}
 		{3E337B3C-13E2-4C78-8824-980135A35646} = {84CBAC2D-25BB-40EF-8F13-1E616587AFA4}
+		{D7937D75-2807-4BE4-9F34-5DDF4823A25F} = {AE9D84D2-7B39-4154-95D4-169BCCAA6021}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\AwesomeMenuSample\AwesomeMenuSample.csproj
+		StartupItem = Tests\MonoKit.UnitTests\MonoKit.UnitTests.csproj
 	EndGlobalSection
 EndGlobal

@@ -34,7 +34,7 @@ namespace MonoKit.Domain
             this.uncommittedEvents = new List<IEvent>();
         }
 
-        public Guid AggregateId { get; protected set; }
+        public Identity AggregateId { get; protected set; }
 
         public int Version { get; protected set; }
 

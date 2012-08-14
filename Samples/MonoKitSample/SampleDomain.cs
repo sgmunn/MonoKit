@@ -70,7 +70,7 @@ namespace MonoKitSample
     public class TestSnapshot : ISnapshot
     {
         [MonoKit.Data.SQLite.PrimaryKey]
-        public Guid Id { get; set; }
+        public Identity Id { get; set; }
         public int Version { get; set; }
         public string Description { get; set; }
     }
@@ -107,11 +107,6 @@ namespace MonoKitSample
         {
             Console.WriteLine("Builder Created Event {0}", @event.AggregateTypeId);
         }
-        
-        protected override void DoSaveReadModel(IReadModel readModel)
-        {
-        }
-
     }
 }
 

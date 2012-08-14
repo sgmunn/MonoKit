@@ -24,7 +24,7 @@ namespace MonoKit.Domain
 
     public interface IEvent
     {
-        Guid AggregateId { get; }
+        Identity AggregateId { get; }
 
         string AggregateTypeId { get; }
 

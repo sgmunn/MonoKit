@@ -22,7 +22,9 @@
 namespace MonoKit.Domain.Commands
 {
     using System;
+    using System.Runtime.Serialization;
 
+    [DataContract(Name="DeleteCmd", Namespace=DomainNamespace.Namespace)]
     public class DeleteCommand : CommandBase
     {
     }

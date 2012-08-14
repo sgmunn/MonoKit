@@ -21,10 +21,11 @@
 namespace MonoKit.Domain.Commands
 {
     using System;
-    
+    using System.Runtime.Serialization;
+
+    [DataContract(Name="CreateCmd", Namespace=DomainNamespace.Namespace)]
     public class CreateCommand : CommandBase
     {
     }
-
 }
 

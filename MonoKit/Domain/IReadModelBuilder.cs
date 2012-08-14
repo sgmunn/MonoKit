@@ -39,13 +39,13 @@ namespace MonoKit.Domain
             this.Change = change;
         }
 
-        public ReadModelChangeEvent(Guid id, ReadModelChange change)
+        public ReadModelChangeEvent(Identity id, ReadModelChange change)
         {
             this.Id = id;
             this.Change = change;
         }
 
-        public Guid Id { get; private set; }
+        public Identity Id { get; private set; }
 
         public IReadModel ReadModel { get; private set; }
 

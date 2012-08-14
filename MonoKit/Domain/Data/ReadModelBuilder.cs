@@ -52,7 +52,7 @@ namespace MonoKit.Domain.Data
             this.updatedReadModels.Add(new ReadModelChangeEvent(readModel, change));
         }
 
-        protected void NotifyReadModelChange(Guid id, ReadModelChange change)
+        protected void NotifyReadModelChange(Identity id, ReadModelChange change)
         {
             this.updatedReadModels.Add(new ReadModelChangeEvent(id, change));
         }

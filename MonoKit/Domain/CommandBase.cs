@@ -30,12 +30,13 @@ namespace MonoKit.Domain
         {
             this.CommandId = Guid.NewGuid();
         }
+
+        // todo: check serialization of Identity
+        [DataMember]
+        public Identity AggregateId { get; set; }
         
         [DataMember]
         public Guid CommandId { get; set; }
-        
-        [DataMember]
-        public Guid AggregateId { get; set; }
     }
 }
 

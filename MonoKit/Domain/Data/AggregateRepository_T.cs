@@ -48,7 +48,7 @@ namespace MonoKit.Domain.Data
 
         public T GetById(object id)
         {
-            var allEvents = this.repository.GetAllAggregateEvents((Guid)id).ToList();
+            var allEvents = this.repository.GetAllAggregateEvents(((Identity)id).Id).ToList();
 
             if (allEvents.Count == 0)
             {
@@ -83,7 +83,7 @@ namespace MonoKit.Domain.Data
 
             int expectedVersion = instance.UncommittedEvents.First().Version - 1;
 
-            var allEvents = this.repository.GetAllAggregateEvents(instance.AggregateId).ToList();
+            var allEvents = this.repository.GetAllAggregateEvents(instance.AggregateId.Id).ToList();
 
             var lastEvent = allEvents.LastOrDefault();
             if ((lastEvent == null && expectedVersion != 0) || (lastEvent != null && lastEvent.Version != expectedVersion))
@@ -91,13 +91,13 @@ namespace MonoKit.Domain.Data
                 throw new ConcurrencyException();
             }
 
-            foreach (var @event in instance.UncommittedEvents.ToList())
+            foreach (var evt in instance.UncommittedEvents.ToList())
             {
                 var storedEvent = this.repository.New();
-                storedEvent.AggregateId = instance.AggregateId;
-                storedEvent.EventId = @event.EventId;
-                storedEvent.Version = @event.Version;
-                storedEvent.Event = this.serializer.SerializeToString(@event);
+                storedEvent.AggregateId = instance.AggregateId.Id;
+                storedEvent.EventId = evt.EventId;
+                storedEvent.Version = evt.Version;
+                storedEvent.Event = this.serializer.SerializeToString(evt);
 
                 this.repository.Save(storedEvent);
             }

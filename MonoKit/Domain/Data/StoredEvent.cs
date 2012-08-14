@@ -27,11 +27,11 @@ namespace MonoKit.Domain.Data
     public class StoredEvent : IEventStoreContract
     {
         [DataMember]
-        public Guid EventId { get; set; }
-  
-        [DataMember]
         public Guid AggregateId { get; set; }
   
+        [DataMember]
+        public Guid EventId { get; set; }
+
         [DataMember]
         public int Version { get; set; }
   

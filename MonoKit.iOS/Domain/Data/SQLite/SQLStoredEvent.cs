@@ -26,11 +26,11 @@ namespace MonoKit.Domain.Data.SQLite
 
     public class SQLStoredEvent : IEventStoreContract
     {
-        [PrimaryKey]
-        public Guid EventId { get; set; }
-  
         [Indexed]
         public Guid AggregateId { get; set; }
+  
+        [PrimaryKey]
+        public Guid EventId { get; set; }
   
         public int Version { get; set; }
   

@@ -24,9 +24,9 @@ namespace MonoKit.Domain.Data
 
     public interface IEventStoreContract
     {
-        Guid EventId { get; set; }
-
         Guid AggregateId { get; set; }
+
+        Guid EventId { get; set; }
 
         int Version { get; set; }
 

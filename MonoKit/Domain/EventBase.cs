@@ -32,14 +32,15 @@ namespace MonoKit.Domain
             this.Timestamp = DateTime.UtcNow;
         }
 
+        // todo: check serialization of Identity
+        [DataMember]
+        public Identity AggregateId { get; set; }
+
         [DataMember]
         public string AggregateTypeId { get; set; }
 
         [DataMember]
         public Guid EventId { get; set; }
-
-        [DataMember]
-        public Guid AggregateId { get; set; }
 
         [DataMember]
         public int Version { get; set; }

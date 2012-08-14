@@ -55,7 +55,7 @@ namespace MonoKitSample
     public class MinionDataContract : ISnapshot
     {
           [PrimaryKey]
-          public Guid Id { get; set; }
+          public Identity Id { get; set; }
         
           public int Version { get; set; }
         
@@ -85,11 +85,11 @@ namespace MonoKitSample
     {
         public PocketMoneyTransactionDataContract()
         {
-            this.Id = Guid.NewGuid();
+            this.Id = new Identity(Guid.NewGuid());
         }
 
         [PrimaryKey]
-        public Guid Id { get; set; }
+        public Identity Id { get; set; }
         
         [Indexed]
         public Guid MinionId { get; set; }
@@ -114,17 +114,11 @@ namespace MonoKitSample
         {
             Console.WriteLine("read model updated");
             var transaction = this.repository.New();
-            transaction.MinionId = @event.AggregateId;
+            transaction.MinionId = @event.AggregateId.Id;
             transaction.Amount = @event.Amount;
             transaction.Date = @event.Date;
 
-
-            this.SaveReadModel(transaction);
-        }
-
-        protected override void DoSaveReadModel(IReadModel readModel)
-        {
-            this.repository.Save(readModel as PocketMoneyTransactionDataContract);
+            this.repository.Save(transaction);
         }
     }
 
