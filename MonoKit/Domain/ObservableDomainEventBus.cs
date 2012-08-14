@@ -25,12 +25,12 @@ namespace MonoKit.Domain
     public class ObservableDomainEventBus : IDomainEventBus
     {
         private readonly Subject<IEvent> eventPublisher;
-        private readonly Subject<IReadModel> readModelPublisher;
+        private readonly Subject<ReadModelChangeEvent> readModelPublisher;
 
         public ObservableDomainEventBus()
         {
             this.eventPublisher = new Subject<IEvent>();
-            this.readModelPublisher = new Subject<IReadModel>();
+            this.readModelPublisher = new Subject<ReadModelChangeEvent>();
         }
 
         public void Publish(IEvent @event)
@@ -38,7 +38,7 @@ namespace MonoKit.Domain
             this.eventPublisher.OnNext(@event);
         }
 
-        public void Publish(IReadModel readModel)
+        public void Publish(ReadModelChangeEvent readModel)
         {
             this.readModelPublisher.OnNext(readModel);
         }
@@ -48,7 +48,7 @@ namespace MonoKit.Domain
             return this.eventPublisher.Subscribe(observer);
         }
 
-        public IDisposable Subscribe(IObserver<IReadModel> observer)
+        public IDisposable Subscribe(IObserver<ReadModelChangeEvent> observer)
         {
             return this.readModelPublisher.Subscribe(observer);
         }

@@ -25,11 +25,11 @@ namespace MonoKit.Domain
     using System.Linq;
 
     // todo: make a static class and use caching
-    public class MethodExecutor
+    public static class MethodExecutor
     {
-        public bool ExecuteMethodForSingleParam(object instance, object param)
+        public static bool ExecuteMethodForSingleParam(object instance, object param)
         {
-            return this.ExecuteMethodForParams(instance, param);
+            return ExecuteMethodForParams(instance, param);
 //            var method = this.GetCommandHandlerMethod(instance, param);
 //
 //            if (method != null)
@@ -41,9 +41,9 @@ namespace MonoKit.Domain
 //            return false;
         }
 
-        public bool ExecuteMethodForParams(object instance, params object[] args)
+        public static bool ExecuteMethodForParams(object instance, params object[] args)
         {
-            var method = this.GetCommandHandlerMethod(instance, args);
+            var method = GetCommandHandlerMethod(instance, args);
 
             if (method != null)
             {
@@ -73,7 +73,7 @@ namespace MonoKit.Domain
 //            return null;
 //        }
 
-        private MethodInfo GetCommandHandlerMethod(object instance, params object[] args)
+        private static MethodInfo GetCommandHandlerMethod(object instance, params object[] args)
         {
             foreach (var method in instance.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance))
             {

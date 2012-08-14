@@ -34,6 +34,13 @@ namespace MonoKit.UI.AwesomeMenu
     using MonoTouch.ObjCRuntime;
     using MonoTouch.UIKit;
 
+    public enum LayoutMode
+    {
+        Radial,
+        Vertical,
+        Horizontal
+    }
+
     public sealed class Menu : UIView
     {
         private readonly List<MenuItem> menuItems;
@@ -47,6 +54,7 @@ namespace MonoKit.UI.AwesomeMenu
         public Menu(RectangleF frame) : base(frame)
         {
             this.BackgroundColor = UIColor.Clear;
+            this.Mode = LayoutMode.Radial;
             this.NearRadius = MenuDefaults.NearRadius;
             this.EndRadius = MenuDefaults.EndRadius;
             this.FarRadius = MenuDefaults.FarRadius;
@@ -74,6 +82,7 @@ namespace MonoKit.UI.AwesomeMenu
         public Menu(RectangleF frame, IEnumerable<MenuItem> menus) : base(frame)
         {
             this.BackgroundColor = UIColor.Clear;
+            this.Mode = LayoutMode.Radial;
             this.NearRadius = MenuDefaults.NearRadius;
             this.EndRadius = MenuDefaults.EndRadius;
             this.FarRadius = MenuDefaults.FarRadius;
@@ -124,6 +133,8 @@ namespace MonoKit.UI.AwesomeMenu
             }
         }
 
+        public LayoutMode Mode { get; set; }
+
         public double TimeOffset { get; set; }
         
         public float NearRadius { get; set; }
@@ -139,6 +150,8 @@ namespace MonoKit.UI.AwesomeMenu
         public float ExpandRotation { get; set; }
 
         public float CloseRotation { get; set; }
+
+        public float RadiusStep { get; set; }
 
         public UIImage Image
         {
@@ -379,6 +392,7 @@ namespace MonoKit.UI.AwesomeMenu
 
             item.Layer.AddAnimation(animationGroup, "Expand");
 
+            item.Alpha = 1f;
             item.Center = item.EndPoint;
             this.flag++;
         }
@@ -387,6 +401,8 @@ namespace MonoKit.UI.AwesomeMenu
         {
             int count = this.MenuItems.Count;
 
+            float step = 0f;
+
             for (int i = 0; i < count; i++) 
             {
                 MenuItem item = this.MenuItems[i];
@@ -394,25 +410,76 @@ namespace MonoKit.UI.AwesomeMenu
                 item.MenuTag = 1000 + i;
                 item.StartPoint = this.StartPoint;
 
-                var endPoint = new PointF(this.StartPoint.X + this.EndRadius * (float)Math.Sin(i * this.MenuWholeAngle / count), 
-                                          this.StartPoint.Y - this.EndRadius * (float)Math.Cos(i * this.MenuWholeAngle / count));
+                switch (this.Mode)
+                {
+                    case LayoutMode.Radial:
+                        this.LayoutMenuItemRadial(item, i, count, step);
+                        break;
 
-                item.EndPoint = RotateCGPointAroundCenter(endPoint, this.StartPoint, this.RotateAngle);
+                    case LayoutMode.Horizontal:
+                        this.LayoutMenuItemHorizontal(item, i, count, step);
+                        break;
 
-                var nearPoint = new PointF(this.StartPoint.X + this.NearRadius * (float)Math.Sin(i * this.MenuWholeAngle / count), 
-                                           this.StartPoint.Y - this.NearRadius * (float)Math.Cos(i * this.MenuWholeAngle / count));
+                    case LayoutMode.Vertical:
+                        this.LayoutMenuItemVertical(item, i, count, step);
+                        break;
+                }
 
-                item.NearPoint = RotateCGPointAroundCenter(nearPoint, this.StartPoint, this.RotateAngle);
-
-                var farPoint = new PointF(this.StartPoint.X + this.FarRadius * (float)Math.Sin(i * this.MenuWholeAngle / count), 
-                                          this.StartPoint.Y - this.FarRadius * (float)Math.Cos(i * this.MenuWholeAngle / count));
-
-                item.FarPoint = RotateCGPointAroundCenter(farPoint, this.StartPoint, this.RotateAngle);
 
                 item.Center = item.StartPoint;
 
                 this.InsertSubviewBelow(item, this.addButton);
+
+                step += this.RadiusStep;
             }
+        }
+
+        private void LayoutMenuItemRadial(MenuItem item, int index, int count, float step)
+        {
+            var endPoint = new PointF(this.StartPoint.X + (this.EndRadius - step) * (float)Math.Sin(index * this.MenuWholeAngle / count), 
+                                      this.StartPoint.Y - (this.EndRadius - step) * (float)Math.Cos(index * this.MenuWholeAngle / count));
+
+            item.EndPoint = RotateCGPointAroundCenter(endPoint, this.StartPoint, this.RotateAngle);
+
+            var nearPoint = new PointF(this.StartPoint.X + (this.NearRadius - step) * (float)Math.Sin(index * this.MenuWholeAngle / count), 
+                                       this.StartPoint.Y - (this.NearRadius - step) * (float)Math.Cos(index * this.MenuWholeAngle / count));
+
+            item.NearPoint = RotateCGPointAroundCenter(nearPoint, this.StartPoint, this.RotateAngle);
+
+            var farPoint = new PointF(this.StartPoint.X + (this.FarRadius - step) * (float)Math.Sin(index * this.MenuWholeAngle / count), 
+                                      this.StartPoint.Y - (this.FarRadius - step) * (float)Math.Cos(index * this.MenuWholeAngle / count));
+
+            item.FarPoint = RotateCGPointAroundCenter(farPoint, this.StartPoint, this.RotateAngle);
+        }
+
+        private void LayoutMenuItemHorizontal(MenuItem item, int index, int count, float step)
+        {
+            var endPoint = new PointF(this.StartPoint.X + (this.EndRadius - step), this.StartPoint.Y);
+
+            item.EndPoint = RotateCGPointAroundCenter(endPoint, this.StartPoint, this.RotateAngle);
+
+            var nearPoint = new PointF(this.StartPoint.X + (this.NearRadius - step), this.StartPoint.Y);
+
+            item.NearPoint = RotateCGPointAroundCenter(nearPoint, this.StartPoint, this.RotateAngle);
+
+            var farPoint = new PointF(this.StartPoint.X + (this.FarRadius - step), this.StartPoint.Y);
+
+            item.FarPoint = RotateCGPointAroundCenter(farPoint, this.StartPoint, this.RotateAngle);
+        }
+
+        private void LayoutMenuItemVertical(MenuItem item, int index, int count, float step)
+        {
+            var endPoint = new PointF(this.StartPoint.X, this.StartPoint.Y + (this.EndRadius - step));
+
+            item.EndPoint = RotateCGPointAroundCenter(endPoint, this.StartPoint, this.RotateAngle);
+
+            var nearPoint = new PointF(this.StartPoint.X, this.StartPoint.Y + (this.NearRadius - step));
+
+            item.NearPoint = RotateCGPointAroundCenter(nearPoint, this.StartPoint, this.RotateAngle);
+
+            var farPoint = new PointF(this.StartPoint.X, this.StartPoint.Y + (this.FarRadius - step));
+
+            item.FarPoint = RotateCGPointAroundCenter(farPoint, this.StartPoint, this.RotateAngle);
         }
 
         [Export("close:")]
@@ -445,14 +512,20 @@ namespace MonoKit.UI.AwesomeMenu
             path.AddLineToPoint(item.StartPoint.X, item.StartPoint.Y);
             positionAnimation.Path = path;
 
+            var alphaAnimation = (CAKeyFrameAnimation)CAKeyFrameAnimation.FromKeyPath("opacity");
+            alphaAnimation.Values = new NSNumber[] {1f, 1f, 0f};
+            alphaAnimation.Duration = 0.5f;
+            alphaAnimation.KeyTimes = new NSNumber[] {0f, 0.8f, 1f};
+
             var animationGroup = new CAAnimationGroup();
-            animationGroup.Animations = new[] {positionAnimation, rotateAnimation};
+            animationGroup.Animations = new[] { positionAnimation, rotateAnimation, alphaAnimation };
             animationGroup.Duration = 0.5f;
             animationGroup.FillMode = CAFillMode.Forwards;
             animationGroup.TimingFunction = CAMediaTimingFunction.FromName(CAMediaTimingFunction.EaseIn);
 
             item.Layer.AddAnimation(animationGroup, "Close");
 
+            item.Alpha = 0f;
             item.Center = item.StartPoint;
             flag--;
         }
@@ -462,6 +535,7 @@ namespace MonoKit.UI.AwesomeMenu
             this.AwesomeMenuItemTouchesEnd(sender as MenuItem);
         }
 
+        // todo: animate opacity to match expand / close 
         private CAAnimationGroup BlowupAnimationAtPoint(PointF p)
         {
             var positionAnimation = (CAKeyFrameAnimation)CAKeyFrameAnimation.FromKeyPath("position");

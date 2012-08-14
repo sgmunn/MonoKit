@@ -233,7 +233,7 @@ namespace MonoKit.Metro
 
         private UIViewController presentedController;
 
-        public void Present(UIViewController controller)
+        public virtual void Present(UIViewController controller)
         {
             this.AddChildViewController(controller);
             this.presentedController = controller;
@@ -261,7 +261,7 @@ namespace MonoKit.Metro
             });
         }
 
-        public void Dismiss()
+        public virtual void Dismiss()
         {
             if (this.presentedController != null)
             {

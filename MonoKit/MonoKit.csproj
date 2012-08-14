@@ -143,5 +143,6 @@
     <Compile Include="Reactive\EmptyActions.cs" />
     <Compile Include="Reactive\Linq\Observable.cs" />
     <Compile Include="Domain\IdLock.cs" />
+    <Compile Include="Domain\Identity.cs" />
   </ItemGroup>
 </Project>

@@ -27,9 +27,6 @@ namespace MonoKit.Domain
 
     public abstract class AggregateRoot : IAggregateRoot
     {
-        // todo: 
-        private static MethodExecutor Executor = new MethodExecutor();
-
         private readonly List<IEvent> uncommittedEvents;
 
         public AggregateRoot()
@@ -101,7 +98,7 @@ namespace MonoKit.Domain
 
         private void ApplyEvent(IEvent @event)
         {
-            if (!Executor.ExecuteMethodForSingleParam(this, @event))
+            if (!MethodExecutor.ExecuteMethodForSingleParam(this, @event))
             {
                 throw new MissingMethodException(string.Format("Aggregate {0} does not support a method that can be called with {1}", this, @event));
             }

@@ -23,40 +23,38 @@ namespace MonoKit.Domain.Data
     using System;
     using System.Collections.Generic;
 
-    public abstract class ReadModelBuilder : MethodExecutor, IReadModelBuilder
+    public abstract class ReadModelBuilder : IReadModelBuilder
     {
-        private readonly List<IReadModel> updatedReadModels;
+        private readonly List<ReadModelChangeEvent> updatedReadModels;
 
         protected ReadModelBuilder()
         {
-            this.updatedReadModels = new List<IReadModel>();
+            this.updatedReadModels = new List<ReadModelChangeEvent>();
         }
 
-        public IEnumerable<IReadModel> Handle(IList<IEvent> events)
+        public IEnumerable<ReadModelChangeEvent> Handle(IList<IEvent> events)
         {
             this.updatedReadModels.Clear();
 
             // now, for each domain event, call a method that takes the event and call it
-            foreach (var @event in events)
+            foreach (var evt in events)
             {
                 // todo: should we check for not handling the event or not.  read model builders probably don't need to 
                 // handle *everthing*
-                this.ExecuteMethodForParams(this, @event);
+                MethodExecutor.ExecuteMethodForParams(this, evt);
             }
 
             return this.updatedReadModels;
         }
 
-        /// <summary>
-        /// Provides a reminder to inheritors that we need to register which read models we update so that we can
-        /// publish them on the event bus.  A bit of an annoyance but we'll see how well this works first.
-        /// </summary>
-        protected abstract void DoSaveReadModel(IReadModel readModel);
-
-        protected void SaveReadModel(IReadModel readModel)
+        protected void NotifyReadModelChange(IReadModel readModel, ReadModelChange change)
         {
-            this.DoSaveReadModel(readModel);
-            this.updatedReadModels.Add(readModel);
+            this.updatedReadModels.Add(new ReadModelChangeEvent(readModel, change));
+        }
+
+        protected void NotifyReadModelChange(Guid id, ReadModelChange change)
+        {
+            this.updatedReadModels.Add(new ReadModelChangeEvent(id, change));
         }
     }
 }

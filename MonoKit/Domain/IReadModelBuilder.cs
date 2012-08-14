@@ -23,9 +23,38 @@ namespace MonoKit.Domain
     using System;
     using System.Collections.Generic;
 
+    // todo: do we need to have added?  
+    public enum ReadModelChange
+    {
+        Changed,
+        Deleted
+    }
+
+    public class ReadModelChangeEvent 
+    {
+        public ReadModelChangeEvent(IReadModel readModel, ReadModelChange change)
+        {
+            this.ReadModel = readModel;
+            this.Id = readModel.Id;
+            this.Change = change;
+        }
+
+        public ReadModelChangeEvent(Guid id, ReadModelChange change)
+        {
+            this.Id = id;
+            this.Change = change;
+        }
+
+        public Guid Id { get; private set; }
+
+        public IReadModel ReadModel { get; private set; }
+
+        public ReadModelChange Change { get; private set; }
+    }
+
     public interface IReadModelBuilder
     {
-        IEnumerable<IReadModel> Handle(IList<IEvent> events);
+        IEnumerable<ReadModelChangeEvent> Handle(IList<IEvent> events);
     }
 }
 

@@ -31,12 +31,12 @@ namespace MonoKit.Domain
 
         private readonly List<IEvent> events;
 
-        private readonly List<IReadModel> readModels;
+        private readonly List<ReadModelChangeEvent> readModels;
         
         public UnitOfWorkEventBus(IEventBus bus)
         {
             this.events = new List<IEvent>();
-            this.readModels = new List<IReadModel>();
+            this.readModels = new List<ReadModelChangeEvent>();
             this.bus = bus;
         }
         
@@ -45,7 +45,7 @@ namespace MonoKit.Domain
             this.events.Add(@event);
         }
 
-        public void Publish(IReadModel readModel)
+        public void Publish(ReadModelChangeEvent readModel)
         {
             this.readModels.Add(readModel);
         }
@@ -69,11 +69,11 @@ namespace MonoKit.Domain
                 // enough
 
                 // only publish each read model once and then the last one
-                var distinctIds = this.readModels.Select(x => x.Id).Distinct().ToList();
+                var distinctIds = this.readModels.Select(x => x.ReadModel.Id).Distinct().ToList();
 
                 foreach (var readModelId in distinctIds)
                 {
-                    this.bus.Publish(this.readModels.Last(x => x.Id == readModelId));
+                    this.bus.Publish(this.readModels.Last(x => x.ReadModel.Id == readModelId));
                 }
             }
         }

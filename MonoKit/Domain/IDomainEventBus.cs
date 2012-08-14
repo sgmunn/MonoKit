@@ -22,7 +22,7 @@ namespace MonoKit.Domain
 {
     using System;
 
-    public interface IDomainEventBus : IEventBus, IObservable<IEvent>, IObservable<IReadModel> 
+    public interface IDomainEventBus : IEventBus, IObservable<IEvent>, IObservable<ReadModelChangeEvent> 
     {
     }
 }

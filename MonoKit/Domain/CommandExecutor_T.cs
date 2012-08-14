@@ -25,7 +25,7 @@ namespace MonoKit.Domain
     using System.Diagnostics;
     using MonoKit.Data;
 
-    public class CommandExecutor<T> : MethodExecutor, ICommandExecutor<T> where T : class, IAggregateRoot, new()
+    public class CommandExecutor<T> : ICommandExecutor<T> where T : class, IAggregateRoot, new()
     {
         private readonly IRepository<T> repository;
 
@@ -68,7 +68,10 @@ namespace MonoKit.Domain
             if (bus != null && root as ISnapshotSupport != null)
             {
                 var snapshot = ((ISnapshotSupport)root).GetSnapshot() as ISnapshot;
-                bus.Publish(snapshot);
+
+                // todo: correct readmodel change for snapshot
+                //bus.Publish(snapshot);
+                bus.Publish(new ReadModelChangeEvent(snapshot, ReadModelChange.Changed));
             }
 
             if (expectedVersion != 0 && !this.versions.ContainsKey(root.AggregateId))
@@ -81,7 +84,7 @@ namespace MonoKit.Domain
         {
             try
             {
-                if (!this.ExecuteMethodForSingleParam(aggregate, command))
+                if (!MethodExecutor.ExecuteMethodForSingleParam(aggregate, command))
                 {
                     throw new MissingMethodException(string.Format("Aggregate {0} does not support a method that can be called with {1}", aggregate, command));
                 }
