@@ -22,39 +22,11 @@ namespace MonoKit.Domain
 {
     using System;
     using System.Collections.Generic;
-
-    // todo: do we need to have added?  
-    public enum ReadModelChange
-    {
-        Changed,
-        Deleted
-    }
-
-    public class ReadModelChangeEvent 
-    {
-        public ReadModelChangeEvent(IReadModel readModel, ReadModelChange change)
-        {
-            this.ReadModel = readModel;
-            this.Id = readModel.Id;
-            this.Change = change;
-        }
-
-        public ReadModelChangeEvent(Identity id, ReadModelChange change)
-        {
-            this.Id = id;
-            this.Change = change;
-        }
-
-        public Identity Id { get; private set; }
-
-        public IReadModel ReadModel { get; private set; }
-
-        public ReadModelChange Change { get; private set; }
-    }
+    using MonoKit.Data;
 
     public interface IReadModelBuilder
     {
-        IEnumerable<ReadModelChangeEvent> Handle(IList<IEvent> events);
+        IEnumerable<IReadModelChange> Handle(IList<IEvent> events);
     }
 }
 

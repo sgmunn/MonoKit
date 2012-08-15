@@ -22,17 +22,18 @@ namespace MonoKit.Domain.Data
 {
     using System;
     using System.Collections.Generic;
+    using MonoKit.Data;
 
     public abstract class ReadModelBuilder : IReadModelBuilder
     {
-        private readonly List<ReadModelChangeEvent> updatedReadModels;
+        private readonly List<IReadModelChange> updatedReadModels;
 
         protected ReadModelBuilder()
         {
-            this.updatedReadModels = new List<ReadModelChangeEvent>();
+            this.updatedReadModels = new List<IReadModelChange>();
         }
 
-        public IEnumerable<ReadModelChangeEvent> Handle(IList<IEvent> events)
+        public IEnumerable<IReadModelChange> Handle(IList<IEvent> events)
         {
             this.updatedReadModels.Clear();
 
@@ -47,14 +48,14 @@ namespace MonoKit.Domain.Data
             return this.updatedReadModels;
         }
 
-        protected void NotifyReadModelChange(IReadModel readModel, ReadModelChange change)
+        protected void NotifyReadModelChange(IReadModel readModel, bool deleted)
         {
-            this.updatedReadModels.Add(new ReadModelChangeEvent(readModel, change));
+            this.updatedReadModels.Add(new ReadModelChange(readModel, deleted));
         }
 
-        protected void NotifyReadModelChange(Identity id, ReadModelChange change)
+        protected void NotifyReadModelChange(IIdentity id, bool deleted)
         {
-            this.updatedReadModels.Add(new ReadModelChangeEvent(id, change));
+            this.updatedReadModels.Add(new ReadModelChange(id, deleted));
         }
     }
 }

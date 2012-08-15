@@ -65,7 +65,7 @@ namespace MonoKit.Reactive
         {
             this.onNext = (_) => {};
             this.onCompleted = onCompleted;
-            this.onError = onError;
+            this.onError = (_) => {};
         }
 
         public void OnCompleted ()

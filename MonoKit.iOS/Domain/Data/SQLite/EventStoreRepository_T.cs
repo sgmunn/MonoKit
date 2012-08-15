@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="EventStoreRepository_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -24,8 +24,8 @@ namespace MonoKit.Domain.Data.SQLite
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Threading;
-    using MonoKit.Data;
     using MonoKit.Data.SQLite;
+    using MonoKit.Tasks;
     
     public class EventStoreRepository<T> : IEventStoreRepository where T : IEventStoreContract, new() 
     {

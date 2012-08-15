@@ -1,15 +1,15 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file=".cs" company="sgmunn">
+//  <copyright file="Identity.cs" company="sgmunn">
 //    (c) sgmunn 2012  
-// 
+//
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
 //    documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
 //    the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
 //    to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-// 
+//
 //    The above copyright notice and this permission notice shall be included in all copies or substantial portions of 
 //    the Software.
-//  
+//
 //    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO 
 //    THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
 //    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
@@ -17,77 +17,60 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-// 
+//
 
-namespace MonoKit.Reactive
+namespace MonoKit.Data
 {
     using System;
-    using MonoKit.Reactive.Concurrency;
-    using System.Collections.Generic;
 
-    public class ScheduledObserver<T> : IObserver<T>, IDisposable
+    public class Identity : IIdentity, IEquatable<IIdentity>, IEquatable<Identity>, IEquatable<Guid>
     {
-        private readonly Queue<Action> queue;
-
-        private readonly IScheduler scheduler;
-
-        private readonly IObserver<T> observer;
-
-        public ScheduledObserver(IScheduler scheduler, IObserver<T> observer)
+        public Identity(Guid id)
         {
-            this.queue = new Queue<Action>();
-            this.scheduler = scheduler;
-            this.observer = observer;
+            this.Id = id;
         }
 
-        public void OnCompleted()
+        public Guid Id { get; private set; }
+
+        public static implicit operator Guid(Identity id)
         {
-            this.queue.Enqueue(() =>
+            return object.ReferenceEquals(id, null) ? Guid.Empty : id.Id;
+        }
+
+        public bool Equals(IIdentity other)
+        {
+            return this == other;
+        }
+
+        public bool Equals(Identity other)
+        {
+            return this == other;
+        }
+
+        public bool Equals(Guid other)
+        {
+            return this.Id == other;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as Identity;
+            if (object.ReferenceEquals(other, null))
             {
-                this.observer.OnCompleted();
-            });
+                return false;
+            }
 
-            this.ScheduleFromQueue();
+            return this.Equals(other);
         }
 
-        public void OnError(Exception error)
+        public override int GetHashCode()
         {
-            this.queue.Enqueue(() =>
-            {
-                this.observer.OnError(error);
-            });
-
-            this.ScheduleFromQueue();
+            return this.Id.GetHashCode();
         }
 
-        public void OnNext(T value)
+        public override string ToString()
         {
-            // todo: locking
-            this.queue.Enqueue(() =>
-            {
-                this.observer.OnNext(value);
-            });
-
-            this.ScheduleFromQueue();
-        }
-
-        public void Dispose()
-        {
-        }
-
-        private void ScheduleFromQueue()
-        {
-            // todo: locking 
-            //var disposable = 
-            this.scheduler.Schedule(() =>
-            {
-                var action = this.queue.Dequeue();
-                if (action != null)
-                {
-                    action();
-                }
-            });
+            return this.GetType().Name + "[" + this.Id + "]";
         }
     }
-    
 }

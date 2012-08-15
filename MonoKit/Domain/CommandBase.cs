@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="CommandBase.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -22,6 +22,7 @@ namespace MonoKit.Domain
 {
     using System;
     using System.Runtime.Serialization;
+    using MonoKit.Data;
 
     [DataContract(Name="CommandBase", Namespace=DomainNamespace.Namespace)]
     public abstract class CommandBase : ICommand
@@ -33,7 +34,7 @@ namespace MonoKit.Domain
 
         // todo: check serialization of Identity
         [DataMember]
-        public Identity AggregateId { get; set; }
+        public IIdentity AggregateId { get; set; }
         
         [DataMember]
         public Guid CommandId { get; set; }

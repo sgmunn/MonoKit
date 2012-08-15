@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="DomainContext.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -58,11 +58,11 @@ namespace MonoKit.Domain
             return new DomainCommandExecutor<T>(this);
         }
 
-        public virtual IAggregateRepository<T> AggregateRepository<T>(IEventBus bus) where T : IAggregateRoot, new()
+        public virtual IAggregateRepository<T> GetAggregateRepository<T>(IEventBus bus) where T : IAggregateRoot, new()
         {
             if (typeof(T).GetInterfaces().Contains(typeof(IEventSourced)))
             {
-                return new AggregateRepository<T>(this.EventSerializer, this.EventStore, new EventBus<T>(this, bus));
+                return new EventSourcedAggregateRepository<T>(this.EventSerializer, this.EventStore, new EventBus<T>(this, bus));
             }
 
             return new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new EventBus<T>(this, bus));

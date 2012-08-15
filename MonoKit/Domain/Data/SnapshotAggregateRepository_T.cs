@@ -72,11 +72,13 @@ namespace MonoKit.Domain.Data
             {
                 return;
             }
-            
+
+            // todo: updatewhere to avoid deadlocks -- aggregate / version table
+           
             // todo: this could cause deadlocks if multiple threads / processes can access the persistence store at any one time
             // we need to either lock or update where instead of the read then write
             // snapshot repositories need to do an update where id = xx or we implement a lock for each aggregate id - will be fine for single process apps
-            var current = this.GetById(instance.AggregateId);
+            var current = this.GetById(instance.Identity);
 
             int expectedVersion = instance.UncommittedEvents.First().Version - 1;
 
@@ -98,7 +100,7 @@ namespace MonoKit.Domain.Data
 
         public void Delete(T instance)
         {
-            this.repository.DeleteId(instance.AggregateId);
+            this.repository.DeleteId(instance.Identity);
         }
 
         public void DeleteId(object id)

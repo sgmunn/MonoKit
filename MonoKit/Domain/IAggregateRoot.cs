@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="IAggregateRoot.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -22,11 +22,10 @@ namespace MonoKit.Domain
 {
     using System;
     using System.Collections.Generic;
+    using MonoKit.Data;
 
-    public interface IAggregateRoot
+    public interface IAggregateRoot : IIdentifiableObject
     {
-        Identity AggregateId { get; }
-        
         int Version { get; }
 
         IEnumerable<IEvent> UncommittedEvents { get; }

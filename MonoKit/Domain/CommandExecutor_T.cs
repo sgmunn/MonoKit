@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="CommandExecutor_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,33 +23,46 @@ namespace MonoKit.Domain
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using MonoKit.Data;
 
     public class CommandExecutor<T> : ICommandExecutor<T> where T : class, IAggregateRoot, new()
     {
         private readonly IRepository<T> repository;
 
-        private readonly Dictionary<Identity, int> versions;
+        private readonly Dictionary<IIdentity, int> versions;
 
-        private readonly IEventBus bus;
+//        private readonly IEventBus bus;
 
-        public CommandExecutor(IRepository<T> repository, IEventBus bus)
+        public CommandExecutor(IRepository<T> repository)//, IEventBus bus)
         {
             this.repository = repository;
-            this.bus = bus;
-            this.versions = new Dictionary<Identity, int>();
+//            this.bus = bus;
+            this.versions = new Dictionary<IIdentity, int>();
         }
 
         public void Execute(ICommand command, int expectedVersion)
         {
-            var root = this.repository.GetById(command.AggregateId) ?? this.repository.New();
+            this.Execute(new [] { command }, expectedVersion);
+        }
+
+        public void Execute(IEnumerable<ICommand> commands, int expectedVersion)
+        {
+            if (!commands.Any())
+            {
+                return;
+            }
+
+            // todo: handle different aggregate id's within the same set of commands
+
+            var root = this.repository.GetById(commands.First().AggregateId) ?? this.repository.New();
 
             if (expectedVersion != 0)
             {
                 var rootVersion = root.Version;
-                if (this.versions.ContainsKey(root.AggregateId))
+                if (this.versions.ContainsKey(root.Identity))
                 {
-                    rootVersion = this.versions[root.AggregateId];
+                    rootVersion = this.versions[root.Identity];
                 }
     
                 if (rootVersion != expectedVersion)
@@ -58,26 +71,34 @@ namespace MonoKit.Domain
                 }
             }
 
-            this.Execute(root, command);
-   
+            foreach (var cmd in commands)
+            {
+                this.Execute(root, cmd);
+            }
+
             this.repository.Save(root);
+//            this.PublishSnapshot(root);
 
-            // we can assume that this is what is going to be saved, as the version will ensure consistency
-            // thus, if the aggregate supports snapshot we can publish it
-            // a bit hacky, will think on it.
-            if (bus != null && root as ISnapshotSupport != null)
+            if (expectedVersion != 0 && !this.versions.ContainsKey(root.Identity))
             {
-                var snapshot = ((ISnapshotSupport)root).GetSnapshot() as ISnapshot;
-
-                // todo: correct readmodel change for snapshot
-                //bus.Publish(snapshot);
-                bus.Publish(new ReadModelChangeEvent(snapshot, ReadModelChange.Changed));
+                this.versions[root.Identity] = expectedVersion;
             }
+        }
 
-            if (expectedVersion != 0 && !this.versions.ContainsKey(root.AggregateId))
-            {
-                this.versions[root.AggregateId] = expectedVersion;
-            }
+        private void PublishSnapshot(IAggregateRoot root)
+        {
+//            // we can assume that this is what is going to be saved, as the version will ensure consistency
+//            // thus, if the aggregate supports snapshot we can publish it
+//            // a bit hacky, will think on it.
+//            var snapshotRoot = root as ISnapshotSupport;
+//            if (bus != null && snapshotRoot != null)
+//            {
+//                var snapshot = snapshotRoot.GetSnapshot();
+//
+//                // todo: correct readmodel change for snapshot
+//                //bus.Publish(snapshot);
+//                bus.Publish(new ReadModelChange(snapshot, false));
+//            }
         }
 
         private void Execute(IAggregateRoot aggregate, ICommand command)

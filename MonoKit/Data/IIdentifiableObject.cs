@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file=".cs" company="sgmunn">
+//  <copyright file="IIdentifiableObject.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -19,63 +19,12 @@
 //  --------------------------------------------------------------------------------------------------------------------
 //
 
-namespace MonoKit.Domain
+namespace MonoKit.Data
 {
     using System;
 
-    public class Identity : IEquatable<Identity>, IEquatable<Guid>
+    public interface IIdentifiableObject
     {
-        public Identity(Guid id)
-        {
-            this.Id = id;
-        }
-
-        public Guid Id { get; private set; }
-
-        public static implicit operator Guid(Identity id)
-        {
-            return object.ReferenceEquals(id, null) ? Guid.Empty : id.Id;
-        }
-
-//        public static bool operator ==(Identity a, Identity b)
-//        {
-//            return a.Id == b.Id;
-//        }
-//
-//        public static bool operator !=(Identity a, Identity b)
-//        {
-//            return !(a.Id == b.Id);            
-//        }
-
-        public bool Equals(Identity other)
-        {
-            return this == other;
-        }
-
-        public bool Equals(Guid other)
-        {
-            return this.Id == other;
-        }
-
-        public override bool Equals(object obj)
-        {
-            var other = obj as Identity;
-            if (object.ReferenceEquals(other, null))
-            {
-                return false;
-            }
-
-            return this.Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            return this.Id.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return this.GetType().Name + "[" + this.Id + "]";
-        }
+        IIdentity Identity { get; }
     }
 }

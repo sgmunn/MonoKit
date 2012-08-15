@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="DomainCommandExecutor_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,6 +17,7 @@
 //   IN THE SOFTWARE.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+using MonoKit.Domain.Data;
 
 namespace MonoKit.Domain
 {
@@ -36,26 +37,20 @@ namespace MonoKit.Domain
         
         public void Execute(ICommand command)
         {
-            var bus = new UnitOfWorkEventBus(this.context.EventBus);
-            using (bus)
-            {
-                var scope = this.context.BeginUnitOfWork();
-                using (scope)
-                {
-                    // uow will be owned by the scope, so we don't need to dispose explicitly
-                    var uow = new UnitOfWork<T>(scope, this.context.AggregateRepository<T>(bus));
-                
-                    var cmd = new CommandExecutor<T>(uow, bus);
-                    cmd.Execute(command, 0);
-                
-                    scope.Commit();
-                }
-
-                bus.Commit();
-            }
+            this.Execute(new[] { command }, 0);
+        }
+        
+        public void Execute(IEnumerable<ICommand> commands)
+        {
+            this.Execute(commands, 0);
+        }
+        
+        public void Execute(ICommand command, int expectedVersion)
+        {
+            this.Execute(new[] { command }, expectedVersion);
         }
 
-        public void Execute(IEnumerable<ICommand> commands)
+        public void Execute(IEnumerable<ICommand> commands, int expectedVersion)
         {
             var bus = new UnitOfWorkEventBus(this.context.EventBus);
             using (bus)
@@ -64,9 +59,9 @@ namespace MonoKit.Domain
                 using (scope)
                 {
                     // uow will be owned by the scope, so we don't need to dispose explicitly
-                    var uow = new UnitOfWork<T>(scope, this.context.AggregateRepository<T>(bus));
+                    var uow = new PublishingRepository<T>(scope, this.context.GetAggregateRepository<T>(bus), bus);
                 
-                    var cmd = new CommandExecutor<T>(uow, bus);
+                    var cmd = new CommandExecutor<T>(uow);//, bus);
 
                     foreach (var command in commands.ToList())
                     {
@@ -78,11 +73,6 @@ namespace MonoKit.Domain
 
                 bus.Commit();
             }
-        }
-
-        public void Execute(ICommand command, int expectedVersion)
-        {
-            this.Execute(command, expectedVersion);
         }
     }
 }

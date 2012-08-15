@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="IDomainContext.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -37,7 +37,7 @@ namespace MonoKit.Domain
 
         IDomainCommandExecutor<T> NewCommandExecutor<T>() where T : class, IAggregateRoot, new();
         
-        IAggregateRepository<T> AggregateRepository<T>(IEventBus bus) where T : IAggregateRoot, new();
+        IAggregateRepository<T> GetAggregateRepository<T>(IEventBus bus) where T : IAggregateRoot, new();
 
         IList<IReadModelBuilder> GetReadModelBuilders(Type aggregateType);
     }

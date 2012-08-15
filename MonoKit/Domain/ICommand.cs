@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="ICommand.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,10 +21,11 @@
 namespace MonoKit.Domain
 {
     using System;
+    using MonoKit.Data;
 
     public interface ICommand
     {
-        Identity AggregateId { get; }
+        IIdentity AggregateId { get; }
 
         Guid CommandId { get; }
     }

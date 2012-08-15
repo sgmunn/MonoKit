@@ -17,6 +17,11 @@ namespace MonoKit.UnitTests.Domain
         {
             return new DomainId(Guid.NewGuid());
         }
+
+        public static implicit operator DomainId(Guid id)
+        {
+            return new DomainId(id);
+        }
     }
 
 
@@ -70,10 +75,19 @@ namespace MonoKit.UnitTests.Domain
         }
 
         [Test]
-        public void CastOfSubclass()
+        public void CastOfSubclassToGuid()
         {
             var identity = DomainId.NewId();
             Guid guid = identity;
+
+            Assert.AreEqual(identity, guid);
+        }
+
+        [Test]
+        public void CastOfSubclassFromGuid()
+        {
+            var guid = Guid.NewGuid();
+            Identity identity = (DomainId)guid;
 
             Assert.AreEqual(identity, guid);
         }

@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="RepositoryUnitOfWork.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,14 +18,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain
+namespace MonoKit.Data
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using MonoKit.Data;
     
-    public class UnitOfWork<T> : IUnitOfWork<T> where T : IAggregateRoot
+    public class RepositoryUnitOfWork<T> : IRepositoryUnitOfWork<T> where T : IIdentifiableObject
     {
         private readonly IRepository<T> repository;
 
@@ -33,7 +33,7 @@ namespace MonoKit.Domain
         
         private readonly List<object> deletedItemKeys;
 
-        public UnitOfWork(IUnitOfWorkScope scope, IRepository<T> repository)
+        public RepositoryUnitOfWork(IUnitOfWorkScope scope, IRepository<T> repository)
         {
             scope.Add(this);
             this.repository = repository;
@@ -81,21 +81,21 @@ namespace MonoKit.Domain
         {
             var saved = this.savedItems.Values;
 
-            return saved.Union(this.Repository.GetAll()).Where(x => !this.deletedItemKeys.Contains(x.AggregateId));
+            return saved.Union(this.Repository.GetAll()).Where(x => !this.deletedItemKeys.Contains(x.Identity));
         }
 
-        public void Save(T instance)
+        public virtual void Save(T instance)
         {
-            this.savedItems[instance.AggregateId] = instance;
+            this.savedItems[instance.Identity] = instance;
         }
 
-        public void Delete(T instance)
+        public virtual void Delete(T instance)
         {
-            var id = instance.AggregateId;
+            var id = instance.Identity;
             this.DeleteId(id);
         }
 
-        public void DeleteId(object id)
+        public virtual void DeleteId(object id)
         {
             if (!this.deletedItemKeys.Contains(id))
             {
@@ -103,7 +103,7 @@ namespace MonoKit.Domain
             }
         }
 
-        public void Commit()
+        public virtual void Commit()
         {
             foreach (var item in this.savedItems.Values)
             {
@@ -116,71 +116,4 @@ namespace MonoKit.Domain
             }
         }
     }
-
-
-
-//    // in this sqlite implementation of this, lock the connection so that we don't get threading issues 
-//    public interface IConnection
-//    {
-//        void BeginTransaction();
-//
-//        void Commit();
-//
-//        void Rollback();
-//    }
-//
-//    public class ConnectionUnitOfWork<T> : IUnitOfWork<T>
-//    {
-//        private IConnection connection;
-//
-//        private IRepository<T> repository;
-//
-//        public ConnectionUnitOfWork(IConnection connection, IRepository<T> repository)
-//        {
-//            this.connection = connection;
-//            this.repository = repository;
-//
-//            this.connection.BeginTransaction();
-//        }
-//
-//        public void Dispose()
-//        {
-//            this.connection.Rollback();
-//        }
-//
-//        public void Commit()
-//        {
-//            this.connection.Commit();
-//        }
-//
-//        public T New()
-//        {
-//            return this.repository.New();
-//        }
-//
-//        public T GetById(object id)
-//        {
-//            return this.repository.GetById(id);
-//        }
-//
-//        public IEnumerable<T> GetAll()
-//        {
-//            return this.GetAll();
-//        }
-//
-//        public void Save(T instance)
-//        {
-//            this.repository.Save(instance);
-//        }
-//
-//        public void Delete(T instance)
-//        {
-//            this.repository.Delete(instance);
-//        }
-//
-//        public void DeleteId(object id)
-//        {
-//            this.repository.DeleteId(id);
-//        }
-//    }
 }

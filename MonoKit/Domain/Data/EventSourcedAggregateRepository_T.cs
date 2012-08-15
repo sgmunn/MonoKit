@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="EventSourcedAggregateRepository_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -26,7 +26,7 @@ namespace MonoKit.Domain.Data
     using MonoKit.Data;
     
     // todo: pass in a repository of state and handle snaspshots
-    public class AggregateRepository<T> : IAggregateRepository<T> where T : IAggregateRoot, new()
+    public class EventSourcedAggregateRepository<T> : IAggregateRepository<T> where T : IAggregateRoot, new()
     {
         private readonly IEventStoreRepository repository;
 
@@ -34,7 +34,7 @@ namespace MonoKit.Domain.Data
         
         private readonly IEventBus<T> eventBus;
   
-        public AggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IEventBus<T> eventBus)
+        public EventSourcedAggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IEventBus<T> eventBus)
         {
             this.serializer = serializer;
             this.repository = repository;
@@ -81,9 +81,11 @@ namespace MonoKit.Domain.Data
                 return;
             }
 
+            // todo: updatewhere to avoid deadlocks -- aggregate / version table
+
             int expectedVersion = instance.UncommittedEvents.First().Version - 1;
 
-            var allEvents = this.repository.GetAllAggregateEvents(instance.AggregateId.Id).ToList();
+            var allEvents = this.repository.GetAllAggregateEvents(instance.Identity.Id).ToList();
 
             var lastEvent = allEvents.LastOrDefault();
             if ((lastEvent == null && expectedVersion != 0) || (lastEvent != null && lastEvent.Version != expectedVersion))
@@ -94,7 +96,7 @@ namespace MonoKit.Domain.Data
             foreach (var evt in instance.UncommittedEvents.ToList())
             {
                 var storedEvent = this.repository.New();
-                storedEvent.AggregateId = instance.AggregateId.Id;
+                storedEvent.AggregateId = instance.Identity.Id;
                 storedEvent.EventId = evt.EventId;
                 storedEvent.Version = evt.Version;
                 storedEvent.Event = this.serializer.SerializeToString(evt);
@@ -112,17 +114,17 @@ namespace MonoKit.Domain.Data
 
         public void Delete(T instance)
         {
-            // todo:
+            throw new NotSupportedException();
         }
 
         public void DeleteId(object id)
         {
-            // todo:
+            throw new NotSupportedException();
         }
 
         public void Dispose()
         {
-            // todo:
+            this.repository.Dispose();
         }
     }
 }

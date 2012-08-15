@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="SyncScheduler.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,14 +18,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain.Events
+namespace MonoKit.Tasks
 {
     using System;
-    using System.Runtime.Serialization;
 
-    [DataContract(Name="CreatedEvt", Namespace=DomainNamespace.Namespace)]
-    public class CreatedEvent : EventBase
+    public static class SyncScheduler
     {
+        public static SyncTaskScheduler TaskScheduler = new SyncTaskScheduler();
     }
 }
 

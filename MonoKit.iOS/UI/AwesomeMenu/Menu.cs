@@ -255,8 +255,7 @@ namespace MonoKit.UI.AwesomeMenu
             }
         }
 
-        [Export("pointInside:withEvent:")]
-        public bool PointInside(PointF point, UIEvent @event)
+        public override bool PointInside(PointF point, UIEvent @event)
         {
             if (this.isAnimating) 
             {

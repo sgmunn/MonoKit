@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="IRepositoryUnitOfWork_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,14 +18,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain.Commands
+namespace MonoKit.Data
 {
     using System;
-    using System.Runtime.Serialization;
 
-    [DataContract(Name="CreateCmd", Namespace=DomainNamespace.Namespace)]
-    public class CreateCommand : CommandBase
+    public interface IRepositoryUnitOfWork<T> : IRepository<T>, IUnitOfWork
     {
     }
 }
-

@@ -31,23 +31,23 @@ namespace MonoKit.Domain
 
         private readonly List<IEvent> events;
 
-        private readonly List<ReadModelChangeEvent> readModels;
+        private readonly List<IReadModelChange> readModels;
         
         public UnitOfWorkEventBus(IEventBus bus)
         {
             this.events = new List<IEvent>();
-            this.readModels = new List<ReadModelChangeEvent>();
+            this.readModels = new List<IReadModelChange>();
             this.bus = bus;
         }
         
-        public void Publish(IEvent @event)
+        public void Publish(IEvent evt)
         {
-            this.events.Add(@event);
+            this.events.Add(evt);
         }
 
-        public void Publish(ReadModelChangeEvent readModel)
+        public void Publish(IReadModelChange readModelChange)
         {
-            this.readModels.Add(readModel);
+            this.readModels.Add(readModelChange);
         }
 
         public void Dispose()
@@ -60,20 +60,20 @@ namespace MonoKit.Domain
         {
             if (this.bus != null)
             {
-                foreach (var @event in this.events)
+                foreach (var evt in this.events)
                 {
-                    this.bus.Publish(@event);
+                    this.bus.Publish(evt);
                 }
 
                 // todo: just need to check that we don't need type info here and that Id will be
                 // enough
 
                 // only publish each read model once and then the last one
-                var distinctIds = this.readModels.Select(x => x.ReadModel.Id).Distinct().ToList();
+                var distinctIds = this.readModels.Select(x => x.Identity).Distinct().ToList();
 
                 foreach (var readModelId in distinctIds)
                 {
-                    this.bus.Publish(this.readModels.Last(x => x.ReadModel.Id == readModelId));
+                    this.bus.Publish(this.readModels.Last(x => x.Identity == readModelId));
                 }
             }
         }

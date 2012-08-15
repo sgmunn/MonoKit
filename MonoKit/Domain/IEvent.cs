@@ -21,18 +21,14 @@
 namespace MonoKit.Domain
 {
     using System;
+    using MonoKit.Data;
 
     public interface IEvent
     {
-        Identity AggregateId { get; }
-
-        string AggregateTypeId { get; }
+        IIdentity AggregateId { get; }
 
         Guid EventId { get; }
         
-        // todo: we can use the command id to match events to commands, or when we store unsent commands
-        //Guid CommandId { get; }
-
         int Version { get; }
         
         DateTime Timestamp { get; }

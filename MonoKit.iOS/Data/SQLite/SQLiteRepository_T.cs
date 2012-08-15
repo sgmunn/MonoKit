@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="SQLiteRepository_.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -25,6 +25,7 @@ namespace MonoKit.Data.SQLite
     using System.Linq;
     using System.Threading.Tasks;
     using System.Threading;
+    using MonoKit.Tasks;
     
     public class SQLiteRepository<T> : IRepository<T> where T: new()
     {

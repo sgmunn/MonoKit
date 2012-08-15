@@ -43,12 +43,9 @@
     <Folder Include="Domain\" />
     <Folder Include="Domain\Data\" />
     <Folder Include="Tasks\" />
-    <Folder Include="Domain\Commands\" />
-    <Folder Include="Domain\Events\" />
     <Folder Include="Reactive\" />
     <Folder Include="Reactive\Disposables\" />
     <Folder Include="Reactive\Subjects\" />
-    <Folder Include="Domain\Reactive\" />
     <Folder Include="Reactive\Concurrency\" />
     <Folder Include="Reactive\Linq\" />
   </ItemGroup>
@@ -81,18 +78,14 @@
     <Compile Include="Data\IRepository_T.cs" />
     <Compile Include="Data\IUnitOfWork.cs" />
     <Compile Include="Data\IUnitOfWorkScope.cs" />
-    <Compile Include="Data\IUnitOfWork_T.cs" />
-    <Compile Include="Domain\UnitOfWork_T.cs" />
     <Compile Include="Domain\DefaultScope.cs" />
     <Compile Include="Domain\ICommandExecutor_T.cs" />
     <Compile Include="Domain\IEventSourced.cs" />
     <Compile Include="Domain\ISnapshot.cs" />
     <Compile Include="Domain\CommandExecutor_T.cs" />
     <Compile Include="Domain\Data\IAggregateRepository_T.cs" />
-    <Compile Include="Domain\Data\AggregateRepository_T.cs" />
     <Compile Include="Domain\Data\IEventStoreRepository.cs" />
     <Compile Include="Domain\Data\ConcurrencyException.cs" />
-    <Compile Include="Domain\Data\DictionaryRepository.cs" />
     <Compile Include="Domain\DomainNamespace.cs" />
     <Compile Include="Domain\IEvent.cs" />
     <Compile Include="Domain\EventBase.cs" />
@@ -109,11 +102,8 @@
     <Compile Include="Domain\EventBus_T.cs" />
     <Compile Include="Tasks\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Tasks\SyncTaskScheduler.cs" />
-    <Compile Include="Domain\Commands\CreateCommand.cs" />
-    <Compile Include="Domain\Events\CreatedEvent.cs" />
     <Compile Include="Domain\ISnapshotSupport.cs" />
     <Compile Include="Data\SyncRepository_T.cs" />
-    <Compile Include="Data\SyncScheduler.cs" />
     <Compile Include="Domain\Data\ISnapshotRepository.cs" />
     <Compile Include="Domain\Data\SnapshotAggregateRepository_T.cs" />
     <Compile Include="Domain\DomainContext.cs" />
@@ -130,11 +120,8 @@
     <Compile Include="Reactive\Disposables\AnonymousDisposable.cs" />
     <Compile Include="Reactive\Unit.cs" />
     <Compile Include="Reactive\Disposables\CompositeDisposable.cs" />
-    <Compile Include="Domain\Commands\DeleteCommand.cs" />
-    <Compile Include="Domain\Events\DeletedEvent.cs" />
     <Compile Include="Domain\UnitOfWorkEventBus.cs" />
     <Compile Include="Domain\IEventBus.cs" />
-    <Compile Include="Domain\IReadModel.cs" />
     <Compile Include="Reactive\Concurrency\IScheduler.cs" />
     <Compile Include="ObservableExtensions.cs" />
     <Compile Include="Reactive\Concurrency\ImmediateScheduler.cs" />
@@ -143,6 +130,19 @@
     <Compile Include="Reactive\EmptyActions.cs" />
     <Compile Include="Reactive\Linq\Observable.cs" />
     <Compile Include="Domain\IdLock.cs" />
-    <Compile Include="Domain\Identity.cs" />
+    <Compile Include="Domain\AggregateRoot_TState.cs" />
+    <Compile Include="Data\IRepositoryUnitOfWork_T.cs" />
+    <Compile Include="Data\IIdentifiableObject.cs" />
+    <Compile Include="Data\RepositoryUnitOfWork_T.cs" />
+    <Compile Include="Data\IIdentity.cs" />
+    <Compile Include="Data\Identity.cs" />
+    <Compile Include="Data\ReadModelChange.cs" />
+    <Compile Include="Data\IReadModelChange.cs" />
+    <Compile Include="Data\IReadModel.cs" />
+    <Compile Include="Tasks\SyncScheduler.cs" />
+    <Compile Include="Domain\Data\EventSourcedAggregateRepository_T.cs" />
+    <Compile Include="Domain\Data\PublishingRepository_T.cs" />
+    <Compile Include="Domain\IReadModelPublisher.cs" />
+    <Compile Include="Domain\Data\DictionaryRepository_T.cs" />
   </ItemGroup>
 </Project>

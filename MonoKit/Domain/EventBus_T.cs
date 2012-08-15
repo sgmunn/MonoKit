@@ -21,6 +21,7 @@ namespace MonoKit.Domain
 {
     using System;
     using System.Collections.Generic;
+    using MonoKit.Data;
 
     public class EventBus<T> : IEventBus<T> where T : IAggregateRoot
     {
@@ -38,7 +39,7 @@ namespace MonoKit.Domain
         {
             var builders = this.context.GetReadModelBuilders(typeof(T));
 
-            var updatedReadModels = new List<ReadModelChangeEvent>();
+            var updatedReadModels = new List<IReadModelChange>();
 
             // todo: this coud be done async, but because we should only have one thread to the db at any one time it's not really worth it.
             // just don't take too long in any one builder and don't make assumptions on the order of builders being executed.
@@ -49,9 +50,9 @@ namespace MonoKit.Domain
 
             if (this.bus != null)
             {
-                foreach (var @event in events)
+                foreach (var evt in events)
                 {
-                    this.bus.Publish(@event);
+                    this.bus.Publish(evt);
                 }
 
                 foreach (var readModel in updatedReadModels)

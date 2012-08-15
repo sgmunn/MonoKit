@@ -21,9 +21,11 @@
 namespace MonoKit.Domain
 {
     using System;
+    using System.Collections.Generic;
 
     public interface ICommandExecutor<T> where T : IAggregateRoot, new()
     {
         void Execute(ICommand command, int expectedVersion);
+        void Execute(IEnumerable<ICommand> commands, int expectedVersion);
     }
 }
