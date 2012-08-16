@@ -24,6 +24,8 @@ namespace MonoKit.Domain
     using System.Runtime.Serialization;
     using MonoKit.Data;
 
+    // todo: implement abstract properties
+
     [DataContract(Name="CommandBase", Namespace=DomainNamespace.Namespace)]
     public abstract class CommandBase : ICommand
     {

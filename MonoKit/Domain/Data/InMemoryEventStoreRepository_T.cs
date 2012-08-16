@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="InMemoryEventStoreRepository_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,6 +23,7 @@ namespace MonoKit.Domain.Data
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using MonoKit.Data;
     
     public class InMemoryEventStoreRepository<T> : DictionaryRepository<IEventStoreContract>, IEventStoreRepository where T : IEventStoreContract, new() 
     {

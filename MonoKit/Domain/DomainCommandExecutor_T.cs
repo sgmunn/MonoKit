@@ -17,7 +17,6 @@
 //   IN THE SOFTWARE.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-using MonoKit.Domain.Data;
 
 namespace MonoKit.Domain
 {
@@ -26,7 +25,7 @@ namespace MonoKit.Domain
     using System.Linq;
     using MonoKit.Data;
 
-    public class DomainCommandExecutor<T> : IDomainCommandExecutor<T> where T : class, IAggregateRoot, new()
+    public class DomainCommandExecutor<T> : ICommandExecutor<T> where T : class, IAggregateRoot, new()
     {
         private readonly IDomainContext context;
         
@@ -59,7 +58,7 @@ namespace MonoKit.Domain
                 using (scope)
                 {
                     // uow will be owned by the scope, so we don't need to dispose explicitly
-                    var uow = new PublishingRepository<T>(scope, this.context.GetAggregateRepository<T>(bus), bus);
+                    var uow = new UnitOfWorkRepository<T>(scope, this.context.GetAggregateRepository<T>(bus));
                 
                     var cmd = new CommandExecutor<T>(uow);//, bus);
 

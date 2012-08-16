@@ -18,51 +18,29 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
-namespace MonoKit.Domain
+namespace MonoKit.Data
 {
     using System;
     using System.Collections.Concurrent;
     using System.Threading;
 
-    /// <summary>
-    /// Provides a mechanism to lock id's.
-    /// </summary>
     public sealed class IdLock : IDisposable
     {
-        /// <summary>
-        /// The static list of locks by id
-        /// </summary>
-        private static readonly ConcurrentDictionary<Guid, object> Locks = new ConcurrentDictionary<Guid, object>();
+        private static readonly ConcurrentDictionary<IUniqueIdentity, object> Locks = new ConcurrentDictionary<IUniqueIdentity, object>();
 
-        /// <summary>
-        /// The id this lock is for
-        /// </summary>
-        private readonly Guid id;
+        private readonly IUniqueIdentity id;
         
-        /// <summary>
-        /// The object to lock on
-        /// </summary>
         private readonly object lockObject;
 
-        /// <summary>
-        /// A value indicating whether the lock has been disposed
-        /// </summary>
         private bool isDisposed;
 
-        /// <summary>
-        /// Initializes a new instance of the IdLock class
-        /// </summary>
-        /// <param name="id">The id to lock on.</param>
-        public IdLock(Guid id)
+        public IdLock(IUniqueIdentity id)
         {
             this.id = id;
             this.lockObject = Locks.GetOrAdd(id, x => new object());
             Monitor.Enter(this.lockObject);
         }
 
-        /// <summary>
-        /// Releases the lock
-        /// </summary>
         public void Dispose()
         {
             if (this.isDisposed)

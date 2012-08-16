@@ -23,9 +23,18 @@ namespace MonoKit.Data.SQLite
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
-    using System.Threading;
+    using MonoKit.Reactive.Subjects;
     using MonoKit.Tasks;
+
+    // todo: using SyncScheduler to ensure that only one thread accesses the connection as per gist but..
+    // I'm using this to block the current thread so not really async.  more sqlite threading investigation
+
+
+
+
+
+
+
 
 
     // todo:  sql repo needs to publish read model changes
@@ -38,14 +47,48 @@ namespace MonoKit.Data.SQLite
 
 
 
+
+
+    /*
+     * IxxxStoreContracts need to be IDataModel, and have Identity property.
+     * need to make sure that these are consistent
+     * 
+     * 
+     * 
+     */
+
+
+
+
+
     
-    public class SQLiteRepository<T> : IRepository<T> where T: new()
+    public class SQLiteRepository<T> : IRepository<T>, IConnectedRepository, IObservableRepository 
+        where T: IDataModel, new()
     {
         private readonly SQLiteConnection connection;
+
+        private readonly Subject<IDataModelEvent> changes;
         
         public SQLiteRepository(SQLiteConnection connection)
         {
             this.connection = connection;
+            this.changes = new Subject<IDataModelEvent>();
+        }
+
+        object IConnectedRepository.Connection
+        {
+            get
+            {
+                return this.Connection;
+            }
+        }
+
+        public IObservable<IDataModelEvent> Changes
+        {
+            get
+            {
+                return this.changes;
+            }
         }
 
         public SQLiteConnection Connection
@@ -69,7 +112,7 @@ namespace MonoKit.Data.SQLite
         {
             try
             {
-                return GetSync(() => this.Connection.Get<T>(id));
+                return SynchronousTask.GetSync(() => this.Connection.Get<T>(id));
             }
             catch
             {
@@ -79,29 +122,32 @@ namespace MonoKit.Data.SQLite
 
         public virtual IEnumerable<T> GetAll()
         {
-            return GetSync(() => this.Connection.Table<T>().AsEnumerable());
+            return SynchronousTask.GetSync(() => this.Connection.Table<T>().AsEnumerable());
         }
 
         public virtual void Save(T instance)
         {
-            DoSync
+            SynchronousTask.DoSync
                 (() => 
                  {
                     if (this.Connection.Update(instance) == 0)
                     {
                         this.Connection.Insert(instance);
                     }
+
+                    this.changes.OnNext(new DataModelChange(instance));
                 });
         }
 
         public virtual void Delete(T instance)
         {
-            DoSync(() => this.Connection.Delete(instance));
+            SynchronousTask.DoSync(() => this.Connection.Delete(instance));
+            this.changes.OnNext(new DataModelChange(instance, true));
         }
 
         public virtual void DeleteId(object id)
         {
-            DoSync
+            SynchronousTask.DoSync
                 (() => 
                  {
                     var map = this.Connection.GetMapping(typeof(T));
@@ -112,33 +158,9 @@ namespace MonoKit.Data.SQLite
 
                     var q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
                     this.Connection.Execute (q, id);
+
+                    this.changes.OnNext(new DataModelChange(id));
                 });
-        }
-
-        // todo: using SyncScheduler to ensure that only one thread accesses the connection as per gist but..
-        // I'm using this to block the current thread so not really async.  more sqlite threading investigation
-        protected static TTask GetSync<TTask>(Func<TTask> task)
-        {
-            return Task.Factory.StartNew<TTask>
-                (() => 
-                 { 
-                    return task(); 
-                }, 
-                CancellationToken.None, 
-                TaskCreationOptions.None, 
-                SyncScheduler.TaskScheduler).Result;
-        }
-
-        protected static void DoSync(Action task)
-        {
-            Task.Factory.StartNew
-                (() => 
-                 { 
-                    task(); 
-                }, 
-                CancellationToken.None, 
-                TaskCreationOptions.None, 
-                SyncScheduler.TaskScheduler).Wait();
         }
     }    
 }

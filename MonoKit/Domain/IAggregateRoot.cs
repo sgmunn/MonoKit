@@ -24,7 +24,7 @@ namespace MonoKit.Domain
     using System.Collections.Generic;
     using MonoKit.Data;
 
-    public interface IAggregateRoot : IIdentity
+    public interface IAggregateRoot : IDataModel
     {
         int Version { get; }
 

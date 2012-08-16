@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RepositoryUnitOfWork.cs" company="sgmunn">
+// <copyright file="UnitOfWorkRepository_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -25,7 +25,7 @@ namespace MonoKit.Data
     using System.Linq;
     using MonoKit.Data;
     
-    public class RepositoryUnitOfWork<T> : IRepositoryUnitOfWork<T> where T : IIdentity
+    public class UnitOfWorkRepository<T> : IRepositoryUnitOfWork<T> where T : IDataModel
     {
         private readonly IRepository<T> repository;
 
@@ -33,7 +33,7 @@ namespace MonoKit.Data
         
         private readonly List<object> deletedItemKeys;
 
-        public RepositoryUnitOfWork(IUnitOfWorkScope scope, IRepository<T> repository)
+        public UnitOfWorkRepository(IUnitOfWorkScope scope, IRepository<T> repository)
         {
             scope.Add(this);
             this.repository = repository;

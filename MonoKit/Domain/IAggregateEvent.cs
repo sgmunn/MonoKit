@@ -23,11 +23,8 @@ namespace MonoKit.Domain
     using System;
     using MonoKit.Data;
 
-    // todo: rename as IAggregateEvent
-    public interface IAggregateEvent : IDataEvent
+    public interface IAggregateEvent : IDataModelEvent
     {
-        IUniqueIdentity AggregateId { get; }
-
         Guid EventId { get; }
         
         int Version { get; }

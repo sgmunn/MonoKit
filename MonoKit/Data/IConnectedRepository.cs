@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="AggregateRoot_TState.cs" company="sgmunn">
+//  <copyright file="IConnectedRepository.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,28 +18,13 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
-namespace MonoKit.Domain
+
+namespace MonoKit.Data
 {
     using System;
-    using MonoKit.Domain.Data;
 
-    public abstract class AggregateRoot<TState> : AggregateRoot, ISnapshotSupport where TState : class, ISnapshot, new()
+    public interface IConnectedRepository
     {
-        public AggregateRoot()
-        {
-            this.InternalState = new TState();
-        }
-
-        protected TState InternalState { get; private set; }
-
-        public virtual void LoadFromSnapshot(ISnapshot snapshot)
-        {
-            this.InternalState = snapshot as TState;
-            this.Version = snapshot.Version;
-            this.Identity = snapshot.Identity;
-        }
-
-        public abstract ISnapshot GetSnapshot();
+        object Connection { get; }
     }
 }
-

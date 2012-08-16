@@ -24,7 +24,8 @@ namespace MonoKit.Data
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
+    // todo: deprecate this
     public class SyncRepository<T> : IRepository<T> where T: new()
     {
         private readonly IRepository<T> repository;
@@ -51,7 +52,7 @@ namespace MonoKit.Data
                 scheduler).Result;
         }
 
-        public T GetById(object id)
+        public T GetById(Guid id)
         {
             return Task.Factory.StartNew<T>(
                 () => { return this.repository.GetById(id); }, 
@@ -87,7 +88,7 @@ namespace MonoKit.Data
                 scheduler).Wait();
         }
 
-        public void DeleteId(object id)
+        public void DeleteId(Guid id)
         {
             Task.Factory.StartNew(
                 () => { this.repository.DeleteId(id); }, 

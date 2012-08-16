@@ -32,9 +32,9 @@ namespace MonoKit.Domain.Data
 
         private readonly IEventSerializer serializer;
         
-        private readonly IEventBus eventBus;
+        private readonly IDataModelEventBus eventBus;
   
-        public EventSourcedAggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IEventBus eventBus)
+        public EventSourcedAggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IDataModelEventBus eventBus)
         {
             this.serializer = serializer;
             this.repository = repository;

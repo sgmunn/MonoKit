@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file=".cs" company="sgmunn">
+//  <copyright file="IObservableRepository.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,13 +23,9 @@ namespace MonoKit.Data
 {
     using System;
 
-    public interface IDataEvent
-    {
-
-    }
-
     public interface IObservableRepository
     {
+        IObservable<IDataModelEvent> Changes { get; }
     }
 }
 

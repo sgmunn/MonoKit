@@ -159,7 +159,7 @@ namespace MonoKitSample
         
         public void HandleMe(CreatedEvent @event)
         {
-            Console.WriteLine("Builder Created Event {0}", @event.IdentityType);
+            Console.WriteLine("Builder Created Event {0}", @event.Identity);
         }
     }
 }

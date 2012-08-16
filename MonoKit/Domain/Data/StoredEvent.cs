@@ -22,10 +22,16 @@ namespace MonoKit.Domain.Data
 {
     using System;
     using System.Runtime.Serialization;
+    using MonoKit.Data;
+
+    // todo: move out ?? to application
 
     [DataContract(Name="StoredEvent", Namespace=DomainNamespace.Namespace)]
     public class StoredEvent : IEventStoreContract
     {
+        // todo: impement
+        public IUniqueIdentity Identity { get; set; }
+
         [DataMember]
         public Guid AggregateId { get; set; }
   

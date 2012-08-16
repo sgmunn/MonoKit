@@ -53,29 +53,27 @@ namespace MonoKit.Domain
             return new DefaultScope();
         }
 
-        public IDomainCommandExecutor<T> NewCommandExecutor<T>() where T : class, IAggregateRoot, new()
+        public ICommandExecutor<T> NewCommandExecutor<T>() where T : class, IAggregateRoot, new()
         {
             return new DomainCommandExecutor<T>(this);
         }
 
-        public virtual IAggregateRepository<T> GetAggregateRepository<T>(IEventBus bus) where T : IAggregateRoot, new()
+        public virtual IAggregateRepository<T> GetAggregateRepository<T>(IDataModelEventBus bus) where T : IAggregateRoot, new()
         {
             if (typeof(T).GetInterfaces().Contains(typeof(IEventSourced)))
             {
                 return new EventSourcedAggregateRepository<T>(this.EventSerializer, this.EventStore, new ReadModelBuildingEventBus<T>(this, bus));
             }
 
-            return new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new ReadModelBuildingEventBus<T>(this, bus));
-        }
-        
-        public virtual ISnapshotRepository GetSnapshotRepository(Type aggregateType)
-        {
-            if (this.registeredSnapshotRepositories.ContainsKey(aggregateType))
+            var repo = new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new ReadModelBuildingEventBus<T>(this, bus));
+
+            // todo: test publishing
+            if (repo as IObservableRepository != null)
             {
-                return this.registeredSnapshotRepositories [aggregateType](this);
+                ((IObservableRepository)repo).Changes.Subscribe(evt => bus.Publish(evt));
             }
 
-            return null;
+            return repo;
         }
 
         public IList<IReadModelBuilder> GetReadModelBuilders(Type aggregateType)
@@ -86,6 +84,10 @@ namespace MonoKit.Domain
             {
                 foreach (var factory in this.registeredBuilders[aggregateType])
                 {
+
+                    // todo: pass in bus and register for changes here .
+                    // this means that the builder class needs to have a single repo that should be defined
+
                     result.Add(factory(this));
                 }
             }
@@ -106,6 +108,16 @@ namespace MonoKit.Domain
             }
 
             this.registeredBuilders [typeof(T)].Add(createBuilder);
+        }
+        
+        protected virtual ISnapshotRepository GetSnapshotRepository(Type aggregateType)
+        {
+            if (this.registeredSnapshotRepositories.ContainsKey(aggregateType))
+            {
+                return this.registeredSnapshotRepositories [aggregateType](this);
+            }
+
+            return null;
         }
     }
 }

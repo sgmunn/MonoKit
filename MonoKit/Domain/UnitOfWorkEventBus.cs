@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file=".cs" company="sgmunn">
+//  <copyright file="UnitOfWorkEventBus.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 // 
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -25,41 +25,33 @@ namespace MonoKit.Domain
     using System.Linq;
     using MonoKit.Data;
     
-    public class UnitOfWorkEventBus : IEventBus, IUnitOfWork
+    public class UnitOfWorkEventBus : IDataModelEventBus, IUnitOfWork
     {
-        private readonly IEventBus bus;
+        private readonly IDataModelEventBus bus;
 
-        private readonly List<IDataEvent> events;
-
-        private readonly List<IReadModelChange> readModels;
+        private readonly List<IDataModelEvent> events;
         
-        public UnitOfWorkEventBus(IEventBus bus)
+        public UnitOfWorkEventBus(IDataModelEventBus bus)
         {
-            this.events = new List<IDataEvent>();
-            this.readModels = new List<IReadModelChange>();
+            this.events = new List<IDataModelEvent>();
             this.bus = bus;
         }
         
-        public void Publish(IDataEvent evt)
+        public void Publish(IDataModelEvent evt)
         {
             this.events.Add(evt);
-        }
-
-        public void Publish(IReadModelChange readModelChange)
-        {
-            this.readModels.Add(readModelChange);
         }
 
         public void Dispose()
         {
             this.events.Clear();
-            this.readModels.Clear();
         }
 
         public void Commit()
         {
             if (this.bus != null)
             {
+            // todo: maybe deduplicate events, use a dictionary of id / type etc
                 foreach (var evt in this.events)
                 {
                     this.bus.Publish(evt);
@@ -69,12 +61,12 @@ namespace MonoKit.Domain
                 // enough
 
                 // only publish each read model once and then the last one
-                var distinctIds = this.readModels.Select(x => x.Identity).Distinct().ToList();
-
-                foreach (var readModelId in distinctIds)
-                {
-                    this.bus.Publish(this.readModels.Last(x => x.Identity == readModelId));
-                }
+//                var distinctIds = this.readModels.Select(x => x.Identity).Distinct().ToList();
+//
+//                foreach (var readModelId in distinctIds)
+//                {
+//                    this.bus.Publish(this.readModels.Last(x => x.Identity == readModelId));
+//                }
             }
         }
     }

@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DictionaryRepository_T.cs" company="sgmunn">
+// <copyright file="IReadModelBuilder.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -24,70 +24,9 @@ namespace MonoKit.Domain.Data
     using System.Collections.Generic;
     using MonoKit.Data;
 
-    public abstract class DictionaryRepository<T> : IRepository<T>
+    public interface IReadModelBuilder
     {
-        private readonly Dictionary<object, T> storage;
-
-        protected DictionaryRepository()
-        {
-            this.storage = new Dictionary<object, T>();
-        }
-
-        protected Dictionary<object, T> Storage
-        {
-            get
-            {
-                return this.storage;
-            }
-        }
-
-        public T New()
-        {
-            return this.InternalNew();
-        }
-
-        public T GetById(object id)
-        {
-            if (this.storage.ContainsKey(id))
-            {
-                return this.Storage[id];
-            }
-
-            return default(T);
-        }
-
-        public IEnumerable<T> GetAll()
-        {
-            return this.Storage.Values;
-        }
-
-        public void Save(T instance)
-        {
-            this.InternalSave(instance);
-        }
-
-        public void Delete(T instance)
-        {
-            this.InternalDelete(instance);
-        }
-
-        public void DeleteId(object id)
-        {
-            if (this.Storage.ContainsKey(id))
-            {
-                this.Storage.Remove(id);
-            }
-        }
-
-        public void Dispose()
-        {
-        }
-
-        protected abstract T InternalNew();
-
-        protected abstract void InternalSave(T instance);
-
-        protected abstract void InternalDelete(T instance);
+        IEnumerable<IDataModelChange> Handle(IDataModelEvent evt);
     }
 }
 

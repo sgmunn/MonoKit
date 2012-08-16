@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file=".cs" company="sgmunn">
+//  <copyright file="IDataModelChange.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -19,16 +19,13 @@
 //  --------------------------------------------------------------------------------------------------------------------
 //
 
-namespace MonoKit.Domain
+namespace MonoKit.Data
 {
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using MonoKit.Data;
 
-    public interface IReadModelPublisher
+    public interface IDataModelChange : IDataModelEvent
     {
-        void Publish(IReadModelChange readModelChange);
+        IDataModel Item { get; }
+        bool Deleted { get; }
     }
-    
 }

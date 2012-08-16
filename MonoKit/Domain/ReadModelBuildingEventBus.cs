@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="ReadModelBuildingEventBus.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -24,29 +24,29 @@ namespace MonoKit.Domain
     using MonoKit.Data;
 
             // todo: change from T to pass in the registerd builders
-    public class ReadModelBuildingEventBus<T> : IEventBus where T : IAggregateRoot
+    public class ReadModelBuildingEventBus<T> : IDataModelEventBus where T : IAggregateRoot
     {
         private readonly IDomainContext context;
 
-        private readonly IEventBus bus;
+        private readonly IDataModelEventBus bus;
         
-        public ReadModelBuildingEventBus(IDomainContext context, IEventBus bus)
+        public ReadModelBuildingEventBus(IDomainContext context, IDataModelEventBus bus)
         {
             this.context = context;
             this.bus = bus;
         }
         
-        public void Publish(IDataEvent evt)
+        public void Publish(IDataModelEvent evt)
         {
             var builders = this.context.GetReadModelBuilders(typeof(T));
 
-            var updatedReadModels = new List<IReadModelChange>();
+            var updatedReadModels = new List<IDataModelChange>();
 
             // todo: this coud be done async, but because we should only have one thread to the db at any one time it's not really worth it.
             // just don't take too long in any one builder and don't make assumptions on the order of builders being executed.
             foreach (var builder in builders)
             {
-                updatedReadModels.AddRange(builder.Handle(new [] { evt }));
+                updatedReadModels.AddRange(builder.Handle(evt));
             }
 
             if (this.bus != null)
@@ -59,14 +59,6 @@ namespace MonoKit.Domain
                 }
             }
         }
-
-        #region IEventBus implementation
-        public void Publish(IReadModelChange readModelChange)
-        {
-            throw new System.NotImplementedException();
-        }
-        #endregion
-
     }
 
 //    public class EventBus<T> : IEventBus<T> where T : IAggregateRoot

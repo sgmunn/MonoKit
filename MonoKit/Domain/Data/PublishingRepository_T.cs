@@ -24,31 +24,31 @@ namespace MonoKit.Domain.Data
     using System;
     using MonoKit.Data;
 
-    public class PublishingRepository<T> : RepositoryUnitOfWork<T> where T : IIdentity 
-    {
-        private readonly IEventBus bus; 
-
-        public PublishingRepository(IUnitOfWorkScope scope, IRepository<T> repository, IEventBus bus) : base(scope, repository)
-        {
-            this.bus = bus;
-        }
-
-        public override void Save(T instance)
-        {
-            base.Save(instance);
-            this.bus.Publish(new ReadModelChange(instance));
-        }
-
-        public override void Delete(T instance)
-        {
-            base.Delete(instance);
-            this.bus.Publish(new ReadModelChange(instance.Identity));
-        }
-
-        public override void DeleteId(object id)
-        {
-            base.DeleteId(id);
-            this.bus.Publish(new ReadModelChange((IUniqueIdentity)id));
-        }
-    }
+//    public class PublishingRepository<T> : UnitOfWorkRepository<T> where T : IDataModel 
+//    {
+//        private readonly IDataModelEventBus bus; 
+//
+//        public PublishingRepository(IUnitOfWorkScope scope, IRepository<T> repository, IDataModelEventBus bus) : base(scope, repository)
+//        {
+//            this.bus = bus;
+//        }
+//
+//        public override void Save(T instance)
+//        {
+//            base.Save(instance);
+//            this.bus.Publish(new DataModelChange(instance));
+//        }
+//
+//        public override void Delete(T instance)
+//        {
+//            base.Delete(instance);
+//            this.bus.Publish(new DataModelChange(instance.Identity));
+//        }
+//
+//        public override void DeleteId(object id)
+//        {
+//            base.DeleteId(id);
+//            this.bus.Publish(new DataModelChange((IUniqueIdentity)id));
+//        }
+//    }
 }

@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IDomainCommandExecutor_T.cs" company="sgmunn">
+// <copyright file="ISnapshot.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,15 +18,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain
+namespace MonoKit.Domain.Data
 {
     using System;
-    using System.Collections.Generic;
-
-    public interface IDomainCommandExecutor<T> : ICommandExecutor<T> where T: class, IAggregateRoot, new()
+    using MonoKit.Data;
+    
+    public interface ISnapshot : IDataModel
     {
-        void Execute(ICommand command);
-        void Execute(IEnumerable<ICommand> commands);
+        int Version { get; }
     }
 }
 

@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IRepository_T.cs" company="sgmunn">
+// <copyright file="DictionaryRepository_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,22 +23,70 @@ namespace MonoKit.Data
     using System;
     using System.Collections.Generic;
 
-    public interface IRepository<TData, TKey> : IDisposable
+    public abstract class DictionaryRepository<T> : IRepository<T>
     {
-        TData New();
+        private readonly Dictionary<object, T> storage;
 
-        TData GetById(TKey id);
+        protected DictionaryRepository()
+        {
+            this.storage = new Dictionary<object, T>();
+        }
 
-        IEnumerable<TData> GetAll(); 
+        protected Dictionary<object, T> Storage
+        {
+            get
+            {
+                return this.storage;
+            }
+        }
 
-        void Save(TData instance);
+        public T New()
+        {
+            return this.InternalNew();
+        }
 
-        void Delete(TData instance);
+        public T GetById(object id)
+        {
+            if (this.storage.ContainsKey(id))
+            {
+                return this.Storage[id];
+            }
 
-        void DeleteId(TKey id);
-    }
+            return default(T);
+        }
 
-    public interface IRepository<T> : IRepository<T, Guid>
-    {
+        public IEnumerable<T> GetAll()
+        {
+            return this.Storage.Values;
+        }
+
+        public void Save(T instance)
+        {
+            this.InternalSave(instance);
+        }
+
+        public void Delete(T instance)
+        {
+            this.InternalDelete(instance);
+        }
+
+        public void DeleteId(object id)
+        {
+            if (this.Storage.ContainsKey(id))
+            {
+                this.Storage.Remove(id);
+            }
+        }
+
+        public void Dispose()
+        {
+        }
+
+        protected abstract T InternalNew();
+
+        protected abstract void InternalSave(T instance);
+
+        protected abstract void InternalDelete(T instance);
     }
 }
+

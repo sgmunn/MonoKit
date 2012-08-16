@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="SnapshotAggregateRepository_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -33,9 +33,9 @@ namespace MonoKit.Domain.Data
     {
         private readonly ISnapshotRepository repository;
         
-        private readonly IEventBus eventBus;
+        private readonly IDataModelEventBus eventBus;
   
-        public SnapshotAggregateRepository(ISnapshotRepository repository, IEventBus eventBus)
+        public SnapshotAggregateRepository(ISnapshotRepository repository, IDataModelEventBus eventBus)
         {
             this.repository = repository;
             this.eventBus = eventBus;
@@ -46,7 +46,7 @@ namespace MonoKit.Domain.Data
             return new T();
         }
 
-        public T GetById(object id)
+        public T GetById(Guid id)
         {
             var snapshot = this.repository.GetById(id);
             
@@ -79,7 +79,7 @@ namespace MonoKit.Domain.Data
             // todo: this could cause deadlocks if multiple threads / processes can access the persistence store at any one time
             // we need to either lock or update where instead of the read then write
             // snapshot repositories need to do an update where id = xx or we implement a lock for each aggregate id - will be fine for single process apps
-            var current = this.GetById(instance.Identity);
+            var current = this.GetById(instance.Identity.Id);
 
             int expectedVersion = instance.UncommittedEvents.First().Version - 1;
 
@@ -91,23 +91,16 @@ namespace MonoKit.Domain.Data
             var snapshot = ((ISnapshotSupport)instance).GetSnapshot() as ISnapshot;
             this.repository.Save(snapshot);
 
-            if (this.eventBus != null)
-            {
-                foreach (var evt in instance.UncommittedEvents.ToList())
-                {
-                    this.eventBus.Publish(evt);
-                }
-            }
-            
+            this.PublishEvents(instance.UncommittedEvents);
             instance.Commit();
         }
 
         public void Delete(T instance)
         {
-            this.repository.DeleteId(instance.Identity);
+            this.repository.DeleteId(instance.Identity.Id);
         }
 
-        public void DeleteId(object id)
+        public void DeleteId(Guid id)
         {
             this.repository.DeleteId(id);
         }
@@ -115,6 +108,17 @@ namespace MonoKit.Domain.Data
         public void Dispose()
         {
             this.repository.Dispose();
+        }
+
+        private void PublishEvents(IEnumerable<IAggregateEvent> events)
+        {
+            if (this.eventBus != null)
+            {
+                foreach (var evt in events.ToList())
+                {
+                    this.eventBus.Publish(evt);
+                }
+            }
         }
     }
 }

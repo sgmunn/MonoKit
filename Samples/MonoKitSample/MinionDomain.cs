@@ -97,7 +97,7 @@ namespace MonoKitSample
         public decimal Amount { get; set; }
     }
 
-    public class PocketMoneyTransactionDataContract : IReadModel
+    public class PocketMoneyTransactionDataContract : IDataModel
     {
         public PocketMoneyTransactionDataContract()
         {
@@ -140,7 +140,7 @@ namespace MonoKitSample
         {
             Console.WriteLine("read model updated");
             var transaction = this.repository.New();
-            transaction.MinionId = @event.AggregateId.Id;
+            transaction.MinionId = @event.Identity.Id;
             transaction.Amount = @event.Amount;
             transaction.Date = @event.Date;
 

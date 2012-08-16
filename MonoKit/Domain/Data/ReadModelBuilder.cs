@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="ReadModelBuilder.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -24,38 +24,37 @@ namespace MonoKit.Domain.Data
     using System.Collections.Generic;
     using MonoKit.Data;
 
+    // todo: can we remove the notify, once we have publishing repositories
+    // then make this of T and pass in the repository to read / write from
     public abstract class ReadModelBuilder : IReadModelBuilder
     {
-        private readonly List<IReadModelChange> updatedReadModels;
+        private readonly List<IDataModelChange> updatedReadModels;
 
         protected ReadModelBuilder()
         {
-            this.updatedReadModels = new List<IReadModelChange>();
+            this.updatedReadModels = new List<IDataModelChange>();
         }
 
-        public IEnumerable<IReadModelChange> Handle(IList<IDataEvent> events)
+        public IEnumerable<IDataModelChange> Handle(IDataModelEvent evt)
         {
             this.updatedReadModels.Clear();
 
             // now, for each domain event, call a method that takes the event and call it
-            foreach (var evt in events)
-            {
                 // todo: should we check for not handling the event or not.  read model builders probably don't need to 
                 // handle *everthing*
                 MethodExecutor.ExecuteMethodForParams(this, evt);
-            }
 
             return this.updatedReadModels;
         }
 
-        protected void NotifyReadModelChange(IReadModel readModel, bool deleted)
+        protected void NotifyReadModelChange(IDataModel readModel, bool deleted)
         {
-            this.updatedReadModels.Add(new ReadModelChange(readModel, deleted));
+            this.updatedReadModels.Add(new DataModelChange(readModel, deleted));
         }
 
         protected void NotifyReadModelChange(IUniqueIdentity id, bool deleted)
         {
-            this.updatedReadModels.Add(new ReadModelChange(id, deleted));
+            this.updatedReadModels.Add(new DataModelChange(id, deleted));
         }
     }
 }

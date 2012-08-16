@@ -41,6 +41,16 @@ namespace MonoKit.Domain
             this.versions = new Dictionary<IUniqueIdentity, int>();
         }
 
+        public void Execute(ICommand command)
+        {
+            this.Execute(new [] { command }, 0);
+        }
+
+        public void Execute(IEnumerable<ICommand> commands)
+        {
+            this.Execute(commands, 0);
+        }
+
         public void Execute(ICommand command, int expectedVersion)
         {
             this.Execute(new [] { command }, expectedVersion);
@@ -55,7 +65,7 @@ namespace MonoKit.Domain
 
             // todo: handle different aggregate id's within the same set of commands
 
-            var root = this.repository.GetById(commands.First().AggregateId) ?? this.repository.New();
+            var root = this.repository.GetById(commands.First().AggregateId.Id) ?? this.repository.New();
 
             if (expectedVersion != 0)
             {

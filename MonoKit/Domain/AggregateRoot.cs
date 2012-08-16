@@ -55,7 +55,7 @@ namespace MonoKit.Domain
         {
             if (this.Identity == null && events.Any())
             {
-                this.Identity = events.First().AggregateId;
+                this.Identity = events.First().Identity;
             }
 
             foreach (var evt in events)
@@ -69,13 +69,12 @@ namespace MonoKit.Domain
         {
             if (this.Identity == null)
             {
-                this.Identity = evt.AggregateId;
+                this.Identity = evt.Identity;
             }
 
             this.Version++;
 
-            evt.AggregateId = this.Identity;
-            evt.IdentityType = this.Identity.GetType().Name;
+            evt.Identity = this.Identity;
             evt.Version = this.Version;
             evt.Timestamp = DateTime.UtcNow;
 

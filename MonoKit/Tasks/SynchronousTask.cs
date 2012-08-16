@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="IIdentity.cs" company="sgmunn">
+//  <copyright file="SynchronousTask.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -19,12 +19,37 @@
 //  --------------------------------------------------------------------------------------------------------------------
 //
 
-namespace MonoKit.Data
+namespace MonoKit.Tasks
 {
     using System;
+    using System.Threading;
+    using System.Threading.Tasks;
 
-    public interface IIdentity
+    public static class SynchronousTask
     {
-        IUniqueIdentity Identity { get; }
+        public static TTask GetSync<TTask>(Func<TTask> task)
+        {
+            return Task.Factory.StartNew<TTask>
+                (() => 
+                 { 
+                    return task(); 
+                }, 
+                CancellationToken.None, 
+                TaskCreationOptions.None, 
+                SyncScheduler.TaskScheduler).Result;
+        }
+
+        public static void DoSync(Action task)
+        {
+            Task.Factory.StartNew
+                (() => 
+                 { 
+                    task(); 
+                }, 
+                CancellationToken.None, 
+                TaskCreationOptions.None, 
+                SyncScheduler.TaskScheduler).Wait();
+        }
     }
 }
+
