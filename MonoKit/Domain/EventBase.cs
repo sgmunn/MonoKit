@@ -25,7 +25,7 @@ namespace MonoKit.Domain
     using MonoKit.Data;
 
     [DataContract(Name="EventBase", Namespace=DomainNamespace.Namespace)]
-    public abstract class EventBase : IEvent
+    public abstract class EventBase : IAggregateEvent
     {
         public EventBase()
         {
@@ -35,7 +35,7 @@ namespace MonoKit.Domain
 
         // todo: check serialization of Identity
         [DataMember]
-        public IIdentity AggregateId { get; set; }
+        public IUniqueIdentity AggregateId { get; set; }
 
         [DataMember]
         public string IdentityType { get; set; }

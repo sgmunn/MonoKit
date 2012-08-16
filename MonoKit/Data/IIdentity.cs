@@ -25,6 +25,6 @@ namespace MonoKit.Data
 
     public interface IIdentity
     {
-        Guid Id { get; }
+        IUniqueIdentity Identity { get; }
     }
 }

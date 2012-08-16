@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file=".cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
@@ -35,7 +35,7 @@ namespace MonoKit.Domain.Data
         {
             Assembly.GetCallingAssembly();
 
-            var eventTypes = assembly.GetTypes().Where(t => typeof(IEvent).IsAssignableFrom(t)).ToList();
+            var eventTypes = assembly.GetTypes().Where(t => typeof(IAggregateEvent).IsAssignableFrom(t)).ToList();
             EventTypes.AddRange(eventTypes);
         }
     }

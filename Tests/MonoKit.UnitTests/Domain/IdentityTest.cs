@@ -1,4 +1,6 @@
 
+using MonoKit.Data;
+
 namespace MonoKit.UnitTests.Domain
 {
     using System;

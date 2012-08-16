@@ -24,11 +24,11 @@ namespace MonoKit.Domain
     using System.Collections.Generic;
     using MonoKit.Data;
 
-    public interface IAggregateRoot : IIdentifiableObject
+    public interface IAggregateRoot : IIdentity
     {
         int Version { get; }
 
-        IEnumerable<IEvent> UncommittedEvents { get; }
+        IEnumerable<IAggregateEvent> UncommittedEvents { get; }
 
         void Commit();
     }

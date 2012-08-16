@@ -22,9 +22,7 @@ using System;
 using MonoKit.Domain.Data;
 using MonoKit.Data;
 using MonoKit.Domain;
-using MonoKit.Domain.Commands;
 using System.Runtime.Serialization;
-using MonoKit.Domain.Events;
 using System.Collections.Generic;
 using System.IO;
 using MonoKit.Data.SQLite;
@@ -43,20 +41,38 @@ namespace MonoKitSample
     {
         public void Execute(EarnPocketMoneyCommand command)
         {
-            this.NewEvent(new PocketMoneyEarntEvent() { Date = command.Date, Amount = command.Amount });
+            this.RaiseEvent(new PocketMoneyEarntEvent() { Date = command.Date, Amount = command.Amount });
         }
 
         public void Apply(PocketMoneyEarntEvent @event)
         {
             this.InternalState.Balance += @event.Amount;
         }
+
+        public override ISnapshot GetSnapshot()
+        {
+            var snapshot = this.InternalState;
+            snapshot.Id = this.Identity.Id;
+            snapshot.Version = this.Version;
+            return snapshot;
+        }
     }
     
     public class MinionDataContract : ISnapshot
     {
-          [PrimaryKey]
-          public Identity Id { get; set; }
-        
+        [MonoKit.Data.SQLite.Ignore]
+        public IUniqueIdentity Identity
+        {
+            get
+            {
+                return new Identity(this.Id);
+            }
+
+        }
+
+        [MonoKit.Data.SQLite.PrimaryKey]
+        public Guid Id { get; set; }
+
           public int Version { get; set; }
         
           public string Name { get; set; }  
@@ -88,9 +104,19 @@ namespace MonoKitSample
             this.Id = new Identity(Guid.NewGuid());
         }
 
-        [PrimaryKey]
-        public Identity Id { get; set; }
-        
+        [MonoKit.Data.SQLite.Ignore]
+        public IUniqueIdentity Identity
+        {
+            get
+            {
+                return new Identity(this.Id);
+            }
+
+        }
+
+        [MonoKit.Data.SQLite.PrimaryKey]
+        public Guid Id { get; set; }
+
         [Indexed]
         public Guid MinionId { get; set; }
         

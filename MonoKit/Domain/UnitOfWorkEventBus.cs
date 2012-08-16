@@ -29,18 +29,18 @@ namespace MonoKit.Domain
     {
         private readonly IEventBus bus;
 
-        private readonly List<IEvent> events;
+        private readonly List<IDataEvent> events;
 
         private readonly List<IReadModelChange> readModels;
         
         public UnitOfWorkEventBus(IEventBus bus)
         {
-            this.events = new List<IEvent>();
+            this.events = new List<IDataEvent>();
             this.readModels = new List<IReadModelChange>();
             this.bus = bus;
         }
         
-        public void Publish(IEvent evt)
+        public void Publish(IDataEvent evt)
         {
             this.events.Add(evt);
         }

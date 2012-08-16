@@ -178,6 +178,6 @@ Global
 		{D7937D75-2807-4BE4-9F34-5DDF4823A25F} = {AE9D84D2-7B39-4154-95D4-169BCCAA6021}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Tests\MonoKit.UnitTests\MonoKit.UnitTests.csproj
+		StartupItem = Samples\iPhoneTest\iPhoneTest.csproj
 	EndGlobalSection
 EndGlobal

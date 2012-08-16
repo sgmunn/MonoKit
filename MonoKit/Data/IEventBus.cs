@@ -19,15 +19,13 @@
 //  --------------------------------------------------------------------------------------------------------------------
 // 
 
-namespace MonoKit.Domain
+namespace MonoKit.Data
 {
     using System;
-    using System.Collections.Generic;
-    using MonoKit.Data;
 
     public interface IEventBus
     {
-        void Publish(IEvent evt);
+        void Publish(IDataEvent evt);
 
         void Publish(IReadModelChange readModelChange);
     }

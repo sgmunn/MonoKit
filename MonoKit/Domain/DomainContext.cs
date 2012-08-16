@@ -62,10 +62,10 @@ namespace MonoKit.Domain
         {
             if (typeof(T).GetInterfaces().Contains(typeof(IEventSourced)))
             {
-                return new EventSourcedAggregateRepository<T>(this.EventSerializer, this.EventStore, new EventBus<T>(this, bus));
+                return new EventSourcedAggregateRepository<T>(this.EventSerializer, this.EventStore, new ReadModelBuildingEventBus<T>(this, bus));
             }
 
-            return new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new EventBus<T>(this, bus));
+            return new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new ReadModelBuildingEventBus<T>(this, bus));
         }
         
         public virtual ISnapshotRepository GetSnapshotRepository(Type aggregateType)

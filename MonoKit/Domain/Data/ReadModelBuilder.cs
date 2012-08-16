@@ -33,7 +33,7 @@ namespace MonoKit.Domain.Data
             this.updatedReadModels = new List<IReadModelChange>();
         }
 
-        public IEnumerable<IReadModelChange> Handle(IList<IEvent> events)
+        public IEnumerable<IReadModelChange> Handle(IList<IDataEvent> events)
         {
             this.updatedReadModels.Clear();
 
@@ -53,7 +53,7 @@ namespace MonoKit.Domain.Data
             this.updatedReadModels.Add(new ReadModelChange(readModel, deleted));
         }
 
-        protected void NotifyReadModelChange(IIdentity id, bool deleted)
+        protected void NotifyReadModelChange(IUniqueIdentity id, bool deleted)
         {
             this.updatedReadModels.Add(new ReadModelChange(id, deleted));
         }

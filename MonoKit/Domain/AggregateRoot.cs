@@ -27,18 +27,18 @@ namespace MonoKit.Domain
 
     public abstract class AggregateRoot : IAggregateRoot
     {
-        private readonly List<IEvent> uncommittedEvents;
+        private readonly List<IAggregateEvent> uncommittedEvents;
 
         public AggregateRoot()
         {
-            this.uncommittedEvents = new List<IEvent>();
+            this.uncommittedEvents = new List<IAggregateEvent>();
         }
 
-        public IIdentity Identity { get; protected set; }
+        public IUniqueIdentity Identity { get; protected set; }
 
         public int Version { get; protected set; }
 
-        public IEnumerable<IEvent> UncommittedEvents
+        public IEnumerable<IAggregateEvent> UncommittedEvents
         {
             get
             {
@@ -51,7 +51,7 @@ namespace MonoKit.Domain
             this.uncommittedEvents.Clear();
         }
 
-        protected void ApplyEvents(IList<IEvent> events)
+        protected void ApplyEvents(IList<IAggregateEvent> events)
         {
             if (this.Identity == null && events.Any())
             {
@@ -83,7 +83,7 @@ namespace MonoKit.Domain
             this.uncommittedEvents.Add(evt);
         }
 
-        private void ApplyEvent(IEvent evt)
+        private void ApplyEvent(IAggregateEvent evt)
         {
             if (!MethodExecutor.ExecuteMethodForSingleParam(this, evt))
             {

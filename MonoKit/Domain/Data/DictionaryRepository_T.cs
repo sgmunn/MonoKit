@@ -81,7 +81,6 @@ namespace MonoKit.Domain.Data
 
         public void Dispose()
         {
-            // todo
         }
 
         protected abstract T InternalNew();

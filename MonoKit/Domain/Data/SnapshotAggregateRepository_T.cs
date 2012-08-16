@@ -23,6 +23,7 @@ namespace MonoKit.Domain.Data
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using MonoKit.Data;
 
     // todo: snapshot repository needs a way to serialize complex data members so that we can still use sqlite
     // at the moment this will not handle internal state with complicated objects
@@ -32,9 +33,9 @@ namespace MonoKit.Domain.Data
     {
         private readonly ISnapshotRepository repository;
         
-        private readonly IEventBus<T> eventBus;
+        private readonly IEventBus eventBus;
   
-        public SnapshotAggregateRepository(ISnapshotRepository repository, IEventBus<T> eventBus)
+        public SnapshotAggregateRepository(ISnapshotRepository repository, IEventBus eventBus)
         {
             this.repository = repository;
             this.eventBus = eventBus;
@@ -92,7 +93,10 @@ namespace MonoKit.Domain.Data
 
             if (this.eventBus != null)
             {
-                this.eventBus.Publish(instance.UncommittedEvents.ToList());
+                foreach (var evt in instance.UncommittedEvents.ToList())
+                {
+                    this.eventBus.Publish(evt);
+                }
             }
             
             instance.Commit();

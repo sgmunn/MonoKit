@@ -24,7 +24,7 @@ namespace MonoKit.Domain.Data
     using System;
     using MonoKit.Data;
 
-    public class PublishingRepository<T> : RepositoryUnitOfWork<T> where T : IIdentifiableObject 
+    public class PublishingRepository<T> : RepositoryUnitOfWork<T> where T : IIdentity 
     {
         private readonly IEventBus bus; 
 
@@ -48,7 +48,7 @@ namespace MonoKit.Domain.Data
         public override void DeleteId(object id)
         {
             base.DeleteId(id);
-            this.bus.Publish(new ReadModelChange((IIdentity)id));
+            this.bus.Publish(new ReadModelChange((IUniqueIdentity)id));
         }
     }
 }

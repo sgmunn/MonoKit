@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="IReadModelChange.cs" company="sgmunn">
+//  <copyright file="IUniqueIdentity.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,11 +23,8 @@ namespace MonoKit.Data
 {
     using System;
 
-    public interface IReadModelChange
+    public interface IUniqueIdentity
     {
-        IUniqueIdentity Identity { get; }
-        IIdentity Item { get; }
-        bool Deleted { get; }
+        Guid Id { get; }
     }
-    
 }

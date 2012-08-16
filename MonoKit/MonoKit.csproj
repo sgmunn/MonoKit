@@ -87,7 +87,6 @@
     <Compile Include="Domain\Data\IEventStoreRepository.cs" />
     <Compile Include="Domain\Data\ConcurrencyException.cs" />
     <Compile Include="Domain\DomainNamespace.cs" />
-    <Compile Include="Domain\IEvent.cs" />
     <Compile Include="Domain\EventBase.cs" />
     <Compile Include="Domain\ICommand.cs" />
     <Compile Include="Domain\CommandBase.cs" />
@@ -121,7 +120,6 @@
     <Compile Include="Reactive\Unit.cs" />
     <Compile Include="Reactive\Disposables\CompositeDisposable.cs" />
     <Compile Include="Domain\UnitOfWorkEventBus.cs" />
-    <Compile Include="Domain\IEventBus.cs" />
     <Compile Include="Reactive\Concurrency\IScheduler.cs" />
     <Compile Include="ObservableExtensions.cs" />
     <Compile Include="Reactive\Concurrency\ImmediateScheduler.cs" />
@@ -132,9 +130,7 @@
     <Compile Include="Domain\IdLock.cs" />
     <Compile Include="Domain\AggregateRoot_TState.cs" />
     <Compile Include="Data\IRepositoryUnitOfWork_T.cs" />
-    <Compile Include="Data\IIdentifiableObject.cs" />
     <Compile Include="Data\RepositoryUnitOfWork_T.cs" />
-    <Compile Include="Data\IIdentity.cs" />
     <Compile Include="Data\Identity.cs" />
     <Compile Include="Data\ReadModelChange.cs" />
     <Compile Include="Data\IReadModelChange.cs" />
@@ -144,5 +140,10 @@
     <Compile Include="Domain\Data\PublishingRepository_T.cs" />
     <Compile Include="Domain\IReadModelPublisher.cs" />
     <Compile Include="Domain\Data\DictionaryRepository_T.cs" />
+    <Compile Include="Data\IObservableRepository.cs" />
+    <Compile Include="Domain\IAggregateEvent.cs" />
+    <Compile Include="Data\IEventBus.cs" />
+    <Compile Include="Data\IUniqueIdentity.cs" />
+    <Compile Include="Data\IIdentity.cs" />
   </ItemGroup>
 </Project>

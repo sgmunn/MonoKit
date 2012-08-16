@@ -23,7 +23,7 @@ namespace MonoKit.Data
 {
     using System;
 
-    public class Identity : IIdentity, IEquatable<IIdentity>, IEquatable<Identity>, IEquatable<Guid>
+    public class Identity : IUniqueIdentity, IEquatable<IUniqueIdentity>, IEquatable<Identity>, IEquatable<Guid>
     {
         public Identity(Guid id)
         {
@@ -37,7 +37,7 @@ namespace MonoKit.Data
             return object.ReferenceEquals(id, null) ? Guid.Empty : id.Id;
         }
 
-        public bool Equals(IIdentity other)
+        public bool Equals(IUniqueIdentity other)
         {
             return this == other;
         }

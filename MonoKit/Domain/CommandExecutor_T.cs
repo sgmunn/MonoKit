@@ -30,7 +30,7 @@ namespace MonoKit.Domain
     {
         private readonly IRepository<T> repository;
 
-        private readonly Dictionary<IIdentity, int> versions;
+        private readonly Dictionary<IUniqueIdentity, int> versions;
 
 //        private readonly IEventBus bus;
 
@@ -38,7 +38,7 @@ namespace MonoKit.Domain
         {
             this.repository = repository;
 //            this.bus = bus;
-            this.versions = new Dictionary<IIdentity, int>();
+            this.versions = new Dictionary<IUniqueIdentity, int>();
         }
 
         public void Execute(ICommand command, int expectedVersion)

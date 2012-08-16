@@ -25,7 +25,7 @@ namespace MonoKit.Domain
 
     public interface IEventSourced
     {
-        void LoadFromEvents(IList<IEvent> events);
+        void LoadFromEvents(IList<IAggregateEvent> events);
     }
 }
 

@@ -23,7 +23,7 @@ namespace MonoKit.Data
 {
     using System;
 
-    public interface IReadModel : IIdentifiableObject
+    public interface IReadModel : IIdentity
     {
     }
 }

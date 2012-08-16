@@ -25,7 +25,7 @@ namespace MonoKit.Data
     using System.Linq;
     using MonoKit.Data;
     
-    public class RepositoryUnitOfWork<T> : IRepositoryUnitOfWork<T> where T : IIdentifiableObject
+    public class RepositoryUnitOfWork<T> : IRepositoryUnitOfWork<T> where T : IIdentity
     {
         private readonly IRepository<T> repository;
 

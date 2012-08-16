@@ -18,41 +18,26 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using MonoKit.Domain.Data;
-using MonoKit.Data;
-using MonoKit.Domain;
-using MonoKit.Domain.Commands;
-using System.Runtime.Serialization;
-using MonoKit.Domain.Events;
-using System.Collections.Generic;
-using System.IO;
-using MonoKit.Data.SQLite;
-using MonoKit.Domain.Data.SQLite;
 
 namespace MonoKitSample
 {
-    public class EventSourcedTestRoot : AggregateRoot, IEventSourced
+    using System;
+    using MonoKit.Domain.Data;
+    using MonoKit.Data;
+    using MonoKit.Domain;
+    using System.Runtime.Serialization;
+    using System.Collections.Generic;
+    using System.IO;
+    using MonoKit.Data.SQLite;
+    using MonoKit.Domain.Data.SQLite;
+
+    public class CreateCommand : CommandBase
     {
-        public EventSourcedTestRoot() : base()
-        {
-        }
-
-        public void Execute(TestCommand command)
-        {
-            Console.WriteLine("Execuite TestCommand");
-            this.NewEvent(new TestEvent() { Description = command.Description, });
-        }
-
-        public void Apply(TestEvent domainEvent)
-        {
-            Console.WriteLine("apply TestEvent {0}", domainEvent.Description);
-        }
-
-        public void LoadFromEvents(System.Collections.Generic.IList<IEvent> events)
-        {
-            base.ApplyEvents(events);
-        }
+    }
+        
+    [DataContract(Name="Created", Namespace="http://sgmunn.com/2012/Sample/Domain")]
+    public class CreatedEvent : EventBase
+    {
     }
 
     public class TestCommand : CommandBase
@@ -67,34 +52,103 @@ namespace MonoKitSample
         public string Description { get; set; }
     }
 
+
+
+
+
+    public class EventSourcedTestRoot : AggregateRoot, IEventSourced
+    {
+        public EventSourcedTestRoot() : base()
+        {
+        }
+   
+        public void Execute(CreateCommand command)
+        {
+            Console.WriteLine("Execute CreateCommand");
+            this.RaiseEvent(new CreatedEvent() );
+        }
+
+        public void Apply(CreatedEvent domainEvent)
+        {
+            Console.WriteLine("Apply CreateCommand {0}", domainEvent.Version);
+        }
+
+        public void Execute(TestCommand command)
+        {
+            Console.WriteLine("Execuite TestCommand");
+            this.RaiseEvent(new TestEvent() { Description = command.Description, });
+        }
+
+        public void Apply(TestEvent domainEvent)
+        {
+            Console.WriteLine("Apply TestEvent {0} - {1}", domainEvent.Version, domainEvent.Description);
+        }
+
+        public void LoadFromEvents(IList<IAggregateEvent> events)
+        {
+            base.ApplyEvents(events);
+        }
+    }
+
+
+
+
     public class TestSnapshot : ISnapshot
     {
+        [MonoKit.Data.SQLite.Ignore]
+        public IUniqueIdentity Identity
+        {
+            get
+            {
+                return new Identity(this.Id);
+            }
+
+        }
+
         [MonoKit.Data.SQLite.PrimaryKey]
-        public Identity Id { get; set; }
+        public Guid Id { get; set; }
+
+
         public int Version { get; set; }
         public string Description { get; set; }
     }
     
     public class SnapshotTestRoot : AggregateRoot<TestSnapshot>
     {
-    
+   
+        public void Execute(CreateCommand command)
+        {
+            Console.WriteLine("Snapshot Execute CreateCommand");
+            this.RaiseEvent(new CreatedEvent() );
+        }
+
+        public void Apply(CreatedEvent domainEvent)
+        {
+            Console.WriteLine("Snapshot Apply CreateCommand {0}", domainEvent.Version);
+        }
+
         public void Execute(TestCommand command)
         {
-            Console.WriteLine("Snapshot Execute TestCommand");
-            this.NewEvent(new TestEvent() { Description = command.Description, });
+            Console.WriteLine("Snapshot Execuite TestCommand");
+            this.RaiseEvent(new TestEvent() { Description = command.Description, });
         }
 
         public void Apply(TestEvent domainEvent)
         {
-            Console.WriteLine("Snapshot apply TestEvent {0}", domainEvent.Description);
-            this.InternalState.Description = domainEvent.Description;
+            Console.WriteLine("Snapshot Apply TestEvent {0} - {1}", domainEvent.Version, domainEvent.Description);
         }
-    
+
+        public override ISnapshot GetSnapshot()
+        {
+            var snapshot = this.InternalState;
+            snapshot.Id = this.Identity.Id;
+            snapshot.Version = this.Version;
+            return snapshot;
+        }
     }
 
     public class TestReadModel
     {
-        
     }
     
     public class TestBuilder : ReadModelBuilder
@@ -105,7 +159,7 @@ namespace MonoKitSample
         
         public void HandleMe(CreatedEvent @event)
         {
-            Console.WriteLine("Builder Created Event {0}", @event.AggregateTypeId);
+            Console.WriteLine("Builder Created Event {0}", @event.IdentityType);
         }
     }
 }

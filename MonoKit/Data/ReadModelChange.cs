@@ -25,35 +25,35 @@ namespace MonoKit.Data
  
     public class ReadModelChange : IReadModelChange
     {
-        public ReadModelChange(IIdentifiableObject item)
+        public ReadModelChange(IIdentity item)
         {
             this.Item = item;
             this.Identity = item.Identity;
             this.Deleted = false;
         }
 
-        public ReadModelChange(IIdentity id)
+        public ReadModelChange(IUniqueIdentity id)
         {
             this.Identity = id;
             this.Deleted = true;
         }
 
-        public ReadModelChange(IIdentifiableObject item, bool deleted)
+        public ReadModelChange(IIdentity item, bool deleted)
         {
             this.Item = item;
             this.Identity = item.Identity;
             this.Deleted = deleted;
         }
 
-        public ReadModelChange(IIdentity id, bool deleted)
+        public ReadModelChange(IUniqueIdentity id, bool deleted)
         {
             this.Identity = id;
             this.Deleted = deleted;
         }
 
-        public IIdentity Identity { get; private set; }
+        public IUniqueIdentity Identity { get; private set; }
 
-        public IIdentifiableObject Item { get; private set; }
+        public IIdentity Item { get; private set; }
 
         public bool Deleted { get; private set; }
     }

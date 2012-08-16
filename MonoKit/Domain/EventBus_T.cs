@@ -23,19 +23,20 @@ namespace MonoKit.Domain
     using System.Collections.Generic;
     using MonoKit.Data;
 
-    public class EventBus<T> : IEventBus<T> where T : IAggregateRoot
+            // todo: change from T to pass in the registerd builders
+    public class ReadModelBuildingEventBus<T> : IEventBus where T : IAggregateRoot
     {
         private readonly IDomainContext context;
 
         private readonly IEventBus bus;
         
-        public EventBus(IDomainContext context, IEventBus bus)
+        public ReadModelBuildingEventBus(IDomainContext context, IEventBus bus)
         {
             this.context = context;
             this.bus = bus;
         }
         
-        public void Publish(IList<IEvent> events)
+        public void Publish(IDataEvent evt)
         {
             var builders = this.context.GetReadModelBuilders(typeof(T));
 
@@ -45,15 +46,12 @@ namespace MonoKit.Domain
             // just don't take too long in any one builder and don't make assumptions on the order of builders being executed.
             foreach (var builder in builders)
             {
-                updatedReadModels.AddRange(builder.Handle(events));
+                updatedReadModels.AddRange(builder.Handle(new [] { evt }));
             }
 
             if (this.bus != null)
             {
-                foreach (var evt in events)
-                {
-                    this.bus.Publish(evt);
-                }
+                this.bus.Publish(evt);
 
                 foreach (var readModel in updatedReadModels)
                 {
@@ -61,6 +59,54 @@ namespace MonoKit.Domain
                 }
             }
         }
+
+        #region IEventBus implementation
+        public void Publish(IReadModelChange readModelChange)
+        {
+            throw new System.NotImplementedException();
+        }
+        #endregion
+
     }
+
+//    public class EventBus<T> : IEventBus<T> where T : IAggregateRoot
+//    {
+//        private readonly IDomainContext context;
+//
+//        private readonly IEventBus bus;
+//        
+//        public EventBus(IDomainContext context, IEventBus bus)
+//        {
+//            this.context = context;
+//            this.bus = bus;
+//        }
+//        
+//        public void Publish(IList<IAggregateEvent> events)
+//        {
+//            var builders = this.context.GetReadModelBuilders(typeof(T));
+//
+//            var updatedReadModels = new List<IReadModelChange>();
+//
+//            // todo: this coud be done async, but because we should only have one thread to the db at any one time it's not really worth it.
+//            // just don't take too long in any one builder and don't make assumptions on the order of builders being executed.
+//            foreach (var builder in builders)
+//            {
+//                updatedReadModels.AddRange(builder.Handle(events));
+//            }
+//
+//            if (this.bus != null)
+//            {
+//                foreach (var evt in events)
+//                {
+//                    this.bus.Publish(evt);
+//                }
+//
+//                foreach (var readModel in updatedReadModels)
+//                {
+//                    this.bus.Publish(readModel);
+//                }
+//            }
+//        }
+//    }
 }
 

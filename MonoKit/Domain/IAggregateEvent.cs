@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="IAggregateEvent.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,9 +23,10 @@ namespace MonoKit.Domain
     using System;
     using MonoKit.Data;
 
-    public interface IEvent
+    // todo: rename as IAggregateEvent
+    public interface IAggregateEvent : IDataEvent
     {
-        IIdentity AggregateId { get; }
+        IUniqueIdentity AggregateId { get; }
 
         Guid EventId { get; }
         

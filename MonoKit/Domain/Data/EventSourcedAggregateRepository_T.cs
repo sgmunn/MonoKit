@@ -32,9 +32,9 @@ namespace MonoKit.Domain.Data
 
         private readonly IEventSerializer serializer;
         
-        private readonly IEventBus<T> eventBus;
+        private readonly IEventBus eventBus;
   
-        public EventSourcedAggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IEventBus<T> eventBus)
+        public EventSourcedAggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IEventBus eventBus)
         {
             this.serializer = serializer;
             this.repository = repository;
@@ -55,11 +55,11 @@ namespace MonoKit.Domain.Data
                 return default(T);
             }
 
-            var history = new List<IEvent>();
+            var history = new List<IAggregateEvent>();
 
             foreach (var storedEvent in allEvents)
             {
-                history.Add(this.serializer.DeserializeFromString(storedEvent.Event) as IEvent);
+                history.Add(this.serializer.DeserializeFromString(storedEvent.Event) as IAggregateEvent);
             }
 
             var result = this.New();
@@ -106,7 +106,10 @@ namespace MonoKit.Domain.Data
    
             if (this.eventBus != null)
             {
-                this.eventBus.Publish(instance.UncommittedEvents.ToList());
+                foreach (var evt in instance.UncommittedEvents.ToList())
+                {
+                    this.eventBus.Publish(evt);
+                }
             }
             
             instance.Commit();

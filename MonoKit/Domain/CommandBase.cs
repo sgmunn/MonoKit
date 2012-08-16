@@ -34,7 +34,7 @@ namespace MonoKit.Domain
 
         // todo: check serialization of Identity
         [DataMember]
-        public IIdentity AggregateId { get; set; }
+        public IUniqueIdentity AggregateId { get; set; }
         
         [DataMember]
         public Guid CommandId { get; set; }

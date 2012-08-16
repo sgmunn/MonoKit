@@ -26,6 +26,18 @@ namespace MonoKit.Data.SQLite
     using System.Threading.Tasks;
     using System.Threading;
     using MonoKit.Tasks;
+
+
+    // todo:  sql repo needs to publish read model changes
+    // todo: test snapshot read model changes -- builders vs aggregate repositories
+    // we either publish here in SQL, or specifically in each use case (we already do one in command execution for 
+    // aggregate repos)
+
+
+
+
+
+
     
     public class SQLiteRepository<T> : IRepository<T> where T: new()
     {
