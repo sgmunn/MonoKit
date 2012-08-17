@@ -28,6 +28,9 @@ namespace MonoKit.Domain.Data
     // todo: snapshot repository needs a way to serialize complex data members so that we can still use sqlite
     // at the moment this will not handle internal state with complicated objects
     // an alternative is for the aggregate to return a snapshot that is serialized -- ie different to its internal state
+
+
+    // todo: remove event bus from snapshot repository and place on inner concrete repository (sql)
     
     public class SnapshotAggregateRepository<T> : IAggregateRepository<T> where T : IAggregateRoot, new()
     {
@@ -46,7 +49,7 @@ namespace MonoKit.Domain.Data
             return new T();
         }
 
-        public T GetById(Guid id)
+        public T GetById(IUniqueIdentity id)
         {
             var snapshot = this.repository.GetById(id);
             
@@ -79,7 +82,7 @@ namespace MonoKit.Domain.Data
             // todo: this could cause deadlocks if multiple threads / processes can access the persistence store at any one time
             // we need to either lock or update where instead of the read then write
             // snapshot repositories need to do an update where id = xx or we implement a lock for each aggregate id - will be fine for single process apps
-            var current = this.GetById(instance.Identity.Id);
+            var current = this.GetById(instance.Identity);
 
             int expectedVersion = instance.UncommittedEvents.First().Version - 1;
 
@@ -97,10 +100,10 @@ namespace MonoKit.Domain.Data
 
         public void Delete(T instance)
         {
-            this.repository.DeleteId(instance.Identity.Id);
+            this.repository.DeleteId(instance.Identity);
         }
 
-        public void DeleteId(Guid id)
+        public void DeleteId(IUniqueIdentity id)
         {
             this.repository.DeleteId(id);
         }

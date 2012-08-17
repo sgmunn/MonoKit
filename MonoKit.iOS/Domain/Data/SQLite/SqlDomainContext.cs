@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IEventStoreContract.cs" company="sgmunn">
+// <copyright file="SqlDomainContext.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,20 +18,26 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain.Data
+namespace MonoKit.Domain.Data.SQLite
 {
     using System;
+    using MonoKit.Domain;
+    using MonoKit.Domain.Data;
     using MonoKit.Data;
+    using MonoKit.Data.SQLite;
 
-    public interface IEventStoreContract : IDataModel
+    public class SqlDomainContext : DomainContext
     {
-        Guid AggregateId { get; set; }
+        public SqlDomainContext(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(eventStore, eventBus)
+        {
+            this.Connection = connection;
+        }
 
-        Guid EventId { get; set; }
+        public SQLiteConnection Connection { get; private set; }
 
-        int Version { get; set; }
-
-        string Event { get; set; }
+        public override IUnitOfWorkScope BeginUnitOfWork()
+        {
+            return new SqlUnitOfWorkScope(this.Connection);
+        }
     }
 }
-

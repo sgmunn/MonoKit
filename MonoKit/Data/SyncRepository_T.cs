@@ -52,7 +52,7 @@ namespace MonoKit.Data
                 scheduler).Result;
         }
 
-        public T GetById(Guid id)
+        public T GetById(IUniqueIdentity id)
         {
             return Task.Factory.StartNew<T>(
                 () => { return this.repository.GetById(id); }, 
@@ -88,7 +88,7 @@ namespace MonoKit.Data
                 scheduler).Wait();
         }
 
-        public void DeleteId(Guid id)
+        public void DeleteId(IUniqueIdentity id)
         {
             Task.Factory.StartNew(
                 () => { this.repository.DeleteId(id); }, 

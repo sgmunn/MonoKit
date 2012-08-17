@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SQLiteRepository_.cs" company="sgmunn">
+// <copyright file="SqlRepository_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -29,47 +29,14 @@ namespace MonoKit.Data.SQLite
     // todo: using SyncScheduler to ensure that only one thread accesses the connection as per gist but..
     // I'm using this to block the current thread so not really async.  more sqlite threading investigation
 
-
-
-
-
-
-
-
-
-    // todo:  sql repo needs to publish read model changes
-    // todo: test snapshot read model changes -- builders vs aggregate repositories
-    // we either publish here in SQL, or specifically in each use case (we already do one in command execution for 
-    // aggregate repos)
-
-
-
-
-
-
-
-
-    /*
-     * IxxxStoreContracts need to be IDataModel, and have Identity property.
-     * need to make sure that these are consistent
-     * 
-     * 
-     * 
-     */
-
-
-
-
-
-    
-    public class SQLiteRepository<T> : IRepository<T>, IConnectedRepository, IObservableRepository 
+    public class SqlRepository<T> : IRepository<T>, IConnectedRepository, IObservableRepository 
         where T: IDataModel, new()
     {
         private readonly SQLiteConnection connection;
 
         private readonly Subject<IDataModelEvent> changes;
         
-        public SQLiteRepository(SQLiteConnection connection)
+        public SqlRepository(SQLiteConnection connection)
         {
             this.connection = connection;
             this.changes = new Subject<IDataModelEvent>();
@@ -108,7 +75,7 @@ namespace MonoKit.Data.SQLite
             return new T();
         }
 
-        public virtual T GetById(object id)
+        public virtual T GetById(IUniqueIdentity id)
         {
             try
             {
@@ -145,7 +112,7 @@ namespace MonoKit.Data.SQLite
             this.changes.OnNext(new DataModelChange(instance, true));
         }
 
-        public virtual void DeleteId(object id)
+        public virtual void DeleteId(IUniqueIdentity id)
         {
             SynchronousTask.DoSync
                 (() => 

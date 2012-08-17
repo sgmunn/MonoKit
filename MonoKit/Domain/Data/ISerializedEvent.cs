@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="ISerializedEvent.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,22 +18,20 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain.Data.SQLite
+namespace MonoKit.Domain.Data
 {
     using System;
-    using MonoKit.Domain.Data;
-    using MonoKit.Data.SQLite;
+    using MonoKit.Data;
 
-    public class SQLStoredEvent : IEventStoreContract
+    public interface ISerializedEvent : IDataModel
     {
-        [Indexed]
-        public Guid AggregateId { get; set; }
-  
-        [PrimaryKey]
-        public Guid EventId { get; set; }
-  
-        public int Version { get; set; }
-  
-        public string Event { get; set; }
+        Guid AggregateId { get; set; }
+
+        Guid EventId { get; set; }
+
+        int Version { get; set; }
+
+        string Event { get; set; }
     }
 }
+

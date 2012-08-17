@@ -29,17 +29,17 @@ namespace MonoKit.Data
     {
         private readonly IRepository<T> repository;
 
-        private readonly Dictionary<object, T> savedItems;
+        private readonly Dictionary<IUniqueIdentity, T> savedItems;
         
-        private readonly List<object> deletedItemKeys;
+        private readonly List<IUniqueIdentity> deletedItemKeys;
 
         public UnitOfWorkRepository(IUnitOfWorkScope scope, IRepository<T> repository)
         {
             scope.Add(this);
             this.repository = repository;
 
-            this.savedItems = new Dictionary<object, T>();
-            this.deletedItemKeys = new List<object>();
+            this.savedItems = new Dictionary<IUniqueIdentity, T>();
+            this.deletedItemKeys = new List<IUniqueIdentity>();
         }
 
         protected IRepository<T> Repository
@@ -62,7 +62,7 @@ namespace MonoKit.Data
             return this.repository.New();
         }
 
-        public T GetById(object id)
+        public T GetById(IUniqueIdentity id)
         {
             if (this.deletedItemKeys.Contains(id))
             {
@@ -95,7 +95,7 @@ namespace MonoKit.Data
             this.DeleteId(id);
         }
 
-        public virtual void DeleteId(object id)
+        public virtual void DeleteId(IUniqueIdentity id)
         {
             if (!this.deletedItemKeys.Contains(id))
             {

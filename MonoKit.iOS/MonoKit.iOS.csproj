@@ -59,10 +59,6 @@
     <Compile Include="UI\UIViewControllerExtensions.cs" />
     <Compile Include="UI\ViewDefinition.cs" />
     <Compile Include="Data\SQLite\SQLite.cs" />
-    <Compile Include="Data\SQLite\SQLiteRepository_T.cs" />
-    <Compile Include="Data\SQLite\SQLiteUnitOfWorkScope.cs" />
-    <Compile Include="Domain\Data\SQLite\SQLStoredEvent.cs" />
-    <Compile Include="Domain\Data\SQLite\SQLiteDomainContext.cs" />
     <Compile Include="Domain\Data\SQLite\SnapshotRepository.cs" />
     <Compile Include="Domain\Data\SQLite\EventStoreRepository_T.cs" />
     <Compile Include="Domain\Data\SQLite\InternalEventStoreRepository_T.cs" />
@@ -81,6 +77,10 @@
     <Compile Include="UI\AwesomeMenu\Menu.cs" />
     <Compile Include="UI\AwesomeMenu\MenuDefaults.cs" />
     <Compile Include="UI\AwesomeMenu\MenuItemSelectedEventArgs.cs" />
+    <Compile Include="Domain\Data\SQLite\SerializedEvent.cs" />
+    <Compile Include="Data\SQLite\SqlRepository_T.cs" />
+    <Compile Include="Data\SQLite\SqlUnitOfWorkScope.cs" />
+    <Compile Include="Domain\Data\SQLite\SqlDomainContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />

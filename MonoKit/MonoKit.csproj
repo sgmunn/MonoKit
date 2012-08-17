@@ -88,8 +88,6 @@
     <Compile Include="Domain\EventBase.cs" />
     <Compile Include="Domain\ICommand.cs" />
     <Compile Include="Domain\CommandBase.cs" />
-    <Compile Include="Domain\Data\IEventStoreContract.cs" />
-    <Compile Include="Domain\Data\StoredEvent.cs" />
     <Compile Include="Domain\Data\InMemoryEventStoreRepository_T.cs" />
     <Compile Include="Domain\IDomainContext.cs" />
     <Compile Include="Domain\DomainCommandExecutor_T.cs" />
@@ -138,11 +136,14 @@
     <Compile Include="Data\UnitOfWorkRepository_T.cs" />
     <Compile Include="Data\DictionaryRepository_T.cs" />
     <Compile Include="Domain\Data\IReadModelBuilder.cs" />
-    <Compile Include="Domain\ReadModelBuildingEventBus.cs" />
     <Compile Include="Data\IdLock.cs" />
     <Compile Include="Domain\Data\ISnapshot.cs" />
     <Compile Include="MethodExecutor.cs" />
     <Compile Include="Data\IConnectedRepository.cs" />
     <Compile Include="Tasks\SynchronousTask.cs" />
+    <Compile Include="Domain\Data\ISerializedEvent.cs" />
+    <Compile Include="Domain\Data\SerializedEventId.cs" />
+    <Compile Include="Data\IRepository_TData_TKey.cs" />
+    <Compile Include="Domain\ReadModelBuildingEventBus_T.cs" />
   </ItemGroup>
 </Project>

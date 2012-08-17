@@ -25,29 +25,29 @@ namespace MonoKit.Domain.Data
     using System.Linq;
     using MonoKit.Data;
     
-    public class InMemoryEventStoreRepository<T> : DictionaryRepository<IEventStoreContract>, IEventStoreRepository where T : IEventStoreContract, new() 
+    public class InMemoryEventStoreRepository<T> : DictionaryRepository<ISerializedEvent>, IEventStoreRepository where T : ISerializedEvent, new() 
     {
-        protected override IEventStoreContract InternalNew()
+        protected override ISerializedEvent InternalNew()
         {
             return new T(); 
         }
 
-        protected override void InternalSave(IEventStoreContract instance)
+        protected override void InternalSave(ISerializedEvent instance)
         {
-            this.Storage[instance.EventId] = instance;
+            this.Storage[instance.Identity] = instance;
         }
 
-        protected override void InternalDelete(IEventStoreContract instance)
+        protected override void InternalDelete(ISerializedEvent instance)
         {
-            if (this.Storage.ContainsKey(instance.EventId))
+            if (this.Storage.ContainsKey(instance.Identity))
             {
-                this.Storage.Remove(instance.EventId);
+                this.Storage.Remove(instance.Identity);
             }
         }
 
-        public IEnumerable<IEventStoreContract> GetAllAggregateEvents(Guid rootId)
+        public IEnumerable<ISerializedEvent> GetAllAggregateEvents(IUniqueIdentity rootId)
         {
-            return this.GetAll().Where(x => x.AggregateId == rootId).OrderBy(x => x.Version);
+            return this.GetAll().Where(x => x.AggregateId == rootId.Id).OrderBy(x => x.Version);
         }
     }
 }

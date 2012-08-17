@@ -65,7 +65,7 @@ namespace MonoKit.Domain
 
             // todo: handle different aggregate id's within the same set of commands
 
-            var root = this.repository.GetById(commands.First().AggregateId.Id) ?? this.repository.New();
+            var root = this.repository.GetById(commands.First().AggregateId) ?? this.repository.New();
 
             if (expectedVersion != 0)
             {

@@ -147,8 +147,17 @@ namespace MonoKitSample
         }
     }
 
-    public class TestReadModel
+    public class TestReadModel : IDataModel
     {
+        #region IDataModel implementation
+        public IUniqueIdentity Identity
+        {
+            get
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+        #endregion
     }
     
     public class TestBuilder : ReadModelBuilder

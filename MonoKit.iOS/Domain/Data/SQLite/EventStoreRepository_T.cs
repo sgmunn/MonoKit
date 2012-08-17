@@ -25,9 +25,10 @@ namespace MonoKit.Domain.Data.SQLite
     using System.Threading.Tasks;
     using System.Threading;
     using MonoKit.Data.SQLite;
+    using MonoKit.Data;
     using MonoKit.Tasks;
     
-    public class EventStoreRepository<T> : IEventStoreRepository where T : IEventStoreContract, new() 
+    public class EventStoreRepository<T> : IEventStoreRepository where T : ISerializedEvent, new() 
     {
         private readonly IEventStoreRepository repository;
         
@@ -36,34 +37,34 @@ namespace MonoKit.Domain.Data.SQLite
             this.repository = new InternalEventStoreRepository<T>(connection);
         }
 
-        public IEventStoreContract New()
+        public ISerializedEvent New()
         {
-            return Task.Factory.StartNew<IEventStoreContract>(
+            return Task.Factory.StartNew<ISerializedEvent>(
                 () => { return this.repository.New(); }, 
                 CancellationToken.None, 
                 TaskCreationOptions.None, 
                 SyncScheduler.TaskScheduler).Result;
         }
 
-        public IEventStoreContract GetById(object id)
+        public ISerializedEvent GetById(IUniqueIdentity id)
         {
-            return Task.Factory.StartNew<IEventStoreContract>(
+            return Task.Factory.StartNew<ISerializedEvent>(
                 () => { return this.repository.GetById(id); }, 
                 CancellationToken.None, 
                 TaskCreationOptions.None, 
                 SyncScheduler.TaskScheduler).Result;
         }
 
-        public IEnumerable<IEventStoreContract> GetAll()
+        public IEnumerable<ISerializedEvent> GetAll()
         {
-            return Task.Factory.StartNew<IEnumerable<IEventStoreContract>>(
+            return Task.Factory.StartNew<IEnumerable<ISerializedEvent>>(
                 () => { return this.repository.GetAll(); }, 
                 CancellationToken.None, 
                 TaskCreationOptions.None, 
                 SyncScheduler.TaskScheduler).Result;
         }
 
-        public void Save(IEventStoreContract instance)
+        public void Save(ISerializedEvent instance)
         {
             Task.Factory.StartNew(
                 () => { this.repository.Save(instance); }, 
@@ -72,7 +73,7 @@ namespace MonoKit.Domain.Data.SQLite
                 SyncScheduler.TaskScheduler).Wait();
         }
 
-        public void Delete(IEventStoreContract instance)
+        public void Delete(ISerializedEvent instance)
         {
             Task.Factory.StartNew(
                 () => { this.repository.Delete(instance); }, 
@@ -81,7 +82,7 @@ namespace MonoKit.Domain.Data.SQLite
                 SyncScheduler.TaskScheduler).Wait();
         }
 
-        public void DeleteId(object id)
+        public void DeleteId(IUniqueIdentity id)
         {
             Task.Factory.StartNew(
                 () => { this.repository.DeleteId(id); }, 
@@ -90,9 +91,9 @@ namespace MonoKit.Domain.Data.SQLite
                 SyncScheduler.TaskScheduler).Wait();
         }
 
-        public IEnumerable<IEventStoreContract> GetAllAggregateEvents(Guid rootId)
+        public IEnumerable<ISerializedEvent> GetAllAggregateEvents(IUniqueIdentity rootId)
         {
-            return Task.Factory.StartNew<IEnumerable<IEventStoreContract>>(
+            return Task.Factory.StartNew<IEnumerable<ISerializedEvent>>(
                 () => { return this.repository.GetAllAggregateEvents(rootId); }, 
                 CancellationToken.None, 
                 TaskCreationOptions.None, 

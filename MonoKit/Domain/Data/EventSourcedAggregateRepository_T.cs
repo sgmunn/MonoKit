@@ -46,9 +46,9 @@ namespace MonoKit.Domain.Data
             return new T();
         }
 
-        public T GetById(object id)
+        public T GetById(IUniqueIdentity id)
         {
-            var allEvents = this.repository.GetAllAggregateEvents(((Identity)id).Id).ToList();
+            var allEvents = this.repository.GetAllAggregateEvents(id).ToList();
 
             if (allEvents.Count == 0)
             {
@@ -85,7 +85,7 @@ namespace MonoKit.Domain.Data
 
             int expectedVersion = instance.UncommittedEvents.First().Version - 1;
 
-            var allEvents = this.repository.GetAllAggregateEvents(instance.Identity.Id).ToList();
+            var allEvents = this.repository.GetAllAggregateEvents(instance.Identity).ToList();
 
             var lastEvent = allEvents.LastOrDefault();
             if ((lastEvent == null && expectedVersion != 0) || (lastEvent != null && lastEvent.Version != expectedVersion))
@@ -120,7 +120,7 @@ namespace MonoKit.Domain.Data
             throw new NotSupportedException();
         }
 
-        public void DeleteId(object id)
+        public void DeleteId(IUniqueIdentity id)
         {
             throw new NotSupportedException();
         }

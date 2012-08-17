@@ -24,9 +24,9 @@ namespace MonoKit.Domain.Data
     using System.Collections.Generic;
     using MonoKit.Data;
 
-    public interface IEventStoreRepository : IRepository<IEventStoreContract>
+    public interface IEventStoreRepository : IRepository<ISerializedEvent>
     {
-        IEnumerable<IEventStoreContract> GetAllAggregateEvents(Guid rootId);
+        IEnumerable<ISerializedEvent> GetAllAggregateEvents(IUniqueIdentity rootId);
     }
 }
 

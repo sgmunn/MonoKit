@@ -30,7 +30,7 @@ using MonoKit.Domain.Data.SQLite;
 
 namespace MonoKitSample
 {
-    public class MinionContext : SQLiteDomainContext
+    public class MinionContext : SqlDomainContext
     {
         public MinionContext(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
         {

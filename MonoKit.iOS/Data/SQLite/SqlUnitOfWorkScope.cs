@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="SqlUnitOfWorkScope.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,31 +18,54 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain.Data
+namespace MonoKit.Data.SQLite
 {
     using System;
-    using System.Runtime.Serialization;
-    using MonoKit.Data;
-
-    // todo: move out ?? to application
-
-    [DataContract(Name="StoredEvent", Namespace=DomainNamespace.Namespace)]
-    public class StoredEvent : IEventStoreContract
+    using System.Collections.Generic;
+    
+    public class SqlUnitOfWorkScope : IUnitOfWorkScope
     {
-        // todo: impement
-        public IUniqueIdentity Identity { get; set; }
+        private readonly SQLiteConnection connection;
+        
+        private readonly List<IUnitOfWork> scopedWork;
 
-        [DataMember]
-        public Guid AggregateId { get; set; }
-  
-        [DataMember]
-        public Guid EventId { get; set; }
+        public SqlUnitOfWorkScope(SQLiteConnection connection)
+        {
+            this.connection = connection;
+            this.scopedWork = new List<IUnitOfWork>();
+        }
 
-        [DataMember]
-        public int Version { get; set; }
-  
-        [DataMember]
-        public string Event { get; set; }
+        public void Add(IUnitOfWork uow)
+        {
+            this.scopedWork.Add(uow);
+        }
+
+        public void Commit()
+        {
+            this.connection.BeginTransaction();
+            try
+            {
+                foreach (var uow in this.scopedWork)
+                {
+                    uow.Commit();
+                }
+
+                this.connection.Commit();
+            }
+            catch
+            {
+                this.connection.Rollback();
+                throw;
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var uow in this.scopedWork)
+            {
+                uow.Dispose();
+            }
+        }
     }
 }
 

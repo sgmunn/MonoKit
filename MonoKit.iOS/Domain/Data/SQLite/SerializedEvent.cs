@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="SerializedEvent.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,54 +18,32 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Data.SQLite
+namespace MonoKit.Domain.Data.SQLite
 {
     using System;
-    using System.Collections.Generic;
-    
-    public class SQLiteUnitOfWorkScope : IUnitOfWorkScope
+    using MonoKit.Data;
+    using MonoKit.Data.SQLite;
+    using MonoKit.Domain.Data;
+
+    public class SerializedEvent : ISerializedEvent
     {
-        private readonly SQLiteConnection connection;
-        
-        private readonly List<IUnitOfWork> scopedWork;
-
-        public SQLiteUnitOfWorkScope(SQLiteConnection connection)
+        [Ignore]
+        public IUniqueIdentity Identity
         {
-            this.connection = connection;
-            this.scopedWork = new List<IUnitOfWork>();
-        }
-
-        public void Add(IUnitOfWork uow)
-        {
-            this.scopedWork.Add(uow);
-        }
-
-        public void Commit()
-        {
-            this.connection.BeginTransaction();
-            try
+            get
             {
-                foreach (var uow in this.scopedWork)
-                {
-                    uow.Commit();
-                }
-
-                this.connection.Commit();
-            }
-            catch
-            {
-                this.connection.Rollback();
-                throw;
+                return new SerializedEventId(this.EventId);
             }
         }
 
-        public void Dispose()
-        {
-            foreach (var uow in this.scopedWork)
-            {
-                uow.Dispose();
-            }
-        }
+        [Indexed]
+        public Guid AggregateId { get; set; }
+  
+        [PrimaryKey]
+        public Guid EventId { get; set; }
+  
+        public int Version { get; set; }
+  
+        public string Event { get; set; }
     }
 }
-

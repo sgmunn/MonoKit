@@ -213,9 +213,9 @@ namespace MonoKitSample
             // register events before creating context if using default serializer
             KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
 
-            SampleDB.Main.CreateTable<SQLStoredEvent>();
+            SampleDB.Main.CreateTable<SerializedEvent>();
    
-            var storage = new EventStoreRepository<SQLStoredEvent>(SampleDB.Main);
+            var storage = new EventStoreRepository<SerializedEvent>(SampleDB.Main);
             var context = new SampleContext1(SampleDB.Main, storage, null);
 
             var id = new Guid("{4332b5a6-ab99-49dc-b37f-216c67247f14}");
@@ -240,13 +240,13 @@ namespace MonoKitSample
             // setup and bootstrap context
             SampleDB.Main.CreateTable<TestSnapshot>();
    
-            var storage = new EventStoreRepository<SQLStoredEvent>(SampleDB.Main);
+            var storage = new EventStoreRepository<SerializedEvent>(SampleDB.Main);
             
             var context = new SampleContext2(SampleDB.Main, storage, null);
 
             context.RegisterSnapshot<SnapshotTestRoot>(c => new SnapshotRepository<TestSnapshot>(SampleDB.Main));
             
-            context.RegisterBuilder<SnapshotTestRoot>(c => new TestBuilder(new SQLiteRepository<TestReadModel>(SampleDB.Main)));
+            context.RegisterBuilder<SnapshotTestRoot>(c => new TestBuilder(new SqlRepository<TestReadModel>(SampleDB.Main)));
             
             // the commanding bit
             var id = new Guid("{c239587e-c8bc-4654-9f28-6a79a7feb12a}");
@@ -272,13 +272,13 @@ namespace MonoKitSample
             SampleDB.Main.CreateTable<MinionDataContract>();
             SampleDB.Main.CreateTable<PocketMoneyTransactionDataContract>();
    
-            var storage = new EventStoreRepository<SQLStoredEvent>(SampleDB.Main);
+            var storage = new EventStoreRepository<SerializedEvent>(SampleDB.Main);
             
             var context = new MinionContext(SampleDB.Main, storage, null);
 
             context.RegisterSnapshot<Minion>(c => new SnapshotRepository<MinionDataContract>(SampleDB.Main));
             
-            context.RegisterBuilder<Minion>(c => new TransactionReadModelBuilder(new SQLiteRepository<PocketMoneyTransactionDataContract>(SampleDB.Main)));
+            context.RegisterBuilder<Minion>(c => new TransactionReadModelBuilder(new SqlRepository<PocketMoneyTransactionDataContract>(SampleDB.Main)));
             
             // the commanding bit
             var id = new Guid("{b6dc9675-a6ca-4767-8b49-e24b4262ac93}");
@@ -350,14 +350,14 @@ namespace MonoKitSample
         }
     }
     
-    public class SampleContext1 : SQLiteDomainContext
+    public class SampleContext1 : SqlDomainContext
     {
         public SampleContext1(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
         {
         }
     }
     
-    public class SampleContext2 : SQLiteDomainContext
+    public class SampleContext2 : SqlDomainContext
     {
         public SampleContext2(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
         {

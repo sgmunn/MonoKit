@@ -21,24 +21,8 @@
 namespace MonoKit.Data
 {
     using System;
-    using System.Collections.Generic;
 
-    public interface IRepository<TData, TKey> : IDisposable
-    {
-        TData New();
-
-        TData GetById(TKey id);
-
-        IEnumerable<TData> GetAll(); 
-
-        void Save(TData instance);
-
-        void Delete(TData instance);
-
-        void DeleteId(TKey id);
-    }
-
-    public interface IRepository<T> : IRepository<T, Guid>
+    public interface IRepository<T> : IRepository<T, IUniqueIdentity>
     {
     }
 }

@@ -25,14 +25,14 @@ namespace MonoKit.Data
 
     public abstract class DictionaryRepository<T> : IRepository<T>
     {
-        private readonly Dictionary<object, T> storage;
+        private readonly Dictionary<IUniqueIdentity, T> storage;
 
         protected DictionaryRepository()
         {
-            this.storage = new Dictionary<object, T>();
+            this.storage = new Dictionary<IUniqueIdentity, T>();
         }
 
-        protected Dictionary<object, T> Storage
+        protected Dictionary<IUniqueIdentity, T> Storage
         {
             get
             {
@@ -45,7 +45,7 @@ namespace MonoKit.Data
             return this.InternalNew();
         }
 
-        public T GetById(object id)
+        public T GetById(IUniqueIdentity id)
         {
             if (this.storage.ContainsKey(id))
             {
@@ -70,7 +70,7 @@ namespace MonoKit.Data
             this.InternalDelete(instance);
         }
 
-        public void DeleteId(object id)
+        public void DeleteId(IUniqueIdentity id)
         {
             if (this.Storage.ContainsKey(id))
             {

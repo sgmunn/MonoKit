@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="InternalEventStoreRepository_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,51 +23,52 @@ namespace MonoKit.Domain.Data.SQLite
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using MonoKit.Data;
     using MonoKit.Data.SQLite;
     using MonoKit.Domain.Data;
     
-    public class InternalEventStoreRepository<T> : IEventStoreRepository where T : IEventStoreContract, new() 
+    public class InternalEventStoreRepository<T> : IEventStoreRepository where T : ISerializedEvent, new() 
     {
-        private readonly SQLiteRepository<T> repository;
+        private readonly SqlRepository<T> repository;
         
         public InternalEventStoreRepository(SQLiteConnection connection)
         {
-            this.repository = new SQLiteRepository<T>(connection);
+            this.repository = new SqlRepository<T>(connection);
         }
 
-        public IEventStoreContract New()
+        public ISerializedEvent New()
         {
             return new T();
         }
 
-        public IEventStoreContract GetById(object id)
+        public ISerializedEvent GetById(IUniqueIdentity id)
         {
             return ((T)this.repository.GetById(id));
         }
 
-        public IEnumerable<IEventStoreContract> GetAll()
+        public IEnumerable<ISerializedEvent> GetAll()
         {
-            return this.repository.GetAll().Cast<IEventStoreContract>();
+            return this.repository.GetAll().Cast<ISerializedEvent>();
         }
 
-        public void Save(IEventStoreContract instance)
+        public void Save(ISerializedEvent instance)
         {
             this.repository.Save((T)instance);
         }
 
-        public void Delete(IEventStoreContract instance)
+        public void Delete(ISerializedEvent instance)
         {
             this.repository.Delete((T)instance);
         }
 
-        public void DeleteId(object id)
+        public void DeleteId(IUniqueIdentity id)
         {
             this.repository.DeleteId(id);
         }
 
-        public IEnumerable<IEventStoreContract> GetAllAggregateEvents(Guid rootId)
+        public IEnumerable<ISerializedEvent> GetAllAggregateEvents(IUniqueIdentity rootId)
         {
-            return this.repository.GetAll().Cast<IEventStoreContract>().Where(x => x.AggregateId == rootId).OrderBy(x => x.Version);
+            return this.repository.GetAll().Cast<ISerializedEvent>().Where(x => x.AggregateId == rootId.Id).OrderBy(x => x.Version);
         }
 
         public void Dispose()

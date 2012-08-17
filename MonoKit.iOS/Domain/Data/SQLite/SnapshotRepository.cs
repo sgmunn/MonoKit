@@ -52,7 +52,7 @@ namespace MonoKit.Domain.Data.SQLite
         
         public SnapshotRepository(SQLiteConnection connection)
         {
-            var repo = new SQLiteRepository<T>(connection);
+            var repo = new SqlRepository<T>(connection);
             this.repository = new SyncRepository<T>(repo, SyncScheduler.TaskScheduler);
         }
 
@@ -61,7 +61,7 @@ namespace MonoKit.Domain.Data.SQLite
             return new T();
         }
 
-        public ISnapshot GetById(object id)
+        public ISnapshot GetById(IUniqueIdentity id)
         {
             return ((T)this.repository.GetById(id));
         }
@@ -81,7 +81,7 @@ namespace MonoKit.Domain.Data.SQLite
             this.repository.Delete((T)instance);
         }
 
-        public void DeleteId(object id)
+        public void DeleteId(IUniqueIdentity id)
         {
             this.repository.DeleteId(id);
         }
