@@ -39,8 +39,10 @@ namespace MonoKit.Domain.Data
             EventTypes.AddRange(eventTypes);
         }
     }
-    
-    public class DefaultEventSerializer : IEventSerializer
+
+    // todo: make ieventserilizer of T
+    public class DefaultEventSerializer<T> : IEventSerializer
+        where T : class, new()
     {
         private readonly DataContractSerializer serializer;
 
@@ -51,7 +53,7 @@ namespace MonoKit.Domain.Data
 
         public DefaultEventSerializer()
         {
-            this.serializer = new DataContractSerializer(typeof(EventBase), KnownTypes.EventTypes);
+            this.serializer = new DataContractSerializer(typeof(T), KnownTypes.EventTypes);
         }
 
         public object DeserializeFromString(string value)

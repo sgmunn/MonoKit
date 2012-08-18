@@ -41,7 +41,7 @@ namespace MonoKitSample
     {
         public void Execute(EarnPocketMoneyCommand command)
         {
-            this.RaiseEvent(new PocketMoneyEarntEvent() { Date = command.Date, Amount = command.Amount });
+            this.RaiseEvent(command.AggregateId, new PocketMoneyEarntEvent() { Date = command.Date, Amount = command.Amount });
         }
 
         public void Apply(PocketMoneyEarntEvent @event)
@@ -90,7 +90,7 @@ namespace MonoKitSample
         public decimal Amount { get; set; }
     } 
 
-    public class PocketMoneyEarntEvent : DomainEventBase
+    public class PocketMoneyEarntEvent : EventBase
     {
         public DateTime Date { get; set; }
         

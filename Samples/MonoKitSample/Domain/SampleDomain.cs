@@ -28,11 +28,16 @@ namespace MonoKitSample.Domain
     using MonoKit.Domain.Data.SQLite;
     using System.Collections.Generic;
 
+    // todo: test event serialization
+    // todo: implement aggregate index for version updating - UpdateWhere
+    // todo: test publication of events and read models on domain bus
+
     public class TestDomainContext : SqlDomainContext
     {
         public TestDomainContext(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) 
             : base(connection, eventStore, eventBus)
         {
+            this.EventSerializer = new DefaultEventSerializer<EventBase>();
         }
     }
 
@@ -45,6 +50,7 @@ namespace MonoKitSample.Domain
 
     public class EventSourcedRoot : AggregateRoot, IEventSourced
     {
+        private string name;
         private decimal balance;
 
         public EventSourcedRoot() : base()
@@ -54,7 +60,7 @@ namespace MonoKitSample.Domain
         public void Execute(TestCommand1 command)
         {
             Console.WriteLine("Execute TestCommand1");
-            this.RaiseEvent(new TestEvent1{
+            this.RaiseEvent(command.AggregateId, new TestEvent1{
                 Name = command.Name,
             });
         }
@@ -62,20 +68,20 @@ namespace MonoKitSample.Domain
         public void Apply(TestEvent1 domainEvent)
         {
             Console.WriteLine("Apply TestEvent1 {0}", domainEvent.Version);
+            this.name = domainEvent.Name;
         }
    
         public void Execute(TestCommand2 command)
         {
             Console.WriteLine("Execute TestCommand2");
-            this.balance += command.Amount;
 
-            this.RaiseEvent(new TestEvent2{
+            this.RaiseEvent(command.AggregateId, new TestEvent2{
                 Description = command.Description,
                 Amount = command.Amount,
             });
 
-            this.RaiseEvent(new BalanceUpdatedEvent{
-                Balance = this.balance,
+            this.RaiseEvent(command.AggregateId, new BalanceUpdatedEvent{
+                Balance = this.balance += command.Amount,
             });
         }
 
@@ -87,6 +93,12 @@ namespace MonoKitSample.Domain
         public void LoadFromEvents(IList<IAggregateEvent> events)
         {
             base.ApplyEvents(events);
+        }
+
+        public void Apply(BalanceUpdatedEvent domainEvent)
+        {
+            Console.WriteLine("Apply BalanceUpdatedEvent {0}", domainEvent.Balance);
+            this.balance = domainEvent.Balance;
         }
     }
 
@@ -112,6 +124,11 @@ namespace MonoKitSample.Domain
         public string Name { get; set; }
 
         public decimal Balance { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("{0} [{1}] {2}", this.Version, this.Name, this.Balance);
+        }
     }
     
     public class SnapshotTestRoot : AggregateRoot<TestSnapshot>
@@ -119,34 +136,40 @@ namespace MonoKitSample.Domain
         public void Execute(TestCommand1 command)
         {
             Console.WriteLine("Execute TestCommand1");
-            this.RaiseEvent(new TestEvent1{
+            this.RaiseEvent(command.AggregateId, new TestEvent1{
                 Name = command.Name,
             });
         }
 
         public void Apply(TestEvent1 domainEvent)
         {
-            Console.WriteLine("Apply TestEvent1 {0}", domainEvent.Version);
+            Console.WriteLine("Apply TestEvent1 {0} - {1}", domainEvent.Version, domainEvent.Name);
+            this.InternalState.Name = domainEvent.Name;
         }
    
         public void Execute(TestCommand2 command)
         {
             Console.WriteLine("Execute TestCommand2");
-            this.InternalState.Balance += command.Amount;
 
-            this.RaiseEvent(new TestEvent2{
+            this.RaiseEvent(command.AggregateId, new TestEvent2{
                 Description = command.Description,
                 Amount = command.Amount,
             });
 
-            this.RaiseEvent(new BalanceUpdatedEvent{
-                Balance = this.InternalState.Balance,
+            this.RaiseEvent(command.AggregateId, new BalanceUpdatedEvent{
+                Balance = this.InternalState.Balance += command.Amount,
             });
         }
 
         public void Apply(TestEvent2 domainEvent)
         {
             Console.WriteLine("Apply TestEvent2 {0}", domainEvent.Version);
+        }
+
+        public void Apply(BalanceUpdatedEvent domainEvent)
+        {
+            Console.WriteLine("Apply BalanceUpdatedEvent {0}", domainEvent.Balance);
+            this.InternalState.Balance = domainEvent.Balance;
         }
 
         public override ISnapshot GetSnapshot()

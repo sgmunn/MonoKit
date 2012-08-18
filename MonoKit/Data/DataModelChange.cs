@@ -51,7 +51,7 @@ namespace MonoKit.Data
             this.Deleted = deleted;
         }
 
-        public IUniqueIdentity Identity { get; private set; }
+        public IUniqueIdentity Identity { get; set; }
 
         public IDataModel Item { get; private set; }
 

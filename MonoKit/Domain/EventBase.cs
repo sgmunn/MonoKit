@@ -23,31 +23,41 @@ namespace MonoKit.Domain
     using System;
     using System.Runtime.Serialization;
     using MonoKit.Data;
-
-    // todo: investigate having this with abstract properties so that serialization could be shifted to application domains
-    // todo: kill off identity type from event base as we have it with Identity
-
+//
 //    [DataContract(Name="EventBase", Namespace=DomainNamespace.Namespace)]
-    public abstract class EventBase : IAggregateEvent
-    {
-        public EventBase()
-        {
-            this.EventId = Guid.NewGuid();
-            this.Timestamp = DateTime.UtcNow;
-        }
-
-        // todo: check serialization of Identity
+//    public abstract class EventBase : IAggregateEvent
+//    {
+//        public EventBase()
+//        {
+//            this.EventId = Guid.NewGuid();
+//            this.Timestamp = DateTime.UtcNow;
+//        }
+//
+//        // todo: check serialization of Identity, but how to get at the correct type for the event ??
+//        public IUniqueIdentity Identity { get; set; }
+//
 //        [DataMember]
-        public abstract IUniqueIdentity Identity { get; set; }
-
+//        public Guid IdentityId 
+//        { 
+//            get
+//            {
+//                return this.Identity.Id;
+//            }
+//
+//            set
+//            {
+//                this.Identity = new Identity(value);
+//            }
+//        }
+//
 //        [DataMember]
-        public abstract Guid EventId { get; set; }
-
+//        public Guid EventId { get; set; }
+//
 //        [DataMember]
-        public abstract int Version { get; set; }
-
+//        public int Version { get; set; }
+//
 //        [DataMember]
-        public abstract DateTime Timestamp { get; set; }      
-    }
+//        public DateTime Timestamp { get; set; }      
+//    }
 }
 

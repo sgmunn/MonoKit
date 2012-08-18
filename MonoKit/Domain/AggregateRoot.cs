@@ -65,16 +65,27 @@ namespace MonoKit.Domain
             }
         }
 
-        protected void RaiseEvent(EventBase evt)
+        protected void RaiseEvent(IUniqueIdentity id, IAggregateEvent evt)
         {
+            if (id == null || id.Id == Guid.Empty)
+            {
+                throw new ArgumentNullException("id", "Cannot raise an event without specifying the correct aggregate id");
+            }
+
             if (this.Identity == null)
             {
-                this.Identity = evt.Identity;
+                this.Identity = id;
+            }
+
+            if (this.Identity.Id != id.Id)
+            {
+                throw new InvalidOperationException("Cannot raise an event for a different aggregate root id");
             }
 
             this.Version++;
 
-            evt.Identity = this.Identity;
+            evt.Identity = id;
+            evt.EventId = Guid.NewGuid();
             evt.Version = this.Version;
             evt.Timestamp = DateTime.UtcNow;
 

@@ -18,15 +18,64 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
-using System;
 
 namespace MonoKitSample.Domain
 {
+    using System;
+    using System.Reflection;
+    using MonoKit.Domain;
+    using MonoKit.Domain.Data;
+    using MonoKit.Domain.Data.SQLite;
+    using MonoKit.Data.SQLite;
+
     public static class EventSourceSamples
     {
+        public static Guid TestId = new Guid("{c239587e-c8bc-4654-9f28-6a79a7feb12a}");
+
+        public static IDomainContext GetDomainContext()
+        {
+            KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
+
+            var eventStore = new EventStoreRepository<SerializedEvent>(EventSourcedDB.Main);
+
+            var context = new TestDomainContext(EventSourcedDB.Main, eventStore, null);
+
+            // registrations
+            context.RegisterBuilder<EventSourcedRoot>(c => 
+                 new TransactionReadModelBuilder(new SqlRepository<TransactionDataContract>(EventSourcedDB.Main)));
+
+            return context;
+        }
+
         public static void DoTest1()
         {
+            var context = GetDomainContext();
 
+            var id = new TestAggregateId(TestId);
+
+            var executor = context.NewCommandExecutor<EventSourcedRoot>();
+
+            executor.Execute(new TestCommand1 
+                { 
+                    AggregateId = new TestAggregateId(id),
+                    Name = Guid.NewGuid().ToString().Substring(0, 8),
+                });
+        }
+
+        public static void DoTest2()
+        {
+            var context = GetDomainContext();
+
+            var id = new TestAggregateId(TestId);
+
+            var executor = context.NewCommandExecutor<EventSourcedRoot>();
+
+            executor.Execute(new TestCommand2 
+                { 
+                    AggregateId = new TestAggregateId(id),
+                    Description = Guid.NewGuid().ToString().Substring(0, 8),
+                    Amount = 100,
+                });
         }
     }
 }

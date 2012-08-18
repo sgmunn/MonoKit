@@ -45,5 +45,10 @@ namespace MonoKit.Domain.Data.SQLite
         public int Version { get; set; }
   
         public string Event { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("{0} - {1}", this.AggregateId.ToString().Substring(0, 8), this.Version);
+        }
     }
 }

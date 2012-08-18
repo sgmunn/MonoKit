@@ -22,36 +22,52 @@
 namespace MonoKitSample
 {
     using System;
+    using System.Runtime.Serialization;
     using MonoKit.Data;
     using MonoKit.Domain;
-    using System.Runtime.Serialization;
 
-    // todo: test the serialization of this class
-    [DataContract(Name = "DomainEventBase", Namespace = "xyz")]
-    public class DomainEventBase : EventBase
+    [DataContract(Name="EventBase", Namespace="urn:SampleDomain")]
+    public class EventBase : IAggregateEvent
     {
-        [DataMember]
-        public override IUniqueIdentity Identity { get; set; }
+        public EventBase()
+        {
+        }
+
+        public IUniqueIdentity Identity { get; set; }
 
         [DataMember]
-        public override Guid EventId { get; set; }
+        public Guid IdentityId 
+        { 
+            get
+            {
+                return this.Identity.Id;
+            }
+
+            set
+            {
+                this.Identity = new Identity(value);
+            }
+        }
 
         [DataMember]
-        public override int Version { get; set; }
+        public Guid EventId { get; set; }
 
         [DataMember]
-        public override DateTime Timestamp { get; set; }
+        public int Version { get; set; }
+
+        [DataMember]
+        public DateTime Timestamp { get; set; }      
     }
-        
-    [DataContract(Name="Event1", Namespace="http://sgmunn.com/2012/Sample/Domain")]
-    public class TestEvent1 : DomainEventBase
+
+    [DataContract(Name="Event1", Namespace="urn:SampleDomain")]
+    public class TestEvent1 : EventBase
     {
         [DataMember]
         public string Name { get; set; }
     }
         
-    [DataContract(Name="Event2", Namespace="http://sgmunn.com/2012/Sample/Domain")]
-    public class TestEvent2 : DomainEventBase
+    [DataContract(Name="Event2", Namespace="urn:SampleDomain")]
+    public class TestEvent2 : EventBase
     {
         [DataMember]
         public string Description { get; set; }
@@ -60,8 +76,8 @@ namespace MonoKitSample
         public decimal Amount { get; set; }
     }
         
-    [DataContract(Name="BalanceUpdated", Namespace="http://sgmunn.com/2012/Sample/Domain")]
-    public class BalanceUpdatedEvent : DomainEventBase
+    [DataContract(Name="BalanceUpdated", Namespace="urn:SampleDomain")]
+    public class BalanceUpdatedEvent : EventBase
     {
         [DataMember]
         public decimal Balance { get; set; }

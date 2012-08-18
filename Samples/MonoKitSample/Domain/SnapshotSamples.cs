@@ -46,15 +46,6 @@ namespace MonoKitSample.Domain
         public static void DoTest1()
         {
             var context = GetDomainContext();
-//            // register events before creating context if using default serializer
-//            KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
-//
-//            // setup and bootstrap context
-//            SampleDB.Main.CreateTable<TestSnapshot>();
-//   
-//            var storage = new EventStoreRepository<SerializedEvent>(SampleDB.Main);
-
-
 
             var id = new TestAggregateId(TestId);
 
@@ -63,21 +54,24 @@ namespace MonoKitSample.Domain
             executor.Execute(new TestCommand1 
                 { 
                     AggregateId = new TestAggregateId(id),
-                    Name = "Alfred",
+                    Name = Guid.NewGuid().ToString().Substring(0, 8),
                 });
- 
+        }
 
+        public static void DoTest2()
+        {
+            var context = GetDomainContext();
 
+            var id = new TestAggregateId(TestId);
 
-            // not supported at the moment
-//            var scope = context.BeginUnitOfWork();
-//            
-//            using (scope)
-//            {
-//                cmd.Execute(scope, new TestCommand() { AggregateId = id, Description = DateTime.Now.ToShortTimeString(), });
-//                scope.Commit();
-//            }
+            var executor = context.NewCommandExecutor<SnapshotTestRoot>();
 
+            executor.Execute(new TestCommand2 
+                { 
+                    AggregateId = new TestAggregateId(id),
+                    Description = Guid.NewGuid().ToString().Substring(0, 8),
+                    Amount = 100,
+                });
         }
     }
 }

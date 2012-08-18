@@ -59,7 +59,13 @@ namespace MonoKit.Domain.Data
 
             foreach (var storedEvent in allEvents)
             {
-                history.Add(this.serializer.DeserializeFromString(storedEvent.Event) as IAggregateEvent);
+                var evt = this.serializer.DeserializeFromString(storedEvent.Event);
+
+                // should change id of event to match so that new events from subsequent commands are assigned the correct id
+                // this handles serializers that don't restore identity to correct type
+                ((IAggregateEvent)evt).Identity = id;
+
+                history.Add((IAggregateEvent)evt);
             }
 
             var result = this.New();

@@ -25,11 +25,11 @@ namespace MonoKit.Domain
 
     public interface IAggregateEvent : IDataModelEvent
     {
-        Guid EventId { get; }
+        Guid EventId { get; set; }
         
-        int Version { get; }
+        int Version { get; set; }
         
-        DateTime Timestamp { get; }
+        DateTime Timestamp { get; set; }
     }
 }
 

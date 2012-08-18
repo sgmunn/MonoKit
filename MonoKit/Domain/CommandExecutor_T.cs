@@ -63,9 +63,14 @@ namespace MonoKit.Domain
                 return;
             }
 
-            // todo: handle different aggregate id's within the same set of commands
+            var rootId = commands.First().AggregateId;
 
-            var root = this.repository.GetById(commands.First().AggregateId) ?? this.repository.New();
+            if (commands.Any(x => x.AggregateId != rootId))
+            {
+                throw new InvalidOperationException("Can only execute commands for a single aggregate at a time");
+            }
+
+            var root = this.repository.GetById(rootId) ?? this.repository.New();
 
             if (expectedVersion != 0)
             {

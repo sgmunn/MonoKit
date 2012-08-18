@@ -36,7 +36,6 @@ namespace MonoKit.Domain
         {
             this.EventBus = eventBus;
             this.EventStore = eventStore;
-            this.EventSerializer = new DefaultEventSerializer();
 
             this.registeredBuilders = new Dictionary<Type, List<Func<IDomainContext, IReadModelBuilder>>>();
             this.registeredSnapshotRepositories = new Dictionary<Type, Func<IDomainContext, ISnapshotRepository>>();

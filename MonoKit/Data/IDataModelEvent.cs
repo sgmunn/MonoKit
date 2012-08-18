@@ -25,6 +25,6 @@ namespace MonoKit.Data
 
     public interface IDataModelEvent
     {
-        IUniqueIdentity Identity { get; }
+        IUniqueIdentity Identity { get; set; }
     }
 }

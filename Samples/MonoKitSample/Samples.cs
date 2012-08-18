@@ -216,37 +216,21 @@ namespace MonoKitSample
 
             var section1 = new TableViewSection(tb.Source);
             
-            section1.Header = "1";
+            section1.Header = "commands";
             section1.Add(new StringElement("Test Command 1"){ Command = (x) => EventSourceSamples.DoTest1()});
+            section1.Add(new StringElement("Test Command 2"){ Command = (x) => EventSourceSamples.DoTest2()});
+
+            var adminSection = new TableViewSection(tb.Source);
+            
+            adminSection.Header = "Sql";
+            adminSection.Add(new StringElement("Browse"){ Command = (x) => 
+                {
+                var admin = new SQLite.MonoTouchAdmin.SQLiteAdmin(EventSourcedDB.Main);
+                this.rootController.PushViewController(admin.NewTablesViewController(), true);
+                }
+            });
 
             this.rootController.PushViewController(tb, true);
-
-
-
-
-            // register events before creating context if using default serializer
-//            KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
-//
-//            SampleDB.Main.CreateTable<SerializedEvent>();
-//   
-//            var storage = new EventStoreRepository<SerializedEvent>(SampleDB.Main);
-//            var context = new SampleContext1(SampleDB.Main, storage, null);
-//
-//            var id = new Guid("{4332b5a6-ab99-49dc-b37f-216c67247f14}");
-//            var cmd = new DomainCommandExecutor<EventSourcedRoot>(context);
-//            cmd.Execute(new CreateCommand() { AggregateId = new Identity(id) });
- 
-
-
-
-            // not supported at the moment
-//            var scope = context.BeginUnitOfWork();
-//            
-//            using (scope)
-//            {
-//                cmd.Execute(scope, new TestCommand() { AggregateId = id, Description = DateTime.Now.ToShortTimeString(), });
-//                scope.Commit();
-//            }
         }
         
         protected void DoDomainTest2(Element element)
@@ -256,8 +240,9 @@ namespace MonoKitSample
 
             var section1 = new TableViewSection(tb.Source);
             
-            section1.Header = "1";
+            section1.Header = "commands";
             section1.Add(new StringElement("Test Command 1"){ Command = (x) => SnapshotSamples.DoTest1()});
+            section1.Add(new StringElement("Test Command 2"){ Command = (x) => SnapshotSamples.DoTest2()});
 
             var adminSection = new TableViewSection(tb.Source);
             

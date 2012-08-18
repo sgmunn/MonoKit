@@ -77,6 +77,11 @@ namespace MonoKit.Data.SQLite
 
         public virtual T GetById(IUniqueIdentity id)
         {
+            if (id == null)
+            {
+                throw new ArgumentNullException("id", "Cannot Get an entity by id with a null id");
+            }
+
             try
             {
                 return SynchronousTask.GetSync(() => this.Connection.Get<T>(id.Id));
