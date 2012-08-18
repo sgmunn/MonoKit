@@ -24,7 +24,7 @@ namespace MonoKit.Domain.Data
     using System.Collections.Generic;
     using System.Linq;
     using MonoKit.Data;
-
+     
     // todo: snapshot repository needs a way to serialize complex data members so that we can still use sqlite
     // at the moment this will not handle internal state with complicated objects
     // an alternative is for the aggregate to return a snapshot that is serialized -- ie different to its internal state

@@ -27,7 +27,7 @@ namespace MonoKit.Domain
     // todo: investigate having this with abstract properties so that serialization could be shifted to application domains
     // todo: kill off identity type from event base as we have it with Identity
 
-    [DataContract(Name="EventBase", Namespace=DomainNamespace.Namespace)]
+//    [DataContract(Name="EventBase", Namespace=DomainNamespace.Namespace)]
     public abstract class EventBase : IAggregateEvent
     {
         public EventBase()
@@ -37,17 +37,17 @@ namespace MonoKit.Domain
         }
 
         // todo: check serialization of Identity
-        [DataMember]
-        public IUniqueIdentity Identity { get; set; }
+//        [DataMember]
+        public abstract IUniqueIdentity Identity { get; set; }
 
-        [DataMember]
-        public Guid EventId { get; set; }
+//        [DataMember]
+        public abstract Guid EventId { get; set; }
 
-        [DataMember]
-        public int Version { get; set; }
+//        [DataMember]
+        public abstract int Version { get; set; }
 
-        [DataMember]
-        public DateTime Timestamp { get; set; }      
+//        [DataMember]
+        public abstract DateTime Timestamp { get; set; }      
     }
 }
 

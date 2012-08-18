@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="SampleDB.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,14 +18,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using System.IO;
-using MonoKit.Data.SQLite;
-using MonoKit.Data;
-using System.Linq;
-
 namespace MonoKitSample
 {
+    using System;
+    using System.IO;
+    using MonoKit.Data.SQLite;
+    using MonoKit.Data;
+
     public class SampleDB : SQLiteConnection
     {
         private static SampleDB MainDatabase = new SampleDB();

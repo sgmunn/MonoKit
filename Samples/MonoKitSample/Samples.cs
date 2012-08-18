@@ -17,30 +17,32 @@
 //   IN THE SOFTWARE.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
-using System;
-using MonoKit.UI;
-using MonoKit.UI.Controls;
-using MonoKit.UI.Elements;
-using MonoTouch.UIKit;
-using MonoKit.DataBinding;
-using MonoKit.Domain;
-using System.Linq;
-using MonoKit.Domain.Data;
-using MonoKit.Data;
-using System.Collections.Generic;
-using MonoKit.Data.SQLite;
-using MonoKit.Domain.Data.SQLite;
-using System.Reflection;
-using MonoKit.Tasks;
-using MonoKit.Reactive;
-using MonoKit;
-using System.Threading;
-using System.Threading.Tasks;
-using MonoKit.Reactive.Linq;
+using MonoKitSample.Domain;
 
 namespace MonoKitSample
 {
+    using System;
+    using MonoKit.UI;
+    using MonoKit.UI.Controls;
+    using MonoKit.UI.Elements;
+    using MonoTouch.UIKit;
+    using MonoKit.DataBinding;
+    using MonoKit.Domain;
+    using System.Linq;
+    using MonoKit.Domain.Data;
+    using MonoKit.Data;
+    using System.Collections.Generic;
+    using MonoKit.Data.SQLite;
+    using MonoKit.Domain.Data.SQLite;
+    using System.Reflection;
+    using MonoKit.Tasks;
+    using MonoKit.Reactive;
+    using MonoKit;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using MonoKit.Reactive.Linq;
+    using MonoKitSample.Data;
+
     public class Samples
     {
         private UINavigationController rootController;
@@ -75,9 +77,8 @@ namespace MonoKitSample
             section2.Header = "Test Samples";
             
             section2.Add(new DisclosureElement("Tasks Test") { Command = this.DoTaskTest });
-            section2.Add(new DisclosureElement("Minion Test") { Command = this.DoMinionTest });
-            section2.Add(new DisclosureElement("Event Sourced Domain Test") { Command = this.DoDomainTest1 });
             section2.Add(new DisclosureElement("Snapshot Domain Test") { Command = this.DoDomainTest2 });
+            section2.Add(new DisclosureElement("Event Sourced Domain Test") { Command = this.DoDomainTest1 });
             section2.Add(new DisclosureElement("SQLite Admin Test") { Command = this.DoSqliteTest });
             section2.Add(new DisclosureElement("Custom Control") { Command = this.GotoCustomControl });
             section2.Add(new DisclosureElement("GC Tests") { Command = this.GotoGCTests });
@@ -210,18 +211,34 @@ namespace MonoKitSample
         
         protected void DoDomainTest1(Element element)
         {
+            var tb = new TableViewController(UITableViewStyle.Grouped);
+            tb.Title = "Event Sourced";
+
+            var section1 = new TableViewSection(tb.Source);
+            
+            section1.Header = "1";
+            section1.Add(new StringElement("Test Command 1"){ Command = (x) => EventSourceSamples.DoTest1()});
+
+            this.rootController.PushViewController(tb, true);
+
+
+
+
             // register events before creating context if using default serializer
-            KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
-
-            SampleDB.Main.CreateTable<SerializedEvent>();
-   
-            var storage = new EventStoreRepository<SerializedEvent>(SampleDB.Main);
-            var context = new SampleContext1(SampleDB.Main, storage, null);
-
-            var id = new Guid("{4332b5a6-ab99-49dc-b37f-216c67247f14}");
-            var cmd = new DomainCommandExecutor<EventSourcedTestRoot>(context);
-            cmd.Execute(new CreateCommand() { AggregateId = new Identity(id) });
+//            KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
+//
+//            SampleDB.Main.CreateTable<SerializedEvent>();
+//   
+//            var storage = new EventStoreRepository<SerializedEvent>(SampleDB.Main);
+//            var context = new SampleContext1(SampleDB.Main, storage, null);
+//
+//            var id = new Guid("{4332b5a6-ab99-49dc-b37f-216c67247f14}");
+//            var cmd = new DomainCommandExecutor<EventSourcedRoot>(context);
+//            cmd.Execute(new CreateCommand() { AggregateId = new Identity(id) });
  
+
+
+
             // not supported at the moment
 //            var scope = context.BeginUnitOfWork();
 //            
@@ -234,57 +251,53 @@ namespace MonoKitSample
         
         protected void DoDomainTest2(Element element)
         {
-            // register events before creating context if using default serializer
-            KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
+            var tb = new TableViewController(UITableViewStyle.Grouped);
+            tb.Title = "Snapshot Sourced";
 
-            // setup and bootstrap context
-            SampleDB.Main.CreateTable<TestSnapshot>();
-   
-            var storage = new EventStoreRepository<SerializedEvent>(SampleDB.Main);
+            var section1 = new TableViewSection(tb.Source);
             
-            var context = new SampleContext2(SampleDB.Main, storage, null);
+            section1.Header = "1";
+            section1.Add(new StringElement("Test Command 1"){ Command = (x) => SnapshotSamples.DoTest1()});
 
-            context.RegisterSnapshot<SnapshotTestRoot>(c => new SnapshotRepository<TestSnapshot>(SampleDB.Main));
+            var adminSection = new TableViewSection(tb.Source);
             
-            context.RegisterBuilder<SnapshotTestRoot>(c => new TestBuilder(new SqlRepository<TestReadModel>(SampleDB.Main)));
-            
-            // the commanding bit
-            var id = new Guid("{c239587e-c8bc-4654-9f28-6a79a7feb12a}");
-            var cmd = new DomainCommandExecutor<SnapshotTestRoot>(context);
-            cmd.Execute(new CreateCommand() { AggregateId = new Identity(id) });
- 
-            // not supported at the moment
-//            var scope = context.BeginUnitOfWork();
-//            
-//            using (scope)
-//            {
-//                cmd.Execute(scope, new TestCommand() { AggregateId = id, Description = DateTime.Now.ToShortTimeString(), });
-//                scope.Commit();
-//            }
+            adminSection.Header = "Sql";
+            adminSection.Add(new StringElement("Browse"){ Command = (x) => 
+                {
+                var admin = new SQLite.MonoTouchAdmin.SQLiteAdmin(SnapshotSourcedDB.Main);
+                this.rootController.PushViewController(admin.NewTablesViewController(), true);
+                }
+            });
+
+            this.rootController.PushViewController(tb, true);
         }
         
         protected void DoMinionTest(Element element)
         {
             // register events before creating context if using default serializer
-            KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
-
-            // setup and bootstrap context
-            SampleDB.Main.CreateTable<MinionDataContract>();
-            SampleDB.Main.CreateTable<PocketMoneyTransactionDataContract>();
-   
-            var storage = new EventStoreRepository<SerializedEvent>(SampleDB.Main);
-            
-            var context = new MinionContext(SampleDB.Main, storage, null);
-
-            context.RegisterSnapshot<Minion>(c => new SnapshotRepository<MinionDataContract>(SampleDB.Main));
-            
-            context.RegisterBuilder<Minion>(c => new TransactionReadModelBuilder(new SqlRepository<PocketMoneyTransactionDataContract>(SampleDB.Main)));
-            
-            // the commanding bit
-            var id = new Guid("{b6dc9675-a6ca-4767-8b49-e24b4262ac93}");
-            var cmd = context.NewCommandExecutor<Minion>();
-            cmd.Execute(new CreateCommand() { AggregateId = new Identity(id) });
+//            KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
+//
+//            // setup and bootstrap context
+//            SampleDB.Main.CreateTable<MinionDataContract>();
+//            SampleDB.Main.CreateTable<PocketMoneyTransactionDataContract>();
+//   
+//            var storage = new EventStoreRepository<SerializedEvent>(SampleDB.Main);
+//            
+//            var context = new MinionContext(SampleDB.Main, storage, null);
+//
+//            context.RegisterSnapshot<Minion>(c => new SnapshotRepository<MinionDataContract>(SampleDB.Main));
+//            
+//            context.RegisterBuilder<Minion>(c => new TransactionReadModelBuilder(new SqlRepository<PocketMoneyTransactionDataContract>(SampleDB.Main)));
+//            
+//            // the commanding bit
+//            var id = new Guid("{b6dc9675-a6ca-4767-8b49-e24b4262ac93}");
+//            var cmd = context.NewCommandExecutor<Minion>();
+//            cmd.Execute(new CreateCommand() { AggregateId = new Identity(id) });
  
+
+
+
+
             // not supported just yet
 //            var scope = context.BeginUnitOfWork();
 //            
@@ -295,12 +308,13 @@ namespace MonoKitSample
 //                    new EarnPocketMoneyCommand() { AggregateId = id, Date = DateTime.Today, Amount = 10, });
 //                scope.Commit();
 //            }
-            cmd.Execute(new EarnPocketMoneyCommand() { AggregateId = new Identity(id), Date = DateTime.Today, Amount = 10, });
+
+
+//            cmd.Execute(new EarnPocketMoneyCommand() { AggregateId = new Identity(id), Date = DateTime.Today, Amount = 10, });
         }
                 
         protected void DoSqliteTest(Element element)
         {
-
             var admin = new SQLite.MonoTouchAdmin.SQLiteAdmin(SampleDB.Main);
             this.rootController.PushViewController(admin.NewTablesViewController(), true);
         }
@@ -327,7 +341,7 @@ namespace MonoKitSample
 
             if (temp != null)
             {
-                            Console.WriteLine("reset temp {0}", Thread.CurrentThread.ManagedThreadId);
+                Console.WriteLine("reset temp {0}", Thread.CurrentThread.ManagedThreadId);
 
                 temp.Dispose();
                 temp = null;

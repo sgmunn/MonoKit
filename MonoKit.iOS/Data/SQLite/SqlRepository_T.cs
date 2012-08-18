@@ -79,7 +79,7 @@ namespace MonoKit.Data.SQLite
         {
             try
             {
-                return SynchronousTask.GetSync(() => this.Connection.Get<T>(id));
+                return SynchronousTask.GetSync(() => this.Connection.Get<T>(id.Id));
             }
             catch
             {
@@ -124,7 +124,7 @@ namespace MonoKit.Data.SQLite
                     }
 
                     var q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
-                    this.Connection.Execute (q, id);
+                    this.Connection.Execute (q, id.Id);
 
                     this.changes.OnNext(new DataModelChange(id));
                 });

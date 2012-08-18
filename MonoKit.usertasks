@@ -1,5 +1,0 @@
-<ListOfTask>
-  <Task file="" description="Make MethodExecutor a static class instead of inheriting from it." />
-  <Task file="" description="Purge bindings in background task." />
-  <Task file="" description="IdLock for concurrency of updating aggregates." />
-</ListOfTask>

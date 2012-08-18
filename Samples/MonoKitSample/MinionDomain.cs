@@ -90,7 +90,7 @@ namespace MonoKitSample
         public decimal Amount { get; set; }
     } 
 
-    public class PocketMoneyEarntEvent : EventBase
+    public class PocketMoneyEarntEvent : DomainEventBase
     {
         public DateTime Date { get; set; }
         

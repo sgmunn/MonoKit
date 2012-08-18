@@ -1,0 +1,77 @@
+//  --------------------------------------------------------------------------------------------------------------------
+//  <copyright file="DB.cs" company="sgmunn">
+//    (c) sgmunn 2012  
+//
+//    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+//    documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+//    the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+//    to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+//    The above copyright notice and this permission notice shall be included in all copies or substantial portions of 
+//    the Software.
+//
+//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO 
+//    THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+//    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+//    CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+//    IN THE SOFTWARE.
+//  </copyright>
+//  --------------------------------------------------------------------------------------------------------------------
+//
+
+namespace MonoKitSample.Domain
+{
+    using System;
+    using System.IO;
+    using MonoKit.Data.SQLite;
+    using MonoKit.Domain.Data.SQLite;
+
+    public class EventSourcedDB : SQLiteConnection
+    {
+        private static EventSourcedDB MainDatabase = new EventSourcedDB();
+
+        public static string SampleDatabasePath()
+        {
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "EventSample.db");
+        }
+
+        public static EventSourcedDB Main
+        {
+            get
+            {
+                return MainDatabase;
+            }
+        }
+
+        protected EventSourcedDB() : base(SampleDatabasePath())
+        {
+            this.CreateTable<SerializedEvent>();
+            this.CreateTable<TransactionDataContract>();
+        }
+    }
+
+    public class SnapshotSourcedDB : SQLiteConnection
+    {
+        private static SnapshotSourcedDB MainDatabase = new SnapshotSourcedDB();
+
+        public static string SampleDatabasePath()
+        {
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SnapshotSample.db");
+        }
+
+        public static SnapshotSourcedDB Main
+        {
+            get
+            {
+                return MainDatabase;
+            }
+        }
+
+        protected SnapshotSourcedDB() : base(SampleDatabasePath())
+        {
+            this.CreateTable<TestSnapshot>();
+            this.CreateTable<TransactionDataContract>();
+        }
+    }
+}
+

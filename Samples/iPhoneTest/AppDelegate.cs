@@ -1,20 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
-using MonoKit.UI.PagedViews;
-using System.ComponentModel;
-using MonoKit.UI;
-using MonoKit.UI.Elements;
-using MonoKit.DataBinding;
-using MonoKitSample;
-using MonoKit.Metro;
-using System.Drawing;
-
 namespace iPhoneTest
 {
+    using System;
+    using MonoTouch.Foundation;
+    using MonoTouch.UIKit;
+    using MonoKit.UI;
+    using MonoKitSample;
+
     // The UIApplicationDelegate for the application. This class is responsible for launching the 
     // User Interface of the application, as well as listening (and optionally responding) to 
     // application events from iOS.
@@ -34,6 +25,7 @@ namespace iPhoneTest
         }
         
         private UINavigationController controller;
+    
         private TableViewController tableController;
 
         //

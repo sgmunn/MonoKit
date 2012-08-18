@@ -39,12 +39,17 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Samples.cs" />
-    <Compile Include="Person.cs" />
     <Compile Include="SampleDB.cs" />
-    <Compile Include="SampleDomain.cs" />
     <Compile Include="MinionDomain.cs" />
     <Compile Include="SQLite.MonoTouchAdmin.cs" />
-    <Compile Include="Samples2.cs" />
+    <Compile Include="Domain\SampleDomain.cs" />
+    <Compile Include="Domain\Commands.cs" />
+    <Compile Include="Domain\Events.cs" />
+    <Compile Include="Domain\ReadModel.cs" />
+    <Compile Include="Data\Person.cs" />
+    <Compile Include="Domain\DB.cs" />
+    <Compile Include="Domain\EventSourceSamples.cs" />
+    <Compile Include="Domain\SnapshotSamples.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MonoKit\MonoKit.csproj">
@@ -55,5 +60,9 @@
       <Project>{ABE22D63-B716-4C58-9A59-5915F47968D4}</Project>
       <Name>MonoKit.iOS</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Domain\" />
+    <Folder Include="Data\" />
   </ItemGroup>
 </Project>
