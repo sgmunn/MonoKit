@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using MonoKit.Data.SQLite;
 using MonoKit.Domain.Data.SQLite;
+using MonoKitSample.Domain;
 
 namespace MonoKitSample
 {

@@ -25,6 +25,7 @@ namespace MonoKitSample.Domain
     using MonoKit.Domain;
     using MonoKit.Domain.Data.SQLite;
     using MonoKit.Data.SQLite;
+    using MonoKit;
 
     public static class SnapshotSamples
     {
@@ -32,7 +33,10 @@ namespace MonoKitSample.Domain
 
         public static IDomainContext GetDomainContext()
         {
-            var context = new TestDomainContext(SnapshotSourcedDB.Main, null, null);
+            var domainBus = new ObservableDomainEventBus();
+            domainBus.Subscribe((x) => Console.WriteLine("domain bus event {0}", x));
+
+            var context = new TestDomainContext(SnapshotSourcedDB.Main, null, domainBus);
 
             // registrations
             context.RegisterSnapshot<SnapshotTestRoot>(c => new SnapshotRepository<TestSnapshot>(SnapshotSourcedDB.Main));

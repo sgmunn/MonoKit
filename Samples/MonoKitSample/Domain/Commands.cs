@@ -22,7 +22,20 @@
 namespace MonoKitSample.Domain
 {
     using System;
+    using MonoKit.Data;
     using MonoKit.Domain;
+    
+    public class CommandBase : ICommand
+    {
+        public CommandBase()
+        {
+            this.CommandId = Guid.NewGuid();
+        }
+
+        public IUniqueIdentity AggregateId { get; set; }
+        
+        public Guid CommandId { get; set; }
+    }
 
     public class TestCommand1 : CommandBase
     {

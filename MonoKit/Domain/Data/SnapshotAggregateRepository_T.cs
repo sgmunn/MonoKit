@@ -24,24 +24,25 @@ namespace MonoKit.Domain.Data
     using System.Collections.Generic;
     using System.Linq;
     using MonoKit.Data;
+    using MonoKit.Reactive.Subjects;
      
     // todo: snapshot repository needs a way to serialize complex data members so that we can still use sqlite
     // at the moment this will not handle internal state with complicated objects
     // an alternative is for the aggregate to return a snapshot that is serialized -- ie different to its internal state
 
-
-    // todo: remove event bus from snapshot repository and place on inner concrete repository (sql)
-    
-    public class SnapshotAggregateRepository<T> : IAggregateRepository<T> where T : IAggregateRoot, new()
+    public class SnapshotAggregateRepository<T> : IAggregateRepository<T>, IObservableRepository where T : IAggregateRoot, new()
     {
         private readonly ISnapshotRepository repository;
         
         private readonly IDataModelEventBus eventBus;
+
+        private readonly Subject<IDataModelEvent> changes;
   
         public SnapshotAggregateRepository(ISnapshotRepository repository, IDataModelEventBus eventBus)
         {
             this.repository = repository;
             this.eventBus = eventBus;
+            this.changes = new Subject<IDataModelEvent>();
         }
 
         public T New()
@@ -96,6 +97,8 @@ namespace MonoKit.Domain.Data
 
             this.PublishEvents(instance.UncommittedEvents);
             instance.Commit();
+
+            this.changes.OnNext(new DataModelChange(instance));
         }
 
         public void Delete(T instance)
@@ -111,6 +114,14 @@ namespace MonoKit.Domain.Data
         public void Dispose()
         {
             this.repository.Dispose();
+        }
+
+        public IObservable<IDataModelEvent> Changes
+        {
+            get
+            {
+                return this.changes;
+            }
         }
 
         private void PublishEvents(IEnumerable<IAggregateEvent> events)

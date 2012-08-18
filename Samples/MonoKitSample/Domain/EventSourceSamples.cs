@@ -27,6 +27,7 @@ namespace MonoKitSample.Domain
     using MonoKit.Domain.Data;
     using MonoKit.Domain.Data.SQLite;
     using MonoKit.Data.SQLite;
+    using MonoKit;
 
     public static class EventSourceSamples
     {
@@ -38,7 +39,10 @@ namespace MonoKitSample.Domain
 
             var eventStore = new EventStoreRepository<SerializedEvent>(EventSourcedDB.Main);
 
-            var context = new TestDomainContext(EventSourcedDB.Main, eventStore, null);
+            var domainBus = new ObservableDomainEventBus();
+            domainBus.Subscribe((x) => Console.WriteLine("domain bus event {0}", x));
+
+            var context = new TestDomainContext(EventSourcedDB.Main, eventStore, domainBus);
 
             // registrations
             context.RegisterBuilder<EventSourcedRoot>(c => 

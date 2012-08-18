@@ -28,7 +28,6 @@ namespace MonoKitSample.Domain
     using MonoKit.Domain.Data.SQLite;
     using System.Collections.Generic;
 
-    // todo: test event serialization
     // todo: implement aggregate index for version updating - UpdateWhere
     // todo: test publication of events and read models on domain bus
 

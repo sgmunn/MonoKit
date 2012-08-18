@@ -66,7 +66,6 @@ namespace MonoKit.Domain
 
             var repo = new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new ReadModelBuildingEventBus<T>(this, bus));
 
-            // todo: test publishing
             if (repo as IObservableRepository != null)
             {
                 ((IObservableRepository)repo).Changes.Subscribe(evt => bus.Publish(evt));
