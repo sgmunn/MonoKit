@@ -127,25 +127,22 @@ namespace MonoKitSample
     }
 
     
-    public class TransactionReadModelBuilder : ReadModelBuilder
+    public class TransactionReadModelBuilder : ReadModelBuilder<PocketMoneyTransactionDataContract>
     {
-        private IRepository<PocketMoneyTransactionDataContract> repository;
-
-        public TransactionReadModelBuilder(IRepository<PocketMoneyTransactionDataContract> repository)
+        public TransactionReadModelBuilder(IRepository<PocketMoneyTransactionDataContract> repository) : base(repository)
         {
             Console.WriteLine("read model created");
-            this.repository = repository;
         }
         
         public void Handle(PocketMoneyEarntEvent @event)
         {
             Console.WriteLine("read model updated");
-            var transaction = this.repository.New();
+            var transaction = this.Repository.New();
             transaction.MinionId = @event.Identity.Id;
             transaction.Amount = @event.Amount;
             transaction.Date = @event.Date;
 
-            this.repository.Save(transaction);
+            this.Repository.Save(transaction);
         }
     }
 

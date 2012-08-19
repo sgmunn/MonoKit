@@ -39,7 +39,7 @@ namespace MonoKit.Domain
         
         IAggregateRepository<T> GetAggregateRepository<T>(IDataModelEventBus bus) where T : IAggregateRoot, new();
 
-        IList<IReadModelBuilder> GetReadModelBuilders(Type aggregateType);
+        IList<IReadModelBuilder> GetReadModelBuilders<T>(IDataModelEventBus bus) where T : IDataModel, new();
     }
 }
 

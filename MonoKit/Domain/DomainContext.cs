@@ -28,7 +28,7 @@ namespace MonoKit.Domain
     
     public abstract class DomainContext : IDomainContext
     {
-        private readonly Dictionary<Type, List<Func<IDomainContext, IReadModelBuilder>>> registeredBuilders;
+        private readonly Dictionary<Type, List<Func<IDomainContext, IDataModelEventBus, IReadModelBuilder>>> registeredBuilders;
 
         private readonly Dictionary<Type, Func<IDomainContext, ISnapshotRepository>> registeredSnapshotRepositories;
 
@@ -37,7 +37,7 @@ namespace MonoKit.Domain
             this.EventBus = eventBus;
             this.EventStore = eventStore;
 
-            this.registeredBuilders = new Dictionary<Type, List<Func<IDomainContext, IReadModelBuilder>>>();
+            this.registeredBuilders = new Dictionary<Type, List<Func<IDomainContext, IDataModelEventBus, IReadModelBuilder>>>();
             this.registeredSnapshotRepositories = new Dictionary<Type, Func<IDomainContext, ISnapshotRepository>>();
         }
 
@@ -74,19 +74,22 @@ namespace MonoKit.Domain
             return repo;
         }
 
-        public IList<IReadModelBuilder> GetReadModelBuilders(Type aggregateType)
+        public IList<IReadModelBuilder> GetReadModelBuilders<T>(IDataModelEventBus bus) where T : IDataModel, new()
         {
             var result = new List<IReadModelBuilder>();
 
-            if (this.registeredBuilders.ContainsKey(aggregateType))
+            if (this.registeredBuilders.ContainsKey(typeof(T)))
             {
-                foreach (var factory in this.registeredBuilders[aggregateType])
+                foreach (var factory in this.registeredBuilders[typeof(T)])
                 {
+                    var repo = factory(this, bus);
 
-                    // todo: pass in bus and register for changes here .
-                    // this means that the builder class needs to have a single repo that should be defined
+                    if (repo as IObservableRepository != null)
+                    {
+                        ((IObservableRepository)repo).Changes.Subscribe(evt => bus.Publish(evt));
+                    }
 
-                    result.Add(factory(this));
+                    result.Add(repo);
                 }
             }
 
@@ -98,11 +101,11 @@ namespace MonoKit.Domain
             this.registeredSnapshotRepositories[typeof(T)] = createSnapshotRepository;
         }
 
-        public void RegisterBuilder<T>(Func<IDomainContext, IReadModelBuilder> createBuilder) where T : IAggregateRoot
+        public void RegisterBuilder<T>(Func<IDomainContext, IDataModelEventBus, IReadModelBuilder> createBuilder) where T : IAggregateRoot
         {
             if (!this.registeredBuilders.ContainsKey(typeof(T)))
             {
-                this.registeredBuilders [typeof(T)] = new List<Func<IDomainContext, IReadModelBuilder>>();
+                this.registeredBuilders [typeof(T)] = new List<Func<IDomainContext, IDataModelEventBus, IReadModelBuilder>>();
             }
 
             this.registeredBuilders [typeof(T)].Add(createBuilder);

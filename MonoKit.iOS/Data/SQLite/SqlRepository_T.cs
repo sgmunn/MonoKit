@@ -102,6 +102,8 @@ namespace MonoKit.Data.SQLite
             SynchronousTask.DoSync
                 (() => 
                  {
+                    Console.WriteLine(string.Format("SqlRepo - Save {0}", instance));
+
                     if (this.Connection.Update(instance) == 0)
                     {
                         this.Connection.Insert(instance);

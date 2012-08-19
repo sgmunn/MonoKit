@@ -45,7 +45,7 @@ namespace MonoKitSample.Domain
             var context = new TestDomainContext(EventSourcedDB.Main, eventStore, domainBus);
 
             // registrations
-            context.RegisterBuilder<EventSourcedRoot>(c => 
+            context.RegisterBuilder<EventSourcedRoot>((c, b) => 
                  new TransactionReadModelBuilder(new SqlRepository<TransactionDataContract>(EventSourcedDB.Main)));
 
             return context;

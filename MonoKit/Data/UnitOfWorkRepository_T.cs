@@ -33,9 +33,8 @@ namespace MonoKit.Data
         
         private readonly List<IUniqueIdentity> deletedItemKeys;
 
-        public UnitOfWorkRepository(IUnitOfWorkScope scope, IRepository<T> repository)
+        public UnitOfWorkRepository(IRepository<T> repository)
         {
-            scope.Add(this);
             this.repository = repository;
 
             this.savedItems = new Dictionary<IUniqueIdentity, T>();

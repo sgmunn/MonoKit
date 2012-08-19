@@ -24,15 +24,28 @@ namespace MonoKit.Domain.Data
     using System.Collections.Generic;
     using MonoKit.Data;
 
-    // todo: can we remove the notify, once we have publishing repositories
-    // then make this of T and pass in the repository to read / write from
-    public abstract class ReadModelBuilder : IReadModelBuilder
+    public abstract class ReadModelBuilder<T> : IReadModelBuilder<T>, IObservableRepository
     {
+        private readonly IRepository<T> repository;
+
         private readonly List<IDataModelChange> updatedReadModels;
 
-        protected ReadModelBuilder()
+        private readonly IObservable<IDataModelEvent> changes;
+
+        protected ReadModelBuilder(IRepository<T> repository)
         {
+            this.repository = repository;
             this.updatedReadModels = new List<IDataModelChange>();
+            var observableRepo = repository as IObservableRepository;
+            this.changes = observableRepo != null ? observableRepo.Changes : null;
+        }
+
+        public IRepository<T> Repository
+        {
+            get
+            {
+                return this.repository;
+            }
         }
 
         public IEnumerable<IDataModelChange> Handle(IDataModelEvent evt)
@@ -45,6 +58,14 @@ namespace MonoKit.Domain.Data
                 MethodExecutor.ExecuteMethodForParams(this, evt);
 
             return this.updatedReadModels;
+        }
+
+        public IObservable<IDataModelEvent> Changes
+        {
+            get
+            {
+                return this.changes;
+            }
         }
 
         protected void NotifyReadModelChange(IDataModel readModel, bool deleted)

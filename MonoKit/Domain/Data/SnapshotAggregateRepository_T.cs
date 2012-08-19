@@ -95,10 +95,11 @@ namespace MonoKit.Domain.Data
             var snapshot = ((ISnapshotSupport)instance).GetSnapshot() as ISnapshot;
             this.repository.Save(snapshot);
 
+            // publish the snapshot save prior to publishing the events raised from it
+            this.changes.OnNext(new DataModelChange(instance));
+
             this.PublishEvents(instance.UncommittedEvents);
             instance.Commit();
-
-            this.changes.OnNext(new DataModelChange(instance));
         }
 
         public void Delete(T instance)

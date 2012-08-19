@@ -47,9 +47,9 @@ namespace MonoKitSample.Domain
         }
     }
     
-    public class TestBuilder : ReadModelBuilder
+    public class TestBuilder : ReadModelBuilder<TestReadModel>
     {
-        public TestBuilder(IRepository<TestReadModel> repository)
+        public TestBuilder(IRepository<TestReadModel> repository) : base(repository)
         {
         }
         
@@ -100,30 +100,27 @@ namespace MonoKitSample.Domain
 
         public override string ToString()
         {
-            return string.Format("[{0}] {1}", this.Description, this.Amount);
+            return string.Format("readmodel [{0}] {1}", this.Description, this.Amount);
         }
     }
     
-    public class TransactionReadModelBuilder : ReadModelBuilder
+    public class TransactionReadModelBuilder : ReadModelBuilder<TransactionDataContract>
     {
-        private IRepository<TransactionDataContract> repository;
-
-        public TransactionReadModelBuilder(IRepository<TransactionDataContract> repository)
+        public TransactionReadModelBuilder(IRepository<TransactionDataContract> repository) : base(repository)
         {
             Console.WriteLine("read model created");
-            this.repository = repository;
         }
         
         public void Handle(TestEvent2 evt)
         {
             Console.WriteLine("read model updated");
-            var transaction = this.repository.New();
+            var transaction = this.Repository.New();
 
             transaction.TestId = evt.Identity.Id;
             transaction.Amount = evt.Amount;
             transaction.Description = evt.Description;
 
-            this.repository.Save(transaction);
+            this.Repository.Save(transaction);
         }
     }
 }

@@ -24,6 +24,11 @@ namespace MonoKit.Domain.Data
     using System.Collections.Generic;
     using MonoKit.Data;
 
+    public interface IReadModelBuilder<T> : IReadModelBuilder
+    {
+        IRepository<T> Repository { get; }
+    }
+
     public interface IReadModelBuilder
     {
         IEnumerable<IDataModelChange> Handle(IDataModelEvent evt);

@@ -126,7 +126,7 @@ namespace MonoKitSample.Domain
 
         public override string ToString()
         {
-            return string.Format("{0} [{1}] {2}", this.Version, this.Name, this.Balance);
+            return string.Format("snapshot {0} [{1}] {2}", this.Version, this.Name, this.Balance);
         }
     }
     

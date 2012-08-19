@@ -56,5 +56,10 @@ namespace MonoKit.Data
         public IDataModel Item { get; private set; }
 
         public bool Deleted { get; private set; }
+
+        public override string ToString()
+        {
+            return string.Format("[DataModelChange: Identity={0}, Item={1}, Deleted={2}]", Identity, Item, Deleted);
+        }
     }
 }

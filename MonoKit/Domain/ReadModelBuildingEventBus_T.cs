@@ -24,7 +24,7 @@ namespace MonoKit.Domain
     using MonoKit.Data;
 
             // todo: change from T to pass in the registerd builders
-    public class ReadModelBuildingEventBus<T> : IDataModelEventBus where T : IAggregateRoot
+    public class ReadModelBuildingEventBus<T> : IDataModelEventBus where T : IAggregateRoot, new()
     {
         private readonly IDomainContext context;
 
@@ -38,7 +38,12 @@ namespace MonoKit.Domain
         
         public void Publish(IDataModelEvent evt)
         {
-            var builders = this.context.GetReadModelBuilders(typeof(T));
+            if (this.bus != null)
+            {
+                this.bus.Publish(evt);
+            }
+
+            var builders = this.context.GetReadModelBuilders<T>(this.bus);
 
             var updatedReadModels = new List<IDataModelChange>();
 
@@ -51,8 +56,6 @@ namespace MonoKit.Domain
 
             if (this.bus != null)
             {
-                this.bus.Publish(evt);
-
                 foreach (var readModel in updatedReadModels)
                 {
                     this.bus.Publish(readModel);

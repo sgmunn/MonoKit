@@ -22,7 +22,6 @@ namespace MonoKit.Domain
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using MonoKit.Data;
     
     public class UnitOfWorkEventBus : IDataModelEventBus, IUnitOfWork
@@ -51,22 +50,11 @@ namespace MonoKit.Domain
         {
             if (this.bus != null)
             {
-            // todo: maybe deduplicate events, use a dictionary of id / type etc
+                // todo: maybe deduplicate events, use a dictionary of id / type etc
                 foreach (var evt in this.events)
                 {
                     this.bus.Publish(evt);
                 }
-
-                // todo: just need to check that we don't need type info here and that Id will be
-                // enough
-
-                // only publish each read model once and then the last one
-//                var distinctIds = this.readModels.Select(x => x.Identity).Distinct().ToList();
-//
-//                foreach (var readModelId in distinctIds)
-//                {
-//                    this.bus.Publish(this.readModels.Last(x => x.Identity == readModelId));
-//                }
             }
         }
     }

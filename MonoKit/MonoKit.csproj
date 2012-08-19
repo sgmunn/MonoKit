@@ -122,7 +122,6 @@
     <Compile Include="Data\Identity.cs" />
     <Compile Include="Tasks\SyncScheduler.cs" />
     <Compile Include="Domain\Data\EventSourcedAggregateRepository_T.cs" />
-    <Compile Include="Domain\Data\PublishingRepository_T.cs" />
     <Compile Include="Data\IObservableRepository.cs" />
     <Compile Include="Domain\IAggregateEvent.cs" />
     <Compile Include="Data\IUniqueIdentity.cs" />

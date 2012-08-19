@@ -41,7 +41,7 @@ namespace MonoKitSample.Domain
             // registrations
             context.RegisterSnapshot<SnapshotTestRoot>(c => new SnapshotRepository<TestSnapshot>(SnapshotSourcedDB.Main));
 
-            context.RegisterBuilder<SnapshotTestRoot>(c => 
+            context.RegisterBuilder<SnapshotTestRoot>((c, b) => 
                  new TransactionReadModelBuilder(new SqlRepository<TransactionDataContract>(SnapshotSourcedDB.Main)));
 
             return context;

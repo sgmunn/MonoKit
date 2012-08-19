@@ -110,14 +110,7 @@ namespace MonoKit.Domain.Data
                 this.repository.Save(storedEvent);
             }
    
-            if (this.eventBus != null)
-            {
-                foreach (var evt in instance.UncommittedEvents.ToList())
-                {
-                    this.eventBus.Publish(evt);
-                }
-            }
-            
+            this.Publish(instance);
             instance.Commit();
         }
 
@@ -134,6 +127,18 @@ namespace MonoKit.Domain.Data
         public void Dispose()
         {
             this.repository.Dispose();
+        }
+
+        private void Publish(IAggregateRoot instance)
+        {
+            if (this.eventBus != null)
+            {
+                foreach (var evt in instance.UncommittedEvents.ToList())
+                {
+                    this.eventBus.Publish(evt);
+                }
+            }
+
         }
     }
 }

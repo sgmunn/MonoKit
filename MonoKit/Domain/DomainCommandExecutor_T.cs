@@ -57,19 +57,22 @@ namespace MonoKit.Domain
                 var scope = this.context.BeginUnitOfWork();
                 using (scope)
                 {
+                    var uow = new UnitOfWorkRepository<T>(this.context.GetAggregateRepository<T>(bus));
                     // uow will be owned by the scope, so we don't need to dispose explicitly
-                    var uow = new UnitOfWorkRepository<T>(scope, this.context.GetAggregateRepository<T>(bus));
+                    scope.Add(uow);
                 
-                    var cmd = new CommandExecutor<T>(uow);//, bus);
+                    var cmd = new CommandExecutor<T>(uow);
 
                     foreach (var command in commands.ToList())
                     {
                         cmd.Execute(command, 0);
                     }
                 
+                    Console.WriteLine("DomainCommandExecutor - commit scope");
                     scope.Commit();
                 }
 
+                Console.WriteLine("DomainCommandExecutor - commit bus");
                 bus.Commit();
             }
         }
