@@ -26,7 +26,6 @@ namespace MonoKit.Domain.Data.SQLite
     using MonoKit.Domain.Data;
     using MonoKit.Data;
     using MonoKit.Data.SQLite;
-    using MonoKit.Tasks;
 
     public class SnapshotRepository<T> : ISnapshotRepository where T : class, ISnapshot, new() 
     {
@@ -35,7 +34,7 @@ namespace MonoKit.Domain.Data.SQLite
         public SnapshotRepository(SQLiteConnection connection)
         {
             var repo = new SqlRepository<T>(connection);
-            this.repository = new SyncRepository<T>(repo, SyncScheduler.TaskScheduler);
+            this.repository = new SyncRepository<T>(repo);
         }
 
         public ISnapshot New()
