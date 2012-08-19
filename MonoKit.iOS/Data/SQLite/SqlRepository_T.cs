@@ -70,7 +70,7 @@ namespace MonoKit.Data.SQLite
         {
         }
 
-        public T New()
+        public virtual T New()
         {
             return new T();
         }

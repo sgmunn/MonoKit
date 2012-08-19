@@ -39,7 +39,7 @@ namespace MonoKitSample.Domain
 
             var manifest = new SqlAggregateManifestRepository(EventSourcedDB.Main);
 
-            var eventStore = new EventStoreRepository<SerializedEvent>(EventSourcedDB.Main);
+            var eventStore = new EventStoreRepository(EventSourcedDB.Main);
 
             var domainBus = new ObservableDomainEventBus();
             domainBus.Subscribe((x) => Console.WriteLine("domain bus event {0}", x));

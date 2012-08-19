@@ -60,8 +60,6 @@
     <Compile Include="UI\ViewDefinition.cs" />
     <Compile Include="Data\SQLite\SQLite.cs" />
     <Compile Include="Domain\Data\SQLite\SnapshotRepository.cs" />
-    <Compile Include="Domain\Data\SQLite\EventStoreRepository_T.cs" />
-    <Compile Include="Domain\Data\SQLite\InternalEventStoreRepository_T.cs" />
     <Compile Include="Threading\Tasks\UIKitScheduler.cs" />
     <Compile Include="Reactive\Concurrency\UIKitMainThreadScheduler.cs" />
     <Compile Include="Reactive\UIKitObservableExtensions.cs" />
@@ -83,6 +81,7 @@
     <Compile Include="Domain\Data\SQLite\SqlDomainContext.cs" />
     <Compile Include="Domain\Data\SQLite\SqlAggregateManifestRepository.cs" />
     <Compile Include="Domain\Data\SQLite\AggregateManifest.cs" />
+    <Compile Include="Domain\Data\SQLite\EventStoreRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />

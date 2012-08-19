@@ -35,12 +35,12 @@ namespace MonoKit.Domain.Data.SQLite
                 return new SerializedEventId(this.EventId);
             }
         }
-
-        [Indexed]
-        public Guid AggregateId { get; set; }
   
         [PrimaryKey]
         public Guid EventId { get; set; }
+
+        [Indexed]
+        public Guid AggregateId { get; set; }
   
         public int Version { get; set; }
   

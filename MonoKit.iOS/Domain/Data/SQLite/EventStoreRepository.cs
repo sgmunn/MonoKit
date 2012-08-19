@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InternalEventStoreRepository_T.cs" company="sgmunn">
+// <copyright file="EventStoreRepository.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,57 +23,47 @@ namespace MonoKit.Domain.Data.SQLite
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using MonoKit.Data;
     using MonoKit.Data.SQLite;
-    using MonoKit.Domain.Data;
+    using MonoKit.Data;
+    using MonoKit.Tasks;
     
-    public class InternalEventStoreRepository<T> : IEventStoreRepository where T : ISerializedEvent, new() 
+    public class EventStoreRepository : SqlRepository<SerializedEvent>, IEventStoreRepository
     {
-        private readonly SqlRepository<T> repository;
-        
-        public InternalEventStoreRepository(SQLiteConnection connection)
+        public EventStoreRepository(SQLiteConnection connection) : base(connection)
         {
-            this.repository = new SqlRepository<T>(connection);
         }
 
-        public ISerializedEvent New()
+        ISerializedEvent IRepository<ISerializedEvent, IUniqueIdentity>.New()
         {
-            return new T();
+            return (ISerializedEvent)base.New();
         }
 
-        public ISerializedEvent GetById(IUniqueIdentity id)
+        ISerializedEvent IRepository<ISerializedEvent, IUniqueIdentity>.GetById(IUniqueIdentity id)
         {
-            return ((T)this.repository.GetById(id));
+            return (ISerializedEvent)base.GetById(id);
         }
 
-        public IEnumerable<ISerializedEvent> GetAll()
+        IEnumerable<ISerializedEvent> IRepository<ISerializedEvent, IUniqueIdentity>.GetAll()
         {
-            return this.repository.GetAll().Cast<ISerializedEvent>();
+            return (IEnumerable<ISerializedEvent>)base.GetAll();
         }
 
         public void Save(ISerializedEvent instance)
         {
-            this.repository.Save((T)instance);
+            base.Save((SerializedEvent)instance);
         }
 
         public void Delete(ISerializedEvent instance)
         {
-            this.repository.Delete((T)instance);
-        }
-
-        public void DeleteId(IUniqueIdentity id)
-        {
-            this.repository.DeleteId(id);
+            base.Delete((SerializedEvent)instance);
         }
 
         public IEnumerable<ISerializedEvent> GetAllAggregateEvents(IUniqueIdentity rootId)
         {
-            return this.repository.GetAll().Cast<ISerializedEvent>().Where(x => x.AggregateId == rootId.Id).OrderBy(x => x.Version);
-        }
+            var result = SynchronousTask.GetSync(() =>
+                this.Connection.Table<SerializedEvent>().Where(x => x.AggregateId == rootId.Id).OrderBy(x => x.Version).AsEnumerable());
 
-        public void Dispose()
-        {
-            this.repository.Dispose();
+            return result.Cast<ISerializedEvent>();
         }
     }
 }
