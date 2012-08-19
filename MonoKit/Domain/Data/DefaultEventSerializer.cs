@@ -40,7 +40,6 @@ namespace MonoKit.Domain.Data
         }
     }
 
-    // todo: make ieventserilizer of T
     public class DefaultEventSerializer<T> : IEventSerializer
         where T : class, new()
     {

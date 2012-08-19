@@ -24,7 +24,7 @@ namespace MonoKit
     using System.Reflection;
     using System.Linq;
 
-    // todo: make a static class and use caching
+    // todo: MethodExecutor needs to cache 
     public static class MethodExecutor
     {
         public static bool ExecuteMethodForSingleParam(object instance, object param)
@@ -54,7 +54,6 @@ namespace MonoKit
             return false;
         }
         
-        // todo: cache method info for aggregate and command combination
 //        private MethodInfo GetCommandHandlerMethod(object instance, object param)
 //        {
 //            foreach (var method in instance.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance))
