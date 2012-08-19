@@ -142,5 +142,8 @@
     <Compile Include="Domain\Data\SerializedEventId.cs" />
     <Compile Include="Data\IRepository_TData_TKey.cs" />
     <Compile Include="Domain\ReadModelBuildingEventBus_T.cs" />
+    <Compile Include="Domain\Data\AggregateManifestId.cs" />
+    <Compile Include="Domain\Data\IAggregateManifestItem.cs" />
+    <Compile Include="Domain\Data\IAggregateManifestRepository.cs" />
   </ItemGroup>
 </Project>

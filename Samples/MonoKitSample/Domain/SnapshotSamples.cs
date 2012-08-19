@@ -36,7 +36,9 @@ namespace MonoKitSample.Domain
             var domainBus = new ObservableDomainEventBus();
             domainBus.Subscribe((x) => Console.WriteLine("domain bus event {0}", x));
 
-            var context = new TestDomainContext(SnapshotSourcedDB.Main, null, domainBus);
+            var manifest = new SqlAggregateManifestRepository(SnapshotSourcedDB.Main);
+
+            var context = new TestDomainContext(SnapshotSourcedDB.Main, manifest, null, domainBus);
 
             // registrations
             context.RegisterSnapshot<SnapshotTestRoot>(c => new SnapshotRepository<TestSnapshot>(SnapshotSourcedDB.Main));

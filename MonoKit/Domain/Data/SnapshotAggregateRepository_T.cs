@@ -36,12 +36,15 @@ namespace MonoKit.Domain.Data
         
         private readonly IDataModelEventBus eventBus;
 
+        private readonly IAggregateManifestRepository manifest;
+
         private readonly Subject<IDataModelEvent> changes;
   
-        public SnapshotAggregateRepository(ISnapshotRepository repository, IDataModelEventBus eventBus)
+        public SnapshotAggregateRepository(ISnapshotRepository repository, IAggregateManifestRepository manifest, IDataModelEventBus eventBus)
         {
             this.repository = repository;
             this.eventBus = eventBus;
+            this.manifest = manifest;
             this.changes = new Subject<IDataModelEvent>();
         }
 
@@ -78,11 +81,6 @@ namespace MonoKit.Domain.Data
                 return;
             }
 
-            // todo: updatewhere to avoid deadlocks -- aggregate / version table
-           
-            // todo: this could cause deadlocks if multiple threads / processes can access the persistence store at any one time
-            // we need to either lock or update where instead of the read then write
-            // snapshot repositories need to do an update where id = xx or we implement a lock for each aggregate id - will be fine for single process apps
             var current = this.GetById(instance.Identity);
 
             int expectedVersion = instance.UncommittedEvents.First().Version - 1;
@@ -93,6 +91,9 @@ namespace MonoKit.Domain.Data
             }
    
             var snapshot = ((ISnapshotSupport)instance).GetSnapshot() as ISnapshot;
+
+            this.manifest.UpdateManifest(instance.Identity, expectedVersion, snapshot.Version);
+
             this.repository.Save(snapshot);
 
             // publish the snapshot save prior to publishing the events raised from it

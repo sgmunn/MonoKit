@@ -31,6 +31,7 @@ using MonoKitSample.Domain;
 
 namespace MonoKitSample
 {
+    /*
     public class MinionContext : SqlDomainContext
     {
         public MinionContext(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
@@ -146,5 +147,5 @@ namespace MonoKitSample
         }
     }
 
-
+*/
 }

@@ -37,12 +37,14 @@ namespace MonoKitSample.Domain
         {
             KnownTypes.RegisterEvents(Assembly.GetExecutingAssembly());
 
+            var manifest = new SqlAggregateManifestRepository(EventSourcedDB.Main);
+
             var eventStore = new EventStoreRepository<SerializedEvent>(EventSourcedDB.Main);
 
             var domainBus = new ObservableDomainEventBus();
             domainBus.Subscribe((x) => Console.WriteLine("domain bus event {0}", x));
 
-            var context = new TestDomainContext(EventSourcedDB.Main, eventStore, domainBus);
+            var context = new TestDomainContext(EventSourcedDB.Main, manifest, eventStore, domainBus);
 
             // registrations
             context.RegisterBuilder<EventSourcedRoot>((c, b) => 

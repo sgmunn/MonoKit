@@ -81,6 +81,8 @@
     <Compile Include="Data\SQLite\SqlRepository_T.cs" />
     <Compile Include="Data\SQLite\SqlUnitOfWorkScope.cs" />
     <Compile Include="Domain\Data\SQLite\SqlDomainContext.cs" />
+    <Compile Include="Domain\Data\SQLite\SqlAggregateManifestRepository.cs" />
+    <Compile Include="Domain\Data\SQLite\AggregateManifest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />

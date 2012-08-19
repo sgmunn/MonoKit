@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="DB.cs" company="sgmunn">
+//  <copyright file="SqlAggregateManifestRepository.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,62 +17,51 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-//
 
-namespace MonoKitSample.Domain
+namespace MonoKit.Domain.Data.SQLite
 {
     using System;
-    using System.IO;
     using MonoKit.Data.SQLite;
-    using MonoKit.Domain.Data.SQLite;
+    using MonoKit.Data;
+    using MonoKit.Tasks;
 
-    public class EventSourcedDB : SQLiteConnection
+    public class SqlAggregateManifestRepository : IAggregateManifestRepository
     {
-        private static EventSourcedDB MainDatabase = new EventSourcedDB();
+        private const string UpdateSql = "update AggregateManifest set Version = ? where Id = ? and Version = ?";
 
-        public static string SampleDatabasePath()
+        private readonly SQLiteConnection connection;
+
+        public SqlAggregateManifestRepository(SQLiteConnection connection)
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "EventSample.db");
+            this.connection = connection;
         }
 
-        public static EventSourcedDB Main
+        public void UpdateManifest(IUniqueIdentity id, int currentVersion, int newVersion)
         {
-            get
+            Console.WriteLine(string.Format("Update manifest {0} - {1} - {2}", id, currentVersion, newVersion));
+
+            var updated = SynchronousTask.GetSync(() => this.DoUpdate(id, currentVersion, newVersion));
+
+            if (!updated)
             {
-                return MainDatabase;
+                Console.WriteLine("AggregateManifest FAILED");
+                throw new ConcurrencyException();
             }
         }
 
-        protected EventSourcedDB() : base(SampleDatabasePath())
+        private bool DoUpdate(IUniqueIdentity id, int currentVersion, int newVersion)
         {
-            this.CreateTable<AggregateManifest>();
-            this.CreateTable<SerializedEvent>();
-            this.CreateTable<TransactionDataContract>();
-        }
-    }
-
-    public class SnapshotSourcedDB : SQLiteConnection
-    {
-        private static SnapshotSourcedDB MainDatabase = new SnapshotSourcedDB();
-
-        public static string SampleDatabasePath()
-        {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SnapshotSample.db");
-        }
-
-        public static SnapshotSourcedDB Main
-        {
-            get
+            if (currentVersion == 0)
             {
-                return MainDatabase;
+                this.connection.Insert(new AggregateManifest { Id = id.Id, Version = newVersion, AggregateType = id.GetType().Name });
             }
-        }
+            else
+            {
+                var rows = this.connection.Execute(UpdateSql, newVersion, id.Id, currentVersion);
+                return rows == 1;
+            }
 
-        protected SnapshotSourcedDB() : base(SampleDatabasePath())
-        {
-            this.CreateTable<AggregateManifest>();
-            this.CreateTable<TestSnapshot>();
-            this.CreateTable<TransactionDataContract>();
+            return true;
         }
     }
 }

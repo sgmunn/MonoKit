@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="DB.cs" company="sgmunn">
+//  <copyright file="AggregateManifest.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -19,61 +19,33 @@
 //  --------------------------------------------------------------------------------------------------------------------
 //
 
-namespace MonoKitSample.Domain
+namespace MonoKit.Domain.Data.SQLite
 {
     using System;
-    using System.IO;
     using MonoKit.Data.SQLite;
-    using MonoKit.Domain.Data.SQLite;
+    using MonoKit.Data;
 
-    public class EventSourcedDB : SQLiteConnection
+    public class AggregateManifest : IAggregateManifestItem
     {
-        private static EventSourcedDB MainDatabase = new EventSourcedDB();
-
-        public static string SampleDatabasePath()
-        {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "EventSample.db");
-        }
-
-        public static EventSourcedDB Main
+        [Ignore]
+        public IUniqueIdentity Identity
         {
             get
             {
-                return MainDatabase;
+                return new AggregateManifestId(this.Id);
             }
         }
 
-        protected EventSourcedDB() : base(SampleDatabasePath())
-        {
-            this.CreateTable<AggregateManifest>();
-            this.CreateTable<SerializedEvent>();
-            this.CreateTable<TransactionDataContract>();
-        }
-    }
+        [PrimaryKey]
+        public Guid Id { get; set; }
 
-    public class SnapshotSourcedDB : SQLiteConnection
-    {
-        private static SnapshotSourcedDB MainDatabase = new SnapshotSourcedDB();
+        public int Version { get; set; }
 
-        public static string SampleDatabasePath()
-        {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SnapshotSample.db");
-        }
+        public string AggregateType { get; set; }
 
-        public static SnapshotSourcedDB Main
+        public override string ToString()
         {
-            get
-            {
-                return MainDatabase;
-            }
-        }
-
-        protected SnapshotSourcedDB() : base(SampleDatabasePath())
-        {
-            this.CreateTable<AggregateManifest>();
-            this.CreateTable<TestSnapshot>();
-            this.CreateTable<TransactionDataContract>();
+            return string.Format("[{3}] {1} {2}", Identity, Id.ToString().Substring(0, 8), Version, AggregateType);
         }
     }
 }
-

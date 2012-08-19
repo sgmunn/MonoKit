@@ -32,8 +32,9 @@ namespace MonoKit.Domain
 
         private readonly Dictionary<Type, Func<IDomainContext, ISnapshotRepository>> registeredSnapshotRepositories;
 
-        public DomainContext(IEventStoreRepository eventStore, IDomainEventBus eventBus)
+        public DomainContext(IAggregateManifestRepository manifest, IEventStoreRepository eventStore, IDomainEventBus eventBus)
         {
+            this.Manifest = manifest;
             this.EventBus = eventBus;
             this.EventStore = eventStore;
 
@@ -41,7 +42,9 @@ namespace MonoKit.Domain
             this.registeredSnapshotRepositories = new Dictionary<Type, Func<IDomainContext, ISnapshotRepository>>();
         }
 
-        public IEventStoreRepository EventStore{ get; private set; }
+        public IAggregateManifestRepository Manifest { get; private set; }
+
+        public IEventStoreRepository EventStore { get; private set; }
 
         public IDomainEventBus EventBus { get; private set; }
 
@@ -61,10 +64,10 @@ namespace MonoKit.Domain
         {
             if (typeof(T).GetInterfaces().Contains(typeof(IEventSourced)))
             {
-                return new EventSourcedAggregateRepository<T>(this.EventSerializer, this.EventStore, new ReadModelBuildingEventBus<T>(this, bus));
+                return new EventSourcedAggregateRepository<T>(this.EventSerializer, this.EventStore, this.Manifest, new ReadModelBuildingEventBus<T>(this, bus));
             }
 
-            var repo = new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), new ReadModelBuildingEventBus<T>(this, bus));
+            var repo = new SnapshotAggregateRepository<T>(this.GetSnapshotRepository(typeof(T)), this.Manifest, new ReadModelBuildingEventBus<T>(this, bus));
 
             if (repo as IObservableRepository != null)
             {

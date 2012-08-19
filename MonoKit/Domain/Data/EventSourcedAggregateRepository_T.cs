@@ -25,20 +25,23 @@ namespace MonoKit.Domain.Data
     using System.Linq;
     using MonoKit.Data;
     
-    // todo: pass in a repository of state and handle snaspshots
+    // todo: pass in a repository of state and handle snaspshots as well as event sourced aggregates
     public class EventSourcedAggregateRepository<T> : IAggregateRepository<T> where T : IAggregateRoot, new()
     {
         private readonly IEventStoreRepository repository;
 
         private readonly IEventSerializer serializer;
+
+        private readonly IAggregateManifestRepository manifest;
         
         private readonly IDataModelEventBus eventBus;
   
-        public EventSourcedAggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IDataModelEventBus eventBus)
+        public EventSourcedAggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IAggregateManifestRepository manifest, IDataModelEventBus eventBus)
         {
             this.serializer = serializer;
             this.repository = repository;
             this.eventBus = eventBus;
+            this.manifest = manifest;
         }
 
         public T New()
@@ -87,8 +90,6 @@ namespace MonoKit.Domain.Data
                 return;
             }
 
-            // todo: updatewhere to avoid deadlocks -- aggregate / version table
-
             int expectedVersion = instance.UncommittedEvents.First().Version - 1;
 
             var allEvents = this.repository.GetAllAggregateEvents(instance.Identity).ToList();
@@ -98,6 +99,8 @@ namespace MonoKit.Domain.Data
             {
                 throw new ConcurrencyException();
             }
+
+            this.manifest.UpdateManifest(instance.Identity, expectedVersion, instance.UncommittedEvents.Last().Version);
 
             foreach (var evt in instance.UncommittedEvents.ToList())
             {

@@ -28,13 +28,10 @@ namespace MonoKitSample.Domain
     using MonoKit.Domain.Data.SQLite;
     using System.Collections.Generic;
 
-    // todo: implement aggregate index for version updating - UpdateWhere
-    // todo: test publication of events and read models on domain bus
-
     public class TestDomainContext : SqlDomainContext
     {
-        public TestDomainContext(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) 
-            : base(connection, eventStore, eventBus)
+        public TestDomainContext(SQLiteConnection connection, IAggregateManifestRepository manifest, IEventStoreRepository eventStore, IDomainEventBus eventBus) 
+            : base(connection, manifest, eventStore, eventBus)
         {
             this.EventSerializer = new DefaultEventSerializer<EventBase>();
         }

@@ -348,19 +348,5 @@ namespace MonoKitSample
             Console.WriteLine("Done button click");
         }
     }
-    
-    public class SampleContext1 : SqlDomainContext
-    {
-        public SampleContext1(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
-        {
-        }
-    }
-    
-    public class SampleContext2 : SqlDomainContext
-    {
-        public SampleContext2(SQLiteConnection connection, IEventStoreRepository eventStore, IDomainEventBus eventBus) : base(connection, eventStore, eventBus)
-        {
-        }
-    }
 }
 

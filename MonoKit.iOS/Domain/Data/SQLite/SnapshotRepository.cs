@@ -21,7 +21,6 @@
 namespace MonoKit.Domain.Data.SQLite
 {
     using System;
-    using MonoKit.Domain;
     using System.Collections.Generic;
     using System.Linq;
     using MonoKit.Domain.Data;
@@ -29,23 +28,6 @@ namespace MonoKit.Domain.Data.SQLite
     using MonoKit.Data.SQLite;
     using MonoKit.Tasks;
 
-    // todo: add event bus publication here  OR not ??
-
-    /* IIobservableRepository
-     * base implementation of IObservableRepository
-     * 
-     * when we create a repo, hook up it's .Changes to the bus??
-     * 
-     * that means we need to pass in the bus when we ask the context for
-     * a repo (snapshot or readmodel) sot that we get the current uow bus
-     * 
-     * 
-     * IRepositoryChangeEvent : IEvent, 
-     * IEventBus - Publish(IEvent)
-     * 
-     */
-
-    
     public class SnapshotRepository<T> : ISnapshotRepository where T : class, ISnapshot, new() 
     {
         private readonly SyncRepository<T> repository;
