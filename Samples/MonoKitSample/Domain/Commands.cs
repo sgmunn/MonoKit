@@ -25,7 +25,7 @@ namespace MonoKitSample.Domain
     using MonoKit.Data;
     using MonoKit.Domain;
     
-    public class CommandBase : ICommand
+    public class CommandBase : IAggregateCommand
     {
         public CommandBase()
         {

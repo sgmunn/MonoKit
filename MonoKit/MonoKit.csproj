@@ -85,7 +85,6 @@
     <Compile Include="Domain\Data\IEventStoreRepository.cs" />
     <Compile Include="Domain\Data\ConcurrencyException.cs" />
     <Compile Include="Domain\DomainNamespace.cs" />
-    <Compile Include="Domain\ICommand.cs" />
     <Compile Include="Domain\Data\InMemoryEventStoreRepository_T.cs" />
     <Compile Include="Domain\IDomainContext.cs" />
     <Compile Include="Domain\DomainCommandExecutor_T.cs" />
@@ -145,5 +144,6 @@
     <Compile Include="Domain\Data\AggregateManifestId.cs" />
     <Compile Include="Domain\Data\IAggregateManifestItem.cs" />
     <Compile Include="Domain\Data\IAggregateManifestRepository.cs" />
+    <Compile Include="Domain\IAggregateCommand.cs" />
   </ItemGroup>
 </Project>

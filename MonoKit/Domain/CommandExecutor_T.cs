@@ -38,22 +38,22 @@ namespace MonoKit.Domain
             this.versions = new Dictionary<IUniqueIdentity, int>();
         }
 
-        public void Execute(ICommand command)
+        public void Execute(IAggregateCommand command)
         {
             this.Execute(new [] { command }, 0);
         }
 
-        public void Execute(IEnumerable<ICommand> commands)
+        public void Execute(IEnumerable<IAggregateCommand> commands)
         {
             this.Execute(commands, 0);
         }
 
-        public void Execute(ICommand command, int expectedVersion)
+        public void Execute(IAggregateCommand command, int expectedVersion)
         {
             this.Execute(new [] { command }, expectedVersion);
         }
 
-        public void Execute(IEnumerable<ICommand> commands, int expectedVersion)
+        public void Execute(IEnumerable<IAggregateCommand> commands, int expectedVersion)
         {
             if (!commands.Any())
             {
@@ -96,7 +96,7 @@ namespace MonoKit.Domain
             }
         }
 
-        private void Execute(IAggregateRoot aggregate, ICommand command)
+        private void Execute(IAggregateRoot aggregate, IAggregateCommand command)
         {
             try
             {

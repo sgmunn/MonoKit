@@ -28,7 +28,7 @@ namespace MonoKit.Domain
     
     public abstract class DomainContext : IDomainContext
     {
-        private readonly Dictionary<Type, List<Func<IDomainContext, IDataModelEventBus, IReadModelBuilder>>> registeredBuilders;
+        private readonly Dictionary<Type, List<Func<IDomainContext, IReadModelBuilder>>> registeredBuilders;
 
         private readonly Dictionary<Type, Func<IDomainContext, ISnapshotRepository>> registeredSnapshotRepositories;
 
@@ -38,7 +38,7 @@ namespace MonoKit.Domain
             this.EventBus = eventBus;
             this.EventStore = eventStore;
 
-            this.registeredBuilders = new Dictionary<Type, List<Func<IDomainContext, IDataModelEventBus, IReadModelBuilder>>>();
+            this.registeredBuilders = new Dictionary<Type, List<Func<IDomainContext, IReadModelBuilder>>>();
             this.registeredSnapshotRepositories = new Dictionary<Type, Func<IDomainContext, ISnapshotRepository>>();
         }
 
@@ -85,7 +85,7 @@ namespace MonoKit.Domain
             {
                 foreach (var factory in this.registeredBuilders[typeof(T)])
                 {
-                    var repo = factory(this, bus);
+                    var repo = factory(this);
 
                     if (repo as IObservableRepository != null)
                     {
@@ -104,11 +104,11 @@ namespace MonoKit.Domain
             this.registeredSnapshotRepositories[typeof(T)] = createSnapshotRepository;
         }
 
-        public void RegisterBuilder<T>(Func<IDomainContext, IDataModelEventBus, IReadModelBuilder> createBuilder) where T : IAggregateRoot
+        public void RegisterBuilder<T>(Func<IDomainContext, IReadModelBuilder> createBuilder) where T : IAggregateRoot
         {
             if (!this.registeredBuilders.ContainsKey(typeof(T)))
             {
-                this.registeredBuilders [typeof(T)] = new List<Func<IDomainContext, IDataModelEventBus, IReadModelBuilder>>();
+                this.registeredBuilders [typeof(T)] = new List<Func<IDomainContext, IReadModelBuilder>>();
             }
 
             this.registeredBuilders [typeof(T)].Add(createBuilder);

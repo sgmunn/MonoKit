@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ICommandExecutor_T.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
@@ -25,9 +25,9 @@ namespace MonoKit.Domain
 
     public interface ICommandExecutor<T> where T : IAggregateRoot, new()
     {
-        void Execute(ICommand command);
-        void Execute(IEnumerable<ICommand> commands);
-        void Execute(ICommand command, int expectedVersion);
-        void Execute(IEnumerable<ICommand> commands, int expectedVersion);
+        void Execute(IAggregateCommand command);
+        void Execute(IEnumerable<IAggregateCommand> commands);
+        void Execute(IAggregateCommand command, int expectedVersion);
+        void Execute(IEnumerable<IAggregateCommand> commands, int expectedVersion);
     }
 }
