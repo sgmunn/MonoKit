@@ -29,7 +29,7 @@ namespace MonoKit.Data
     {
         private readonly IRepository<T> repository;
 
-        private readonly Dictionary<IUniqueIdentity, T> savedItems;
+        private readonly Dictionary<Guid, T> savedItems;
         
         private readonly List<IUniqueIdentity> deletedItemKeys;
 
@@ -37,7 +37,7 @@ namespace MonoKit.Data
         {
             this.repository = repository;
 
-            this.savedItems = new Dictionary<IUniqueIdentity, T>();
+            this.savedItems = new Dictionary<Guid, T>();
             this.deletedItemKeys = new List<IUniqueIdentity>();
         }
 
@@ -63,14 +63,14 @@ namespace MonoKit.Data
 
         public T GetById(IUniqueIdentity id)
         {
-            if (this.deletedItemKeys.Contains(id))
+            if (this.deletedItemKeys.Any(x => x.Id == id.Id))
             {
                 return default(T);
             }
 
-            if (this.savedItems.ContainsKey(id))
+            if (this.savedItems.ContainsKey(id.Id))
             {
-                return this.savedItems[id];
+                return this.savedItems[id.Id];
             }
 
             return this.repository.GetById(id);
@@ -80,12 +80,12 @@ namespace MonoKit.Data
         {
             var saved = this.savedItems.Values;
 
-            return saved.Union(this.Repository.GetAll()).Where(x => !this.deletedItemKeys.Contains(x.Identity));
+            return saved.Union(this.Repository.GetAll()).Where(x => !this.deletedItemKeys.Any(y => y.Id == x.Identity.Id));
         }
 
         public virtual void Save(T instance)
         {
-            this.savedItems[instance.Identity] = instance;
+            this.savedItems[instance.Identity.Id] = instance;
         }
 
         public virtual void Delete(T instance)
@@ -96,7 +96,7 @@ namespace MonoKit.Data
 
         public virtual void DeleteId(IUniqueIdentity id)
         {
-            if (!this.deletedItemKeys.Contains(id))
+            if (!this.deletedItemKeys.Any(x => x.Id == id.Id))
             {
                 this.deletedItemKeys.Add(id);
             }

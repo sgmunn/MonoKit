@@ -51,11 +51,12 @@ namespace MonoKit.Data.SQLite
                     uow.Commit();
                 }
 
-                Console.WriteLine("SqlUnitOfWork.Commit -- db connecttion");
+                Console.WriteLine("SqlUnitOfWork.Commit -- db connection");
                 this.connection.Commit();
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("SqlUnitOfWork Exception \n{0}", ex);
                 this.connection.Rollback();
                 throw;
             }
