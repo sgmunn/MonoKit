@@ -157,6 +157,11 @@ namespace MonoKit.Metro
             this.contentTop = this.headerTop + this.headerHeight + (this.ShowHeaders ? 2f : 0);// todo: content margin top
         }
 
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+        }
+
         
         /// <summary>
         /// Called when the controller’s view is released from memory. 
@@ -200,6 +205,12 @@ namespace MonoKit.Metro
                     this.ApplyShadow(item.ContentView);
                 }
             }
+
+            if (this.presentedController != null)
+                {
+                    Console.WriteLine("reshow presented");
+                this.Present(this.presentedController, false);
+                }
         }
         
         private void InitViews()
@@ -233,7 +244,7 @@ namespace MonoKit.Metro
 
         private UIViewController presentedController;
 
-        public virtual void Present(UIViewController controller)
+        public virtual void Present(UIViewController controller, bool animated)
         {
             this.AddChildViewController(controller);
             this.presentedController = controller;
@@ -248,17 +259,33 @@ namespace MonoKit.Metro
 
             this.View.InsertSubviewAbove(controller.View, this.ContentView);
 
-            UIView.Animate(0.4f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
+            if (animated)
+            {
+                UIView.Animate(0.4f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
+                               {
+                    this.ContentView.Frame = new RectangleF(0 - this.contentWidth + this.currentScrolledOffset, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
+                    this.TitleView.Alpha = 0f;
+                    presentedController.View.Alpha = 1f;
+                    presentedController.View.Frame = this.View.Bounds;
+                    
+                }, () =>
+                {
+                    presentedController.DidMoveToParentViewController(this);
+                });
+            }
+            else
             {
                 this.ContentView.Frame = new RectangleF(0 - this.contentWidth + this.currentScrolledOffset, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
                 this.TitleView.Alpha = 0f;
                 presentedController.View.Alpha = 1f;
                 presentedController.View.Frame = this.View.Bounds;
-            
-            }, () =>
-            {
                 presentedController.DidMoveToParentViewController(this);
-            });
+            }
+        }
+
+        public virtual void Present(UIViewController controller)
+        {
+            this.Present(controller, true);
         }
 
         public virtual void Dismiss()
@@ -476,6 +503,13 @@ namespace MonoKit.Metro
         private void LayoutContent(float offset)
         {
             this.LayoutBackgroundView(offset);
+
+            if (this.Title != this.TitleView.Text)
+            {
+                var sz = this.View.StringSize(this.Title, this.TitleFont);
+                this.TitleView.Text = this.Title;
+                this.titleSize = new SizeF(sz.Width, this.titleSize.Height);
+            }
 
             this.TitleView.Frame = new RectangleF(this.CalculateTitleOffset(offset), 0, this.titleSize.Width, this.titleSize.Height);
 
