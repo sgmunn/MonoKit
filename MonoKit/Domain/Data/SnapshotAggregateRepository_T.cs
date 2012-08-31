@@ -97,7 +97,7 @@ namespace MonoKit.Domain.Data
             this.repository.Save(snapshot);
 
             // publish the snapshot save prior to publishing the events raised from it
-            this.changes.OnNext(new DataModelChange(instance));
+            this.changes.OnNext(new DataModelChange(snapshot));
 
             this.PublishEvents(instance.UncommittedEvents);
             instance.Commit();
