@@ -102,7 +102,6 @@ namespace MonoKit.Metro
 
         public UIView BackgroundView { get; private set; } 
 
-
         public void AddController(UIViewController controller)
         {
             this.AddController(controller, 0);
@@ -129,7 +128,6 @@ namespace MonoKit.Metro
         public override void LoadView()
         {
             base.LoadView();
-            Console.WriteLine("panorama load");
 
             this.hasAppeared = false;
 
@@ -149,7 +147,11 @@ namespace MonoKit.Metro
             this.ContentView.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
             this.View.AddSubview(this.ContentView);
 
-            this.AddPanner(this.ContentView);
+            // mmm, this means that more than one needs to be added prior to loading ?? 
+            if (this.ChildViewControllers.Count() > 1)
+            {
+                this.AddPanner(this.ContentView);
+            }
 
             this.titleSize = this.ConfigureTitle(this.ShowTitle);
             this.headerTop = this.titleSize.Height + (this.ShowTitle ? 2f : 0); // todo: header margin
@@ -161,7 +163,6 @@ namespace MonoKit.Metro
         {
             base.ViewDidLoad();
         }
-
         
         /// <summary>
         /// Called when the controller’s view is released from memory. 
@@ -169,7 +170,6 @@ namespace MonoKit.Metro
         public override void ViewDidUnload()
         {
             this.hasAppeared = false;
-            Console.WriteLine("panorama unload");
 
             // todo: retest with content views
             foreach (var item in this.items)
@@ -196,7 +196,6 @@ namespace MonoKit.Metro
             this.TitleView.Hidden = !this.ShowTitle;
 
             this.LayoutContent(this.currentScrolledOffset);
-            Console.WriteLine("panorama appear");
 
             if (this.ShadowEnabled)
             {
@@ -207,10 +206,9 @@ namespace MonoKit.Metro
             }
 
             if (this.presentedController != null)
-                {
-                    Console.WriteLine("reshow presented");
+            {
                 this.Present(this.presentedController, false);
-                }
+            }
         }
         
         private void InitViews()
