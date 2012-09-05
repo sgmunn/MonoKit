@@ -153,8 +153,8 @@ namespace MonoKit.UI.Elements
             {
                 return this.CanEdit(this);
             }
-            
-            return true;
+
+            return false;
         }
         
         protected void OnPropertyChanged(string propertyName)
