@@ -2162,7 +2162,7 @@ namespace MonoKit.UI.ViewDeck
 // todo:                this.centerController.setViewDeckController(this);
                 this.CenterController.AddObserver(this, new NSString("title"), 0, IntPtr.Zero);
 
-                this.Title = this.CenterController.Title;
+                this.Title = this.CenterController.Title ?? string.Empty;
 
                 if (this.AutomaticallyUpdateTabBarItems) 
                 {
@@ -2324,7 +2324,7 @@ namespace MonoKit.UI.ViewDeck
             shadowedView.Layer.ShadowOpacity = this.originalShadowOpacity;
             shadowedView.Layer.ShadowColor = this.originalShadowColor.CGColor; 
             shadowedView.Layer.ShadowOffset = this.originalShadowOffset;
-            shadowedView.Layer.ShadowPath = this.originalShadowPath != null ? this.originalShadowPath.CGPath : null;
+            shadowedView.Layer.ShadowPath = this.originalShadowPath != null ? this.originalShadowPath.CGPath :  new CGPath();
         }
 
         private void ApplyShadowToSlidingView() 
