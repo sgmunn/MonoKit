@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="UIViewDefinition.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,7 +21,6 @@
 namespace MonoKit.UI
 {
     using System;
-    using System.Collections.Generic;
     using MonoTouch.UIKit;
     
     public class UIViewDefinition<TView, TData> : ViewDefinition<TView> where TView : UIView

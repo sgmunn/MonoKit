@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file=".cs" company="sgmunn">
+//  <copyright file="DecimalToStringConverter.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,17 +17,15 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-//
 
 namespace MonoKit.DataBinding
 {
     using System;
  
     /// <summary>
-    /// Boolean to string converter.
+    /// Decimal to string converter.
     /// </summary>
-    
-    public class DecimalToStringConverter : IValueConverter
+    public sealed class DecimalToStringConverter : IValueConverter
     {
         public DecimalToStringConverter()
         {
