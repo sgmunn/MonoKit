@@ -99,6 +99,7 @@ namespace MonoKitSample
             
             section.Header = "Sample Elements";
             
+            section.Add(new ButtonElement("Button"));
             section.Add(new StringElement("String"));
             section.Add(new SubtitleStringElement("Subtitle String", "Subtitle"));
             section.Add(new Value1StringElement("Value1 String", "Detail"));
