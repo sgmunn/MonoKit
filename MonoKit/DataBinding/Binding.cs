@@ -98,9 +98,11 @@ namespace MonoKit.DataBinding
             {
                 return;
             }
-            
-            newValue = this.ConvertBackValue(newValue, sourceObject.GetPropertyInfo(this.PropertyName).GetType());
-            
+
+            var propInfo = sourceObject.GetPropertyInfo(this.PropertyName);
+
+            newValue = this.ConvertBackValue(newValue, propInfo.GetType());
+        
             this.InternalSetSourceValue(sourceObject, newValue);
         }
         

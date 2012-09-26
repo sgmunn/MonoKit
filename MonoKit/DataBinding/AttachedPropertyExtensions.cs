@@ -34,7 +34,7 @@ namespace MonoKit.DataBinding
         /// <summary>
         /// Value data store
         /// </summary>
-        private static Dictionary<string, List<KeyValueWeakReference>> ValueDictionary = new Dictionary<string, List<KeyValueWeakReference>>();
+        private static Dictionary<object, List<KeyValueWeakReference>> ValueDictionary = new Dictionary<object, List<KeyValueWeakReference>>();
         
         /// <summary>
         /// Sets the value of an AttachedProperty for an object 
@@ -100,11 +100,10 @@ namespace MonoKit.DataBinding
         private static KeyValueWeakReference GetCurrent(object instance, AttachedProperty property, bool addIfMissing)
         {
             KeyValueWeakReference result = null;
-            var key = GetDicionaryKey(instance);
             
-            if (ValueDictionary.ContainsKey(key))
+            if (ValueDictionary.ContainsKey(instance))
             {
-                var values = ValueDictionary[key];
+                var values = ValueDictionary[instance];
                 result = values.FirstOrDefault(x => x.Target == instance && x.Key == property.PropertyKey);
                 
                 if (result == null && addIfMissing)
@@ -119,23 +118,11 @@ namespace MonoKit.DataBinding
             if (addIfMissing)
             {
                 result = new KeyValueWeakReference(instance, property.PropertyKey);
-                ValueDictionary.Add(key, new List<KeyValueWeakReference>() { result });
+                ValueDictionary.Add(instance, new List<KeyValueWeakReference>() { result });
             }
             
             return result;
         }
-                
-        /// <summary>
-        /// Gets the key for the given object.
-        /// </summary>
-        /// <returns>
-        /// Returns a string representing the key for given target
-        /// </returns>
-        private static string GetDicionaryKey(object target)
-        {
-            return string.Format("{0}-{1}", target.GetType(), target.GetHashCode());
-        }
-
     }
 }
 

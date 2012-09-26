@@ -41,8 +41,8 @@ namespace MonoKit.DataBinding
         /// The list of all binding expressions.
         /// </summary>
         //private static List<BindingExpression> bindingExpressions = new List<BindingExpression>();
-        private static Dictionary<string, List<BindingExpression>> ExpressionDictionary = new Dictionary<string, List<BindingExpression>>();
-        
+        private static Dictionary<object, List<BindingExpression>> ExpressionDictionary = new Dictionary<object, List<BindingExpression>>();
+
         /// <summary>
         /// Sets a binding between target and source.
         /// </summary>
@@ -128,7 +128,7 @@ namespace MonoKit.DataBinding
         {
             var expression = new BindingExpression(target, property, source, binding);
             
-            var key = GetDicionaryKey(target);
+            var key = target;//GetDictionaryKey(target);
             if (!ExpressionDictionary.ContainsKey(key))
             {
                 ExpressionDictionary.Add(key, new List<BindingExpression>() { expression });
@@ -144,7 +144,7 @@ namespace MonoKit.DataBinding
         // todo: better way of changing binding source
         public static void ReplaceBindingSource(this object target, object source)
         {
-            var key = GetDicionaryKey(target);
+            var key = target;//GetDictionaryKey(target);
 
             if (ExpressionDictionary.ContainsKey(key))
             {
@@ -170,7 +170,7 @@ namespace MonoKit.DataBinding
         /// </param>
         public static void ClearBindings(this object target)
         {
-            var key = GetDicionaryKey(target);
+            var key = target;//GetDictionaryKey(target);
             
             if (ExpressionDictionary.ContainsKey(key))
             {
@@ -218,7 +218,7 @@ namespace MonoKit.DataBinding
         /// </param>
         public static BindingExpression[] GetBindingExpressions(this object target, string property)
         {
-            var key = GetDicionaryKey(target);
+            var key = target;//GetDictionaryKey(target);
             
             if (ExpressionDictionary.ContainsKey(key))
             {
@@ -249,16 +249,18 @@ namespace MonoKit.DataBinding
             }
         }
         
-        /// <summary>
-        /// Gets the key for the given object.
-        /// </summary>
-        /// <returns>
-        /// Returns a string representing the key for given target
-        /// </returns>
-        private static string GetDicionaryKey(object target)
-        {
-            return string.Format("{0}-{1}", target.GetType(), target.GetHashCode());
-        }
+//        /// <summary>
+//        /// Gets the key for the given object.
+//        /// </summary>
+//        /// <returns>
+//        /// Returns a string representing the key for given target
+//        /// </returns>
+//        private static object GetDictionaryKey(object target)
+//        {
+//            return target;
+////            var key = string.Format("{0}-{1}", target.GetType(), target.GetHashCode());
+////            return key;
+//        }
         
         /// <summary>
         /// Removes any stale bindings that no longer have references to target or source objects.
