@@ -156,7 +156,7 @@ namespace MonoKit.UI.Elements
 
             return false;
         }
-        
+
         protected void OnPropertyChanged(string propertyName)
         {
             var changed = this.PropertyChanged;
@@ -344,7 +344,18 @@ namespace MonoKit.UI.Elements
             this.Value = !this.Value;
         }
     }
-      
+    
+    public class ButtonElement : Element<string>
+    {
+        public ButtonElement(string caption) : base(caption)
+        {           
+        }
+        
+        public ButtonElement(object data, Binding binding) : base(data, binding)
+        {           
+        }
+    }
+
     public interface IInputElement
     {
     }
@@ -371,7 +382,7 @@ namespace MonoKit.UI.Elements
         public TextInputElement(object data, Binding binding, Binding valueBinding) : base(data, binding, valueBinding)
         {           
         }
-        
+
         public string Placeholder
         {
             get

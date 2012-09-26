@@ -212,6 +212,57 @@ namespace MonoKit.UI.Controls
         }
     }
     
+    
+    public class ButtonElementTableViewCell : ElementTableViewCell<string>
+    {    
+        private UIButton button;
+        
+        public ButtonElementTableViewCell() : base(UITableViewCellStyle.Default, new NSString("ButtonElement"))
+        {
+            this.ConfigureCell();
+        }
+        
+        public ButtonElementTableViewCell(UITableViewCellStyle style, NSString reuseIdentifer)
+            : base(style, reuseIdentifer)
+        {
+            this.ConfigureCell();
+        }
+
+        protected override void TextUpdated(string newValue)
+        {
+            //base.TextUpdated(newValue);
+            this.button.SetTitle(newValue, UIControlState.Normal);
+        }
+        
+        protected override void Dispose (bool disposing)
+        {
+            if (disposing)
+            {
+                this.AccessoryView = null;
+                this.button.Dispose();
+                this.button = null;
+            }
+            
+            base.Dispose (disposing);
+        }
+
+        public override void LayoutSubviews()
+        {
+            base.LayoutSubviews();
+
+            this.ContentView.BringSubviewToFront(this.button);
+            this.button.Frame = this.ContentView.Bounds;
+        }
+        
+        private void ConfigureCell ()
+        {
+            this.button = new UIButton(UIButtonType.RoundedRect);
+            this.button.AutoresizingMask = UIViewAutoresizing.FlexibleMargins;
+            this.button.TintColor = UIColor.Red;
+            this.ContentView.AddSubview(this.button);
+        }
+    }
+
     public class TextInputElementTableViewCell : ElementTableViewCell<string>
     {       
         private UITextField textField;

@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file=".cs" company="sgmunn">
+//  <copyright file="DefaultElementViewDefintions.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -116,7 +116,15 @@ namespace MonoKit.UI
                 return new UIViewDefinition<DecimalInputElementTableViewCell, DecimalInputElement>(SimpleElementBinding);
             }
         }
-        
+
+        public static IViewDefinition ButtonElementViewDefintion
+        {
+            get
+            {
+                return new UIViewDefinition<ButtonElementTableViewCell, ButtonElement>(SimpleElementBinding);
+            }
+        }
+
         public static void SimpleElementBinding(UIView view, object data)
         {
             view.SetBinding("Text", data, "Text");

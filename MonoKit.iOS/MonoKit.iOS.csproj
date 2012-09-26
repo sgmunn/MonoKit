@@ -12,22 +12,22 @@
     <AssemblyName>MonoKit.UI</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -64,7 +64,6 @@
     <Compile Include="Reactive\Concurrency\UIKitMainThreadScheduler.cs" />
     <Compile Include="Reactive\UIKitObservableExtensions.cs" />
     <Compile Include="UI\Metro\UIPivotView.cs" />
-    <Compile Include="UI\Metro\UIPanoramaView.cs" />
     <Compile Include="UI\Metro\UIPanoramaViewController.cs" />
     <Compile Include="UI\Metro\PanoramaConstants.cs" />
     <Compile Include="UI\Metro\ContentItem.cs" />
@@ -82,6 +81,7 @@
     <Compile Include="Domain\Data\SQLite\SqlAggregateManifestRepository.cs" />
     <Compile Include="Domain\Data\SQLite\AggregateManifest.cs" />
     <Compile Include="Domain\Data\SQLite\EventStoreRepository.cs" />
+    <Compile Include="UI\DefaultElementViewDefintions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
