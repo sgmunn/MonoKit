@@ -40,6 +40,8 @@ namespace MonoKit.Domain.Data.SQLite
         {
             Console.WriteLine(string.Format("Update manifest {0} - {1} - {2}", id, currentVersion, newVersion));
 
+            try
+            {
             var updated = SynchronousTask.GetSync(() => this.DoUpdate(id, currentVersion, newVersion));
 
             if (!updated)
@@ -47,16 +49,23 @@ namespace MonoKit.Domain.Data.SQLite
                 Console.WriteLine("AggregateManifest FAILED");
                 throw new ConcurrencyException();
             }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("** Unable to update Aggregate Manifest **", ex);
+            }
         }
 
         private bool DoUpdate(IUniqueIdentity id, int currentVersion, int newVersion)
         {
             if (currentVersion == 0)
             {
+                Console.WriteLine("..insert");
                 this.connection.Insert(new AggregateManifest { Id = id.Id, Version = newVersion, AggregateType = id.GetType().Name });
             }
             else
             {
+                Console.WriteLine("..update");
                 var rows = this.connection.Execute(UpdateSql, newVersion, id.Id, currentVersion);
                 return rows == 1;
             }
