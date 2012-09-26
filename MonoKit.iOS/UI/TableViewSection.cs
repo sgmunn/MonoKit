@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file=".cs" company="sgmunn">
+// <copyright file="TableViewSection.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,121 +21,7 @@
 namespace MonoKit.UI
 {
     using System;
-    using MonoKit.DataBinding;
-    using MonoKit.UI.Controls;
     using MonoKit.UI.Elements;
-    using MonoTouch.UIKit;
-    
-    public static class DefaultElementViewDefintions
-    {
-        public static IViewDefinition StringElementViewDefintion
-        {
-            get
-            {
-                return new UIViewDefinition<StringElementTableViewCell, StringElement>(SimpleElementBinding) { Param = UITableViewCellStyle.Default };
-            }
-        }
-
-        public static IViewDefinition SubtitleStringElementViewDefintion
-        {
-            get
-            {
-                return new UIViewDefinition<StringElementTableViewCell, SubtitleStringElement>(SimpleElementBinding) { Param = UITableViewCellStyle.Subtitle };
-            }
-        }
-
-        public static IViewDefinition Value1StringElementViewDefintion
-        {
-            get
-            {
-                return new UIViewDefinition<StringElementTableViewCell, Value1StringElement>(SimpleElementBinding) { Param = UITableViewCellStyle.Value1 };
-            }
-        }
-
-        public static IViewDefinition Value2StringElementViewDefintion
-        {
-            get
-            {
-                return new UIViewDefinition<StringElementTableViewCell, Value2StringElement>(SimpleElementBinding) { Param = UITableViewCellStyle.Value2 };
-            }
-        }
-
-        public static IViewDefinition DisclosureElementViewDefintion
-        {
-            get
-            {
-                return new UIViewDefinition<DisclosureElementTableViewCell, DisclosureElement>(SimpleElementBinding) { Param = UITableViewCellStyle.Default };
-            }
-        }
-
-        public static IViewDefinition BooleanElementViewDefintion
-        {
-            get
-            {
-                return new UIViewDefinition<BooleanElementTableViewCell, BooleanElement>(SimpleElementBinding);
-            }
-        }
-
-        public static IViewDefinition CheckboxElementViewDefintion
-        {
-            get
-            {
-                return new UIViewDefinition<CheckboxElementTableViewCell, CheckboxElement>(SimpleElementBinding);
-            }
-        }
-
-        public static IViewDefinition TextInputElementViewDefintion
-        {
-            get
-            {
-                return new UIViewDefinition<TextInputElementTableViewCell, TextInputElement>(TextInputElementBinding, typeof(TextInputBehaviour));
-            }
-        }
-
-        public static IViewDefinition PasswordInputElementViewDefintion
-        {
-            get
-            {
-                return new UIViewDefinition<PasswordInputElementTableViewCell, PasswordInputElement>(SimpleElementBinding, typeof(TextInputBehaviour));
-            }
-        }
-
-        public static IViewDefinition DateInputElementViewDefintion
-        {
-            get
-            {
-                return new UIViewDefinition<DateInputElementTableViewCell, DateInputElement>(SimpleElementBinding);
-            }
-        }
-
-        public static IViewDefinition DecimalInputElementViewDefintion
-        {
-            get
-            {
-                return new UIViewDefinition<DecimalInputElementTableViewCell, DecimalInputElement>(SimpleElementBinding);
-            }
-        }
-        
-        public static void SimpleElementBinding(UIView view, object data)
-        {
-            view.SetBinding("Text", data, "Text");
-            view.SetBinding(data, "Value");  
-        }
-        
-        public static void TestElementBinding(UIView view, object data)
-        {
-            view.SetBinding("Text", data, new Binding("Value") { Converter = new BooleanToStringConverter()});
-            view.SetBinding(data, "Value");  
-        }
-        
-        public static void TextInputElementBinding(UIView view, object data)
-        {
-            view.SetBinding(data, "Text");
-            view.SetBinding(data, "Value");  
-            view.SetBinding(data, "Placeholder");  
-            view.SetBinding(data, "KeyboardType");  
-        }
-    }
 
     public class TableViewSection : TableViewSection<Element>
     {
@@ -154,6 +40,7 @@ namespace MonoKit.UI
                 DefaultElementViewDefintions.PasswordInputElementViewDefintion,
                 DefaultElementViewDefintions.DateInputElementViewDefintion,
                 DefaultElementViewDefintions.DecimalInputElementViewDefintion,
+                DefaultElementViewDefintions.ButtonElementViewDefintion,
             };
         }
         
