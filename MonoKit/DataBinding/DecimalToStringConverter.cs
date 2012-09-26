@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="UIPanoramaView.cs" company="sgmunn">
+//  <copyright file=".cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,16 +18,29 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
-namespace MonoKit.Metro
+
+namespace MonoKit.DataBinding
 {
     using System;
-    using System.Linq;
-    using MonoTouch.UIKit;
-    using System.Collections.ObjectModel;
-    using System.Collections.Specialized;
-    using System.Drawing;
-    using MonoTouch.Foundation;
-    using System.Collections.Generic;
+ 
+    /// <summary>
+    /// Boolean to string converter.
+    /// </summary>
+    
+    public class DecimalToStringConverter : IValueConverter
+    {
+        public DecimalToStringConverter()
+        {
+        }
 
+        public object Convert (object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return value.ToString();
+        }
+
+        public object ConvertBack (object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return System.Convert.ToDecimal((string)value);
+        }
+    }
 }
-
