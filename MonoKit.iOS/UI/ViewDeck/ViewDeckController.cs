@@ -288,7 +288,19 @@ namespace MonoKit.UI.ViewDeck
         }
 
         public bool ResizesCenterView { get; set; }
-        
+
+        public CenterHiddenInteractivity CenterInteractivity
+        {
+            get
+            {
+                return this.centerHiddenInteractivity;
+            }
+
+            set
+            {
+                this.centerHiddenInteractivity = value;
+            }
+        }
 
         /// <summary>
         /// </summary>
