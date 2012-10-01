@@ -19,7 +19,7 @@
 //  --------------------------------------------------------------------------------------------------------------------
 
 // Derived from https://github.com/Inferis/ViewDeck
-// Modified a little to support iOS 5 only
+// Modified a little to support iOS 5+ only
 
 namespace MonoKit.UI.ViewDeck
 {
@@ -596,6 +596,7 @@ namespace MonoKit.UI.ViewDeck
             this.originalShadowPath = null;
         }
 
+        [Obsolete]
         public override void ViewDidUnload()
         {
             this.CleanUp();
@@ -608,6 +609,10 @@ namespace MonoKit.UI.ViewDeck
             base.ViewWillAppear(animated);
             
             this.View.AddObserver(this, new NSString("bounds"),  NSKeyValueObservingOptions.New, IntPtr.Zero);
+            if (this.viewAppeared)
+            {
+            this.CenterController.AddObserver(this, new NSString("title"), 0, IntPtr.Zero);
+            }
 
             NSAction applyViews = () => 
             {        
@@ -690,14 +695,14 @@ namespace MonoKit.UI.ViewDeck
         public override void ViewWillDisappear(bool animated) 
         {
             base.ViewWillDisappear(animated);
-
+  
             this.RemovePanners();
         }
 
         public override void ViewDidDisappear(bool animated) 
         {
             base.ViewDidDisappear(animated);
-            
+
             this.TryRemoveObserver(this.View, "bounds");
             this.TryRemoveObserver(this.CenterController, "title");
 
@@ -709,6 +714,7 @@ namespace MonoKit.UI.ViewDeck
             }
         }
 
+        [Obsolete]
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
         {
             this.preRotationWidth = this.ReferenceBounds.Size.Width;
@@ -770,7 +776,7 @@ namespace MonoKit.UI.ViewDeck
             {
                 if (this.Title != this.CenterController.Title) 
                 {
-                    this.Title = this.CenterController.Title;
+                    this.Title = this.CenterController.Title ?? string.Empty;
                 }
                 return;
             }
@@ -1152,14 +1158,15 @@ namespace MonoKit.UI.ViewDeck
             }
         }
 
-        private void TryRemoveObserver(NSObject @object, string key)
+        private void TryRemoveObserver(NSObject obj, string key)
         {
             try
             {
-                @object.RemoveObserver(this, new NSString(key));
+                obj.RemoveObserver(this, new NSString(key));
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 // yum yum
             }
         }
