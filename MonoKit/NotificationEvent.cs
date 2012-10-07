@@ -26,20 +26,20 @@ namespace MonoKit
     {
         public NotificationEvent(Type type, Guid id, INotification evt )
         {
-            this.DataModelId = id;
-            this.DataModelType = type;
+            this.Identity = id;
+            this.Type = type;
             this.Event = evt;
         }
 
-        public Guid DataModelId { get; private set; }
+        public Guid Identity { get; private set; }
         
-        public Type DataModelType { get; private set; }
+        public Type Type { get; private set; }
         
         public INotification Event { get; private set; }
 
         public override string ToString()
         {
-            return string.Format("[DomainEvent: DataModelId={0}, DataModelType={1}, Event={2}]", DataModelId, DataModelType, Event);
+            return string.Format("[DomainEvent: DataModelId={0}, DataModelType={1}, Event={2}]", Identity, Type, Event);
         }
     }
 }

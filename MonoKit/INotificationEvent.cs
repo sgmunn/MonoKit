@@ -24,9 +24,9 @@ namespace MonoKit
 
     public interface INotificationEvent
     {
-        Guid DataModelId { get; }
+        Guid Identity { get; }
 
-        Type DataModelType { get; }
+        Type Type { get; }
 
         INotification Event { get; }
     }

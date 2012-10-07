@@ -210,6 +210,31 @@ namespace MonoKit.Reactive.Linq
                     observer.OnCompleted)));
         }
 
+        public static IObservable<T> Cast<T>(this IObservable<object> source)
+        {
+            return new AnonymousObservable<T>(
+                observer => source.Subscribe(
+                new AnonymousObserver<object>(
+                x =>
+                {
+                T result;
+                
+                try
+                {
+                    result = (T)x;
+                }
+                catch (Exception exception)
+                {
+                    observer.OnError(exception);
+                    return;
+                }
+                
+                observer.OnNext(result);
+            },
+            observer.OnError,
+            observer.OnCompleted)));
+        }
+
 
         public static IObservable<T> Take<T>(this IObservable<T> source, int count)
         {

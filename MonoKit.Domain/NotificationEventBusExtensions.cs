@@ -21,7 +21,6 @@
 namespace MonoKit.Domain
 {
     using System;
-    using MonoKit.Reactive.Subjects;
     using MonoKit.Data;
     using MonoKit.Reactive.Linq;
 
@@ -30,51 +29,32 @@ namespace MonoKit.Domain
         /// <summary>
         /// Returns IDataModelEvents that are for the specified identity type.  These could be events or read model changes
         /// </summary>            
-//        public static IObservable<IEvent> ForIdentity<T>(this IObservable<IDomainEvent> source)
-//        {
-//            //return source.Where (x => x != null && typeof(T).IsAssignableFrom(x.Identity.GetType()));
-//            return source.Where(x => x.DataModelType is T);
-//        }
-//
-//        /// <summary>
-//        /// Returns data model changes for the given identity, events or read models
-//        /// </summary>            
-//        public static IObservable<IDataModelChange> DataModelChangesForIdentity<T>(this IObservable<IDataModelEvent> source) where T : IUniqueIdentity
-//        {
-//            return source.ForIdentity<T>()
-//                .OfType<IDataModelChange>();
-//        }
-//
-//        /// <summary>
-//        /// Returns events for the given identity type
-//        /// </summary>            
-//        public static IObservable<IAggregateEvent> EventsForIdentity<T>(this IObservable<IDataModelEvent> source) where T : IUniqueIdentity
-//        {
-//            return source.ForIdentity<T>()
-//                .OfType<IAggregateEvent>();
-//        }
-
-        /// <summary>
-        /// Returns data model changes for the specified read model type, excluding deleted read models
-        /// </summary>            
-        public static IObservable<T> DataModelChangesForType<T>(this IObservable<INotificationEvent> source)
+        public static IObservable<INotificationEvent> ForType<T>(this IObservable<INotificationEvent> source)
         {
-            return source.Select(x => x.Event)
-                .OfType<IDataChangeEvent>()
-                //.Where (x => x != null && x.Change != DataModelChangeKind.Deleted && typeof(T).IsAssignableFrom(x.DataModel.GetType()))
-                .Where (x => x != null && x.Change != DataChangeKind.Deleted && x.Data is T)
-                .Select(x => (T)x.Data);
+            return source.Where(x => x.Type is T);
         }
 
         /// <summary>
-        /// Returns delete notifications for read models of the specified identity type
+        /// Returns data model changes for the given identity, events or read models
         /// </summary>            
-//        public static IObservable<IUniqueIdentity> DataModelDeletionsForIdentity<T>(this IObservable<IDataModelEvent> source) where T : IUniqueIdentity
-//        {
-//            return source.ForIdentity<T>()
-//                .OfType<IDataModelChange>()
-//                    .Where(x => x.Deleted)
-//                    .Select(x => x.Identity);
-//        }
+        public static IObservable<IDataChangeEvent> DataChangesForType<T>(this IObservable<INotificationEvent> source)
+        {
+            return source.ForType<T>()
+                .Where(x => x.Event is IDataChangeEvent)
+                    .Select(x => x.Event)
+                    .Cast<IDataChangeEvent>();
+        }
+
+        /// <summary>
+        /// Returns events for the given identity type
+        /// </summary>            
+        public static IObservable<IAggregateEvent> EventsForType<T>(this IObservable<INotificationEvent> source) 
+            where T : IAggregateRoot
+        {
+            return source.ForType<T>()
+                .Where(x => x.Event is IAggregateEvent)
+                    .Select(x => x.Event)
+                    .Cast<IAggregateEvent>();
+        }
     }
 }
