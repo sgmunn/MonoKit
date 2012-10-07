@@ -35,18 +35,18 @@ namespace MonoKit.Domain
     {
         private readonly ISnapshotRepository repository;
         
-        private readonly IDomainEventBus eventBus;
+        private readonly INotificationEventBus eventBus;
 
         private readonly IAggregateManifestRepository manifest;
 
-        private readonly Subject<IDataModelChange> changes;
+        private readonly Subject<IDataChangeEvent> changes;
   
-        public SnapshotAggregateRepository(ISnapshotRepository repository, IAggregateManifestRepository manifest, IDomainEventBus eventBus)
+        public SnapshotAggregateRepository(ISnapshotRepository repository, IAggregateManifestRepository manifest, INotificationEventBus eventBus)
         {
             this.repository = repository;
             this.eventBus = eventBus;
             this.manifest = manifest;
-            this.changes = new Subject<IDataModelChange>();
+            this.changes = new Subject<IDataChangeEvent>();
         }
 
         public T New()
@@ -97,14 +97,14 @@ namespace MonoKit.Domain
 
             var saveResult = this.repository.Save(snapshot);
 
-            IDataModelChange modelChange = null; 
+            IDataChangeEvent modelChange = null; 
             switch (saveResult)
             {
                 case SaveResult.Added:
-                    modelChange = new DataModelChange(snapshot.GetType(), snapshot.Identity, snapshot, DataModelChangeKind.Added);
+                    modelChange = new DataChangeEvent(snapshot.GetType(), snapshot.Identity, snapshot, DataChangeKind.Added);
                     break;
                 case SaveResult.Updated:
-                    modelChange = new DataModelChange(snapshot.GetType(), snapshot.Identity, snapshot, DataModelChangeKind.Changed);
+                    modelChange = new DataChangeEvent(snapshot.GetType(), snapshot.Identity, snapshot, DataChangeKind.Changed);
                     break;
             }
 
@@ -131,7 +131,7 @@ namespace MonoKit.Domain
             this.repository.Dispose();
         }
 
-        public IObservable<IDataModelChange> Changes
+        public IObservable<IDataChangeEvent> Changes
         {
             get
             {

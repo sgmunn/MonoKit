@@ -25,14 +25,14 @@ namespace MonoKit.Domain
     
     public static class EventExtensions
     {
-        public static IDomainEvent AsDomainEvent(this IDataModelChange modelChange)
+        public static INotificationEvent AsDomainEvent(this IDataChangeEvent dataChange)
         {
-            return new DomainEvent(modelChange.DataModelType, modelChange.DataModelId, modelChange);
+            return new NotificationEvent(dataChange.DataType, dataChange.DataId, dataChange);
         }
         
-        public static IDomainEvent AsDomainEvent(this IAggregateEvent aggregateEvent, Type aggregateType)
+        public static INotificationEvent AsDomainEvent(this IAggregateEvent aggregateEvent, Type aggregateType)
         {
-            return new DomainEvent(aggregateType, aggregateEvent.AggregateId, aggregateEvent);
+            return new NotificationEvent(aggregateType, aggregateEvent.AggregateId, aggregateEvent);
         }
     }
 }

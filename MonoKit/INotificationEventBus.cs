@@ -18,13 +18,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain
+namespace MonoKit
 {
     using System;
 
-    public interface IDomainEventBus : IObservable<IDomainEvent> 
+    public interface INotificationEventBus : IObservable<INotificationEvent> 
     {
-        void Publish(IDomainEvent evt);
+        void Publish(INotificationEvent evt);
     }
 }
 

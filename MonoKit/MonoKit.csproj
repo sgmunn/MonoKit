@@ -85,8 +85,6 @@
     <Compile Include="Data\IRepositoryUnitOfWork_T.cs" />
     <Compile Include="Tasks\SyncScheduler.cs" />
     <Compile Include="Data\IObservableRepository.cs" />
-    <Compile Include="Data\IDataModelEventBus.cs" />
-    <Compile Include="Data\IDataModelChange.cs" />
     <Compile Include="Data\UnitOfWorkRepository_T.cs" />
     <Compile Include="Data\DictionaryRepository_T.cs" />
     <Compile Include="Data\IdLock.cs" />
@@ -97,10 +95,14 @@
     <Compile Include="DataBinding\DecimalToStringConverter.cs" />
     <Compile Include="DataBinding\DateTimeToStringConverter.cs" />
     <Compile Include="Data\SaveResult.cs" />
-    <Compile Include="Data\DataModelChangeKind.cs" />
     <Compile Include="Data\IId.cs" />
-    <Compile Include="Data\DataModelChange_T.cs" />
-    <Compile Include="Data\DataModelChange.cs" />
-    <Compile Include="Data\IEvent.cs" />
+    <Compile Include="Data\IDataChangeEvent.cs" />
+    <Compile Include="Data\DataChangeKind.cs" />
+    <Compile Include="Data\DataChangeEvent.cs" />
+    <Compile Include="Data\DataChangeEvent_T.cs" />
+    <Compile Include="INotification.cs" />
+    <Compile Include="INotificationEvent.cs" />
+    <Compile Include="INotificationEventBus.cs" />
+    <Compile Include="NotificationEvent.cs" />
   </ItemGroup>
 </Project>

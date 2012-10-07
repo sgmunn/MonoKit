@@ -53,8 +53,6 @@
     <Compile Include="DefaultScope.cs" />
     <Compile Include="DomainCommandExecutor_T.cs" />
     <Compile Include="DomainContext.cs" />
-    <Compile Include="DomainEvent.cs" />
-    <Compile Include="DomainEvent_T.cs" />
     <Compile Include="EventExtensions.cs" />
     <Compile Include="EventSourcedAggregateRepository_T.cs" />
     <Compile Include="IAggregateCommand.cs" />
@@ -65,8 +63,6 @@
     <Compile Include="IAggregateRoot.cs" />
     <Compile Include="ICommandExecutor_T.cs" />
     <Compile Include="IDomainContext.cs" />
-    <Compile Include="IDomainEvent.cs" />
-    <Compile Include="IDomainEventBus.cs" />
     <Compile Include="IEventSerializer.cs" />
     <Compile Include="IEventSourced.cs" />
     <Compile Include="IEventStoreRepository.cs" />
@@ -77,10 +73,11 @@
     <Compile Include="ISnapshot.cs" />
     <Compile Include="ISnapshotRepository.cs" />
     <Compile Include="ISnapshotSupport.cs" />
-    <Compile Include="ObservableDomainEventBus.cs" />
     <Compile Include="ReadModelBuilder.cs" />
     <Compile Include="ReadModelBuildingEventBus_T.cs" />
     <Compile Include="SnapshotAggregateRepository_T.cs" />
     <Compile Include="UnitOfWorkEventBus.cs" />
+    <Compile Include="ObservableNotificationEventBus.cs" />
+    <Compile Include="NotificationEventBusExtensions.cs" />
   </ItemGroup>
 </Project>

@@ -34,9 +34,9 @@ namespace MonoKit.Domain
 
         private readonly IAggregateManifestRepository manifest;
         
-        private readonly IDomainEventBus eventBus;
+        private readonly INotificationEventBus eventBus;
   
-        public EventSourcedAggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IAggregateManifestRepository manifest, IDomainEventBus eventBus)
+        public EventSourcedAggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IAggregateManifestRepository manifest, INotificationEventBus eventBus)
         {
             this.serializer = serializer;
             this.repository = repository;

@@ -31,7 +31,7 @@ namespace MonoKit.Domain
 
         private readonly Dictionary<Type, Func<IDomainContext, ISnapshotRepository>> registeredSnapshotRepositories;
 
-        public DomainContext(IAggregateManifestRepository manifest, IEventStoreRepository eventStore, IDomainEventBus eventBus)
+        public DomainContext(IAggregateManifestRepository manifest, IEventStoreRepository eventStore, INotificationEventBus eventBus)
         {
             this.Manifest = manifest;
             this.EventBus = eventBus;
@@ -45,7 +45,7 @@ namespace MonoKit.Domain
 
         public IEventStoreRepository EventStore { get; private set; }
 
-        public IDomainEventBus EventBus { get; private set; }
+        public INotificationEventBus EventBus { get; private set; }
 
         public IEventSerializer EventSerializer { get; protected set; }
 
@@ -59,7 +59,7 @@ namespace MonoKit.Domain
             return new DomainCommandExecutor<T>(this);
         }
 
-        public virtual IAggregateRepository<T> GetAggregateRepository<T>(IDomainEventBus bus) where T : IAggregateRoot, new()
+        public virtual IAggregateRepository<T> GetAggregateRepository<T>(INotificationEventBus bus) where T : IAggregateRoot, new()
         {
             if (typeof(T).GetInterfaces().Contains(typeof(IEventSourced)))
             {
@@ -76,7 +76,7 @@ namespace MonoKit.Domain
             return repo;
         }
 
-        public IList<IReadModelBuilder> GetReadModelBuilders<T>(IDomainEventBus bus) where T : IAggregateRoot, new()
+        public IList<IReadModelBuilder> GetReadModelBuilders<T>(INotificationEventBus bus) where T : IAggregateRoot, new()
         {
             var result = new List<IReadModelBuilder>();
 

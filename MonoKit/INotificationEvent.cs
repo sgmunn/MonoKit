@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="DataModelChange_T.cs" company="sgmunn">
+//  <copyright file="INotificationEvent.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,20 +18,16 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Data
+namespace MonoKit
 {
     using System;
 
-    public class DataModelChange<T> : DataModelChange
+    public interface INotificationEvent
     {
-        public DataModelChange(Guid id, object dataModel, DataModelChangeKind change)
-            : base(typeof(T), id, dataModel, change)
-        {
-        }
+        Guid DataModelId { get; }
 
-        public DataModelChange(Guid id, DataModelChangeKind change)
-            : base(typeof(T), id, change)
-        {
-        }
+        Type DataModelType { get; }
+
+        INotification Event { get; }
     }
 }

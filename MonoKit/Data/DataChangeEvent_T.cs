@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="DomainEvent_T.cs" company="sgmunn">
+//  <copyright file="DataChangeEvent_T.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,15 +18,19 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain
+namespace MonoKit.Data
 {
     using System;
-    using MonoKit.Data;
 
-    public sealed class DomainEvent<T> : DomainEvent
+    public class DataChangeEvent<T> : DataChangeEvent
     {
-        public DomainEvent(Guid id, IEvent evt)
-            : base(typeof(T), id, evt)
+        public DataChangeEvent(Guid id, object dataModel, DataChangeKind change)
+            : base(typeof(T), id, dataModel, change)
+        {
+        }
+
+        public DataChangeEvent(Guid id, DataChangeKind change)
+            : base(typeof(T), id, change)
         {
         }
     }

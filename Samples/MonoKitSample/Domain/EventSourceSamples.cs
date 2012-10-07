@@ -40,7 +40,7 @@ namespace MonoKitSample.Domain
 
             var eventStore = new EventStoreRepository(EventSourcedDB.Main);
 
-            var domainBus = new ObservableDomainEventBus();
+            var domainBus = new ObservableNotificationEventBus();
             domainBus.Subscribe((x) => Console.WriteLine("domain bus event {0}", x));
 
             var context = new TestDomainContext(EventSourcedDB.Main, manifest, eventStore, domainBus);

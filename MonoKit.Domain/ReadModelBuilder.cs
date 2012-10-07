@@ -28,14 +28,14 @@ namespace MonoKit.Domain
     {
         private readonly IRepository<T> repository;
 
-        private readonly List<IDataModelChange> updatedReadModels;
+        private readonly List<IDataChangeEvent> updatedReadModels;
 
-        private readonly IObservable<IDataModelChange> changes;
+        private readonly IObservable<IDataChangeEvent> changes;
 
         protected ReadModelBuilder(IRepository<T> repository)
         {
             this.repository = repository;
-            this.updatedReadModels = new List<IDataModelChange>();
+            this.updatedReadModels = new List<IDataChangeEvent>();
 
             var observableRepo = repository as IObservableRepository;
             this.changes = observableRepo != null ? observableRepo.Changes : null;
@@ -49,7 +49,7 @@ namespace MonoKit.Domain
             }
         }
 
-        public IEnumerable<IDataModelChange> Handle(IDomainEvent evt)
+        public IEnumerable<IDataChangeEvent> Handle(INotificationEvent evt)
         {
             this.updatedReadModels.Clear();
 
@@ -61,7 +61,7 @@ namespace MonoKit.Domain
             return this.updatedReadModels;
         }
 
-        public IObservable<IDataModelChange> Changes
+        public IObservable<IDataChangeEvent> Changes
         {
             get
             {

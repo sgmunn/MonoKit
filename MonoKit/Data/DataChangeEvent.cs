@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="DomainEvent.cs" company="sgmunn">
+//  <copyright file="DataChangeEvent.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,29 +18,38 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain
+namespace MonoKit.Data
 {
     using System;
-    using MonoKit.Data;
 
-    public class DomainEvent : IDomainEvent
+    public class DataChangeEvent : IDataChangeEvent
     {
-        public DomainEvent(Type type, Guid id, IEvent evt )
+        public DataChangeEvent(Type dataType, Guid id, object data, DataChangeKind change)
         {
-            this.DataModelId = id;
-            this.DataModelType = type;
-            this.Event = evt;
+            this.Data = data;
+            this.DataId = id;
+            this.Change = change;
+            this.DataType = dataType;
         }
-
-        public Guid DataModelId { get; set; }
         
-        public Type DataModelType { get; set; }
+        public DataChangeEvent(Type dataType, Guid id, DataChangeKind change)
+        {
+            this.DataId = id;
+            this.Change = change;
+            this.DataType = dataType;
+        }
         
-        public IEvent Event { get; set; }
-
+        public Guid DataId { get; set; }
+        
+        public Type DataType { get; set; }
+        
+        public object Data { get; private set; }
+        
+        public DataChangeKind Change { get; private set; }
+        
         public override string ToString()
         {
-            return string.Format("[DomainEvent: DataModelId={0}, DataModelType={1}, Event={2}]", DataModelId, DataModelType, Event);
+            return string.Format("[DataChange: Type = {0}, Id={1}, Change={2}, Data={3}]", DataType, DataId, Change, Data);
         }
     }
 }

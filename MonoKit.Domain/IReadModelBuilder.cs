@@ -26,6 +26,6 @@ namespace MonoKit.Domain
 
     public interface IReadModelBuilder
     {
-        IEnumerable<IDataModelChange> Handle(IDomainEvent evt);
+        IEnumerable<IDataChangeEvent> Handle(INotificationEvent evt);
     }
 }

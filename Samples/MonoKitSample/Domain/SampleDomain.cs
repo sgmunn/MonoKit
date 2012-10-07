@@ -17,6 +17,7 @@
 //   IN THE SOFTWARE.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+using MonoKit;
 
 namespace MonoKitSample.Domain
 {
@@ -28,7 +29,7 @@ namespace MonoKitSample.Domain
 
     public class TestDomainContext : SqlDomainContext
     {
-        public TestDomainContext(SQLiteConnection connection, IAggregateManifestRepository manifest, IEventStoreRepository eventStore, IDomainEventBus eventBus) 
+        public TestDomainContext(SQLiteConnection connection, IAggregateManifestRepository manifest, IEventStoreRepository eventStore, INotificationEventBus eventBus) 
             : base(connection, manifest, eventStore, eventBus)
         {
             this.EventSerializer = new DefaultEventSerializer<EventBase>();

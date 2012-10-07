@@ -34,12 +34,12 @@ namespace MonoKit.Data.SQLite
     {
         private readonly SQLiteConnection connection;
 
-        private readonly Subject<IDataModelChange> changes;
+        private readonly Subject<IDataChangeEvent> changes;
         
         public SqlRepository(SQLiteConnection connection)
         {
             this.connection = connection;
-            this.changes = new Subject<IDataModelChange>();
+            this.changes = new Subject<IDataChangeEvent>();
         }
 
         object IConnectedRepository.Connection
@@ -50,7 +50,7 @@ namespace MonoKit.Data.SQLite
             }
         }
 
-        public IObservable<IDataModelChange> Changes
+        public IObservable<IDataChangeEvent> Changes
         {
             get
             {
@@ -111,14 +111,14 @@ namespace MonoKit.Data.SQLite
                 }
             });
 
-            IDataModelChange modelChange = null;
+            IDataChangeEvent modelChange = null;
             switch (result)
             {
                 case SaveResult.Added: 
-                    modelChange = new DataModelChange<T>(instance.Identity, instance, DataModelChangeKind.Added);
+                    modelChange = new DataChangeEvent<T>(instance.Identity, instance, DataChangeKind.Added);
                     break;
                 case SaveResult.Updated:
-                    modelChange = new DataModelChange<T>(instance.Identity, instance, DataModelChangeKind.Changed);
+                    modelChange = new DataChangeEvent<T>(instance.Identity, instance, DataChangeKind.Changed);
                     break;
             }
 
@@ -130,7 +130,7 @@ namespace MonoKit.Data.SQLite
         public virtual void Delete(T instance)
         {
             SynchronousTask.DoSync(() => this.Connection.Delete(instance));
-            var modelChange = new DataModelChange<T>(instance.Identity, DataModelChangeKind.Deleted);
+            var modelChange = new DataChangeEvent<T>(instance.Identity, DataChangeKind.Deleted);
             this.changes.OnNext(modelChange);
         }
 
@@ -148,7 +148,7 @@ namespace MonoKit.Data.SQLite
                 var q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
                 this.Connection.Execute (q, id);
 
-                var modelChange = new DataModelChange<T>(id, DataModelChangeKind.Deleted);
+                var modelChange = new DataChangeEvent<T>(id, DataChangeKind.Deleted);
                 this.changes.OnNext(modelChange);
             });
         }

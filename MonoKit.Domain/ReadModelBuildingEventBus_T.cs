@@ -25,20 +25,20 @@ namespace MonoKit.Domain
     using MonoKit.Data;
 
     // todo: change from T to pass in the registerd builders
-    public class ReadModelBuildingEventBus<T> : IDomainEventBus 
+    public class ReadModelBuildingEventBus<T> : INotificationEventBus 
         where T : IAggregateRoot, new()
     {
         private readonly IDomainContext context;
 
-        private readonly IDomainEventBus bus;
+        private readonly INotificationEventBus bus;
         
-        public ReadModelBuildingEventBus(IDomainContext context, IDomainEventBus bus)
+        public ReadModelBuildingEventBus(IDomainContext context, INotificationEventBus bus)
         {
             this.context = context;
             this.bus = bus;
         }
         
-        public void Publish(IDomainEvent evt)
+        public void Publish(INotificationEvent evt)
         {
             if (this.bus != null)
             {
@@ -47,7 +47,7 @@ namespace MonoKit.Domain
 
             var builders = this.context.GetReadModelBuilders<T>(this.bus);
 
-            var updatedReadModels = new List<IDataModelChange>();
+            var updatedReadModels = new List<IDataChangeEvent>();
 
             // todo: this coud be done async, but because we should only have one thread to the db at any one time it's not really worth it.
             // just don't take too long in any one builder and don't make assumptions on the order of builders being executed.
@@ -60,12 +60,12 @@ namespace MonoKit.Domain
             {
                 foreach (var readModel in updatedReadModels)
                 {
-                    this.bus.Publish(new DomainEvent(readModel.DataModelType, readModel.DataModelId, readModel));
+                    this.bus.Publish(new NotificationEvent(readModel.DataType, readModel.DataId, readModel));
                 }
             }
         }
 
-        public IDisposable Subscribe(IObserver<IDomainEvent> subscriber)
+        public IDisposable Subscribe(IObserver<INotificationEvent> subscriber)
         {
             throw new NotSupportedException();
         }

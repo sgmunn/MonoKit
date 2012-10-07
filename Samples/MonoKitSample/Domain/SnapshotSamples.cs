@@ -32,7 +32,7 @@ namespace MonoKitSample.Domain
 
         public static IDomainContext GetDomainContext()
         {
-            var domainBus = new ObservableDomainEventBus();
+            var domainBus = new ObservableNotificationEventBus();
             domainBus.Subscribe((x) => Console.WriteLine("domain bus event {0}", x));
 
             var manifest = new SqlAggregateManifestRepository(SnapshotSourcedDB.Main);

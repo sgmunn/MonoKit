@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="IDomainEvent.cs" company="sgmunn">
+//  <copyright file="IDataChangeEvent.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,17 +18,18 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain
+namespace MonoKit.Data
 {
     using System;
-    using MonoKit.Data;
 
-    public interface IDomainEvent
+    public interface IDataChangeEvent : INotification
     {
-        Guid DataModelId { get; set; }
+        Guid DataId { get; set; }
 
-        Type DataModelType { get; set; }
+        Type DataType { get; set; }
 
-        IEvent Event { get; set; }
+        object Data { get; }
+
+        DataChangeKind Change { get; }
     }
 }

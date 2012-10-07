@@ -28,7 +28,7 @@ namespace MonoKit.Domain
     {
         IEventStoreRepository EventStore { get; }
         
-        IDomainEventBus EventBus { get; }
+        INotificationEventBus EventBus { get; }
 
         IEventSerializer EventSerializer { get; }
         
@@ -36,9 +36,9 @@ namespace MonoKit.Domain
 
         ICommandExecutor<T> NewCommandExecutor<T>() where T : class, IAggregateRoot, new();
         
-        IAggregateRepository<T> GetAggregateRepository<T>(IDomainEventBus bus) where T : IAggregateRoot, new();
+        IAggregateRepository<T> GetAggregateRepository<T>(INotificationEventBus bus) where T : IAggregateRoot, new();
 
-        IList<IReadModelBuilder> GetReadModelBuilders<T>(IDomainEventBus bus) where T : IAggregateRoot, new();
+        IList<IReadModelBuilder> GetReadModelBuilders<T>(INotificationEventBus bus) where T : IAggregateRoot, new();
     }
 }
 

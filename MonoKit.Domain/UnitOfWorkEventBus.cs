@@ -24,24 +24,24 @@ namespace MonoKit.Domain
     using System.Collections.Generic;
     using MonoKit.Data;
     
-    public class UnitOfWorkEventBus : IDomainEventBus, IUnitOfWork
+    public class UnitOfWorkEventBus : INotificationEventBus, IUnitOfWork
     {
-        private readonly IDomainEventBus bus;
+        private readonly INotificationEventBus bus;
 
-        private readonly List<IDomainEvent> events;
+        private readonly List<INotificationEvent> events;
         
-        public UnitOfWorkEventBus(IDomainEventBus bus)
+        public UnitOfWorkEventBus(INotificationEventBus bus)
         {
-            this.events = new List<IDomainEvent>();
+            this.events = new List<INotificationEvent>();
             this.bus = bus;
         }
         
-        public void Publish(IDomainEvent evt)
+        public void Publish(INotificationEvent evt)
         {
             this.events.Add(evt);
         }
 
-        public IDisposable Subscribe(IObserver<IDomainEvent> subscriber)
+        public IDisposable Subscribe(IObserver<INotificationEvent> subscriber)
         {
             throw new NotSupportedException();
         }

@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IAggregateEvent.cs" company="sgmunn">
+// <copyright file="ObservableNotificationEventBus.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,15 +21,26 @@
 namespace MonoKit.Domain
 {
     using System;
-    using MonoKit.Data;
+    using MonoKit.Reactive.Subjects;
 
-    public interface IAggregateEvent : IId, INotification
+    public sealed class ObservableNotificationEventBus : INotificationEventBus
     {
-        Guid AggregateId { get; set; }
+        private readonly Subject<INotificationEvent> eventPublisher;
 
-        int Version { get; set; }
-        
-        DateTime Timestamp { get; set; }
+        public ObservableNotificationEventBus()
+        {
+            this.eventPublisher = new Subject<INotificationEvent>();
+        }
+
+        public void Publish(INotificationEvent evt)
+        {
+            this.eventPublisher.OnNext(evt);
+        }
+
+        public IDisposable Subscribe(IObserver<INotificationEvent> observer)
+        {
+            return this.eventPublisher.Subscribe(observer);
+        }
     }
 }
 
