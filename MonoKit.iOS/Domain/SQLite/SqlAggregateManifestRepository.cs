@@ -18,7 +18,7 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain.Data.SQLite
+namespace MonoKit.Domain.SQLite
 {
     using System;
     using MonoKit.Data.SQLite;

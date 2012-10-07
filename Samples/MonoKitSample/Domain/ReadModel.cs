@@ -17,15 +17,13 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-//
-using MonoKit.Domain;
 
 namespace MonoKitSample.Domain
 {
     using System;
     using MonoKit.Data;
     using MonoKit.Data.SQLite;
-    using MonoKit.Domain.Data;
+    using MonoKit.Domain;
 
     public class TestReadModel : IId
     {

@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SerializedAggregateEvent.cs" company="sgmunn">
+// <copyright file="SqlSnapshotRepository.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,43 +18,59 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain.Data.SQLite
+namespace MonoKit.Domain.SQLite
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using MonoKit.Data;
     using MonoKit.Data.SQLite;
-    using MonoKit.Domain.Data;
 
-    public class SerializedAggregateEvent : ISerializedAggregateEvent
+    public class SqlSnapshotRepository<T> : ISnapshotRepository 
+        where T : class, ISnapshot, new() 
     {
-        [PrimaryKey]
-        public Guid Identity { get; set; }
-
-        [Indexed]
-        public Guid AggregateId { get; set; }
-
-//        [Ignore]
-//        public Type AggregateType { get; set; }
-//
-//        public string StoredAggregateType
-//        {
-//            get
-//            {
-//                return this.AggregateType.ToString();
-//            }
-//
-//            set 
-//            {
-//                this.AggregateType = Type.GetType(value);
-//            }
-//        }
-  
-        public int Version { get; set; }
-  
-        public string EventData { get; set; }
-
-        public override string ToString()
+        private readonly SyncRepository<T> repository;
+        
+        public SqlSnapshotRepository(SQLiteConnection connection)
         {
-            return string.Format("{0} - {1}", this.AggregateId.ToString().Substring(0, 8), this.Version);
+            var repo = new SqlRepository<T>(connection);
+            this.repository = new SyncRepository<T>(repo);
+        }
+
+        public ISnapshot New()
+        {
+            return new T();
+        }
+
+        public ISnapshot GetById(Guid id)
+        {
+            return ((T)this.repository.GetById(id));
+        }
+
+        public IEnumerable<ISnapshot> GetAll()
+        {
+            return this.repository.GetAll().Cast<ISnapshot>();
+        }
+
+        public SaveResult Save(ISnapshot instance)
+        {
+            return this.repository.Save((T)instance);
+        }
+
+        public void Delete(ISnapshot instance)
+        {
+            this.repository.Delete((T)instance);
+        }
+
+        public void DeleteId(Guid id)
+        {
+            this.repository.DeleteId(id);
+        }
+
+        public void Dispose()
+        {
+            this.repository.Dispose();
         }
     }
 }
+

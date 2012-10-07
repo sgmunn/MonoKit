@@ -17,14 +17,12 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-//
-using MonoKit.Data;
 
 namespace MonoKitSample.Domain
 {
     using System;
     using MonoKit.Domain;
-    using MonoKit.Domain.Data.SQLite;
+    using MonoKit.Domain.SQLite;
     using MonoKit.Data.SQLite;
     using MonoKit;
 

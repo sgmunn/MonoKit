@@ -18,11 +18,10 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain.Data.SQLite
+namespace MonoKit.Domain.SQLite
 {
     using System;
     using MonoKit.Domain;
-    using MonoKit.Domain.Data;
     using MonoKit.Data;
     using MonoKit.Data.SQLite;
 

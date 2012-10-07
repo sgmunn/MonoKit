@@ -21,11 +21,9 @@
 namespace MonoKitSample.Domain
 {
     using System;
-    using MonoKit.Domain.Data;
-    using MonoKit.Data;
     using MonoKit.Domain;
     using MonoKit.Data.SQLite;
-    using MonoKit.Domain.Data.SQLite;
+    using MonoKit.Domain.SQLite;
     using System.Collections.Generic;
 
     public class TestDomainContext : SqlDomainContext

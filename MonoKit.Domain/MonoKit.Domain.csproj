@@ -55,7 +55,6 @@
     <Compile Include="DomainContext.cs" />
     <Compile Include="DomainEvent.cs" />
     <Compile Include="DomainEvent_T.cs" />
-    <Compile Include="DomainNamespace.cs" />
     <Compile Include="EventExtensions.cs" />
     <Compile Include="EventSourcedAggregateRepository_T.cs" />
     <Compile Include="IAggregateCommand.cs" />

@@ -17,7 +17,6 @@
 //   IN THE SOFTWARE.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-using MonoKitSample.Domain;
 
 namespace MonoKitSample
 {
@@ -27,21 +26,13 @@ namespace MonoKitSample
     using MonoKit.UI.Elements;
     using MonoTouch.UIKit;
     using MonoKit.DataBinding;
-    using MonoKit.Domain;
-    using System.Linq;
-    using MonoKit.Domain.Data;
-    using MonoKit.Data;
-    using System.Collections.Generic;
-    using MonoKit.Data.SQLite;
-    using MonoKit.Domain.Data.SQLite;
-    using System.Reflection;
-    using MonoKit.Tasks;
     using MonoKit.Reactive;
     using MonoKit;
     using System.Threading;
     using System.Threading.Tasks;
     using MonoKit.Reactive.Linq;
     using MonoKitSample.Data;
+    using MonoKitSample.Domain;
 
     public class Samples
     {

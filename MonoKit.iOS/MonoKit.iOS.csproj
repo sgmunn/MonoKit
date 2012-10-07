@@ -75,13 +75,13 @@
     <Compile Include="UI\AwesomeMenu\MenuItemSelectedEventArgs.cs" />
     <Compile Include="Data\SQLite\SqlRepository_T.cs" />
     <Compile Include="Data\SQLite\SqlUnitOfWorkScope.cs" />
-    <Compile Include="Domain\Data\SQLite\SqlDomainContext.cs" />
-    <Compile Include="Domain\Data\SQLite\SqlAggregateManifestRepository.cs" />
-    <Compile Include="Domain\Data\SQLite\AggregateManifest.cs" />
-    <Compile Include="Domain\Data\SQLite\EventStoreRepository.cs" />
     <Compile Include="UI\DefaultElementViewDefintions.cs" />
-    <Compile Include="Domain\Data\SQLite\SerializedAggregateEvent.cs" />
-    <Compile Include="Domain\Data\SQLite\SqlSnapshotRepository.cs" />
+    <Compile Include="Domain\SQLite\SqlDomainContext.cs" />
+    <Compile Include="Domain\SQLite\SqlAggregateManifestRepository.cs" />
+    <Compile Include="Domain\SQLite\AggregateManifest.cs" />
+    <Compile Include="Domain\SQLite\EventStoreRepository.cs" />
+    <Compile Include="Domain\SQLite\SerializedAggregateEvent.cs" />
+    <Compile Include="Domain\SQLite\SqlSnapshotRepository.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

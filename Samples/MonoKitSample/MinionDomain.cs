@@ -19,14 +19,14 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using MonoKit.Domain.Data;
+using MonoKit.Domain;
 using MonoKit.Data;
 using MonoKit.Domain;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using MonoKit.Data.SQLite;
-using MonoKit.Domain.Data.SQLite;
+using MonoKit.Domain.SQLite;
 using MonoKitSample.Domain;
 
 namespace MonoKitSample

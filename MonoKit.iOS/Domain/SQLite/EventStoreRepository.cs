@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlSnapshotRepository.cs" company="sgmunn">
+// <copyright file="EventStoreRepository.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,59 +18,52 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.Domain.Data.SQLite
+namespace MonoKit.Domain.SQLite
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using MonoKit.Domain.Data;
-    using MonoKit.Data;
     using MonoKit.Data.SQLite;
-
-    public class SqlSnapshotRepository<T> : ISnapshotRepository 
-        where T : class, ISnapshot, new() 
+    using MonoKit.Data;
+    using MonoKit.Tasks;
+    
+    public class EventStoreRepository : SqlRepository<SerializedAggregateEvent>, IEventStoreRepository
     {
-        private readonly SyncRepository<T> repository;
-        
-        public SqlSnapshotRepository(SQLiteConnection connection)
+        public EventStoreRepository(SQLiteConnection connection) : base(connection)
         {
-            var repo = new SqlRepository<T>(connection);
-            this.repository = new SyncRepository<T>(repo);
         }
 
-        public ISnapshot New()
+        ISerializedAggregateEvent IRepository<ISerializedAggregateEvent, Guid>.New()
         {
-            return new T();
+            return (ISerializedAggregateEvent)base.New();
         }
 
-        public ISnapshot GetById(Guid id)
+        ISerializedAggregateEvent IRepository<ISerializedAggregateEvent, Guid>.GetById(Guid id)
         {
-            return ((T)this.repository.GetById(id));
+            return (ISerializedAggregateEvent)base.GetById(id);
         }
 
-        public IEnumerable<ISnapshot> GetAll()
+        IEnumerable<ISerializedAggregateEvent> IRepository<ISerializedAggregateEvent, Guid>.GetAll()
         {
-            return this.repository.GetAll().Cast<ISnapshot>();
+            return (IEnumerable<ISerializedAggregateEvent>)base.GetAll();
         }
 
-        public SaveResult Save(ISnapshot instance)
+        public SaveResult Save(ISerializedAggregateEvent instance)
         {
-            return this.repository.Save((T)instance);
+            return base.Save((SerializedAggregateEvent)instance);
         }
 
-        public void Delete(ISnapshot instance)
+        public void Delete(ISerializedAggregateEvent instance)
         {
-            this.repository.Delete((T)instance);
+            base.Delete((SerializedAggregateEvent)instance);
         }
 
-        public void DeleteId(Guid id)
+        public IEnumerable<ISerializedAggregateEvent> GetAllAggregateEvents(Guid rootId)
         {
-            this.repository.DeleteId(id);
-        }
+            var result = SynchronousTask.GetSync(() =>
+                this.Connection.Table<SerializedAggregateEvent>().Where(x => x.AggregateId == rootId).OrderBy(x => x.Version).AsEnumerable());
 
-        public void Dispose()
-        {
-            this.repository.Dispose();
+            return result.Cast<ISerializedAggregateEvent>();
         }
     }
 }

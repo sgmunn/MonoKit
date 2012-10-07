@@ -24,7 +24,7 @@ namespace MonoKitSample.Domain
     using System;
     using System.IO;
     using MonoKit.Data.SQLite;
-    using MonoKit.Domain.Data.SQLite;
+    using MonoKit.Domain.SQLite;
 
     public class EventSourcedDB : SQLiteConnection
     {
