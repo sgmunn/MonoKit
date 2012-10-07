@@ -130,6 +130,14 @@ namespace MonoKit.UI
             get;
             set;
         }
+
+        public List<IViewDefinition> ViewDefinitions
+        {
+            get
+            {
+                return this.viewDefinitions;
+            }
+        }
         
         public abstract void Clear();
         

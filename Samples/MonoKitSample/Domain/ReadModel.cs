@@ -18,6 +18,7 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
+using MonoKit.Domain;
 
 namespace MonoKitSample.Domain
 {
@@ -26,25 +27,10 @@ namespace MonoKitSample.Domain
     using MonoKit.Data.SQLite;
     using MonoKit.Domain.Data;
 
-    public class TestReadModel : IDataModel
+    public class TestReadModel : IId
     {
-        public IUniqueIdentity Identity
-        {
-            get
-            {
-                return new TestReadModelId(this.Id);
-            }
-        }
-
         [PrimaryKey]
-        public Guid Id { get; set;}
-
-        public class TestReadModelId : Identity
-        {
-            public TestReadModelId(Guid id) : base(id)
-            {
-            }
-        }
+        public Guid Identity { get; set;}
     }
     
     public class TestBuilder : ReadModelBuilder<TestReadModel>
@@ -64,25 +50,15 @@ namespace MonoKitSample.Domain
         }
     }
 
-    public class TransactionDataContract : IDataModel
+    public class TransactionDataContract : IId
     {
         public TransactionDataContract()
         {
-            this.Id = Guid.NewGuid();
-        }
-
-        [Ignore]
-        public IUniqueIdentity Identity
-        {
-            get
-            {
-                return new TransactionId(this.Id);
-            }
-
+            this.Identity = Guid.NewGuid();
         }
 
         [PrimaryKey]
-        public Guid Id { get; set; }
+        public Guid Identity { get; set; }
 
         [Indexed]
         public Guid TestId { get; set; }
@@ -91,12 +67,12 @@ namespace MonoKitSample.Domain
         
         public decimal Amount { get; set; }
 
-        public class TransactionId : Identity
-        {
-            public TransactionId(Guid id) : base(id)
-            {
-            }
-        }
+//        public class TransactionId : Identity
+//        {
+//            public TransactionId(Guid id) : base(id)
+//            {
+//            }
+//        }
 
         public override string ToString()
         {
@@ -108,7 +84,7 @@ namespace MonoKitSample.Domain
     {
         public TransactionReadModelBuilder(IRepository<TransactionDataContract> repository) : base(repository)
         {
-            Console.WriteLine("read model created");
+            Console.WriteLine("read model builder created");
         }
         
         public void Handle(TestEvent2 evt)
@@ -116,7 +92,7 @@ namespace MonoKitSample.Domain
             Console.WriteLine("read model updated");
             var transaction = this.Repository.New();
 
-            transaction.TestId = evt.Identity.Id;
+            transaction.TestId = evt.Identity;
             transaction.Amount = evt.Amount;
             transaction.Description = evt.Description;
 

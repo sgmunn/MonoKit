@@ -22,7 +22,7 @@ namespace MonoKit.UI.Elements
 {
     using System;
 
-    public interface IElement
+    public interface IElement : IDisposable
     {
         string Text { get; set; }
     }

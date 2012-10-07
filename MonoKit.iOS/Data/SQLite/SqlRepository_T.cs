@@ -17,6 +17,7 @@
 //   IN THE SOFTWARE.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+using MonoKit.Domain.Data;
 
 namespace MonoKit.Data.SQLite
 {
@@ -30,16 +31,16 @@ namespace MonoKit.Data.SQLite
     // I'm using this to block the current thread so not really async.  more sqlite threading investigation
 
     public class SqlRepository<T> : IRepository<T>, IConnectedRepository, IObservableRepository 
-        where T: IDataModel, new()
+        where T: IId, new()
     {
         private readonly SQLiteConnection connection;
 
-        private readonly Subject<IDataModelEvent> changes;
+        private readonly Subject<IDataModelChange> changes;
         
         public SqlRepository(SQLiteConnection connection)
         {
             this.connection = connection;
-            this.changes = new Subject<IDataModelEvent>();
+            this.changes = new Subject<IDataModelChange>();
         }
 
         object IConnectedRepository.Connection
@@ -50,7 +51,7 @@ namespace MonoKit.Data.SQLite
             }
         }
 
-        public IObservable<IDataModelEvent> Changes
+        public IObservable<IDataModelChange> Changes
         {
             get
             {
@@ -75,7 +76,7 @@ namespace MonoKit.Data.SQLite
             return new T();
         }
 
-        public virtual T GetById(IUniqueIdentity id)
+        public virtual T GetById(Guid id)
         {
             if (id == null)
             {
@@ -84,7 +85,7 @@ namespace MonoKit.Data.SQLite
 
             try
             {
-                return SynchronousTask.GetSync(() => this.Connection.Get<T>(id.Id));
+                return SynchronousTask.GetSync(() => this.Connection.Get<T>(id));
             }
             catch
             {
@@ -97,44 +98,60 @@ namespace MonoKit.Data.SQLite
             return SynchronousTask.GetSync(() => this.Connection.Table<T>().AsEnumerable());
         }
 
-        public virtual void Save(T instance)
+        public virtual SaveResult Save(T instance)
         {
-            SynchronousTask.DoSync
-                (() => 
-                 {
-                    Console.WriteLine(string.Format("SqlRepo - Save {0}", instance));
+            var result = SaveResult.Updated;
 
-                    if (this.Connection.Update(instance) == 0)
-                    {
-                        this.Connection.Insert(instance);
-                    }
+            SynchronousTask.DoSync(() => {
+                Console.WriteLine(string.Format("SqlRepo - Save {0}", instance));
 
-                    this.changes.OnNext(new DataModelChange(instance));
-                });
+                if (this.Connection.Update(instance) == 0)
+                {
+                    this.Connection.Insert(instance);
+                    result = SaveResult.Added;
+                }
+            });
+
+            IDataModelChange modelChange = null;
+            switch (result)
+            {
+                case SaveResult.Added: 
+                    modelChange = new DataModelChange<T>(instance.Identity, instance, DataModelChangeKind.Added);
+                    break;
+                case SaveResult.Updated:
+                    modelChange = new DataModelChange<T>(instance.Identity, instance, DataModelChangeKind.Changed);
+                    break;
+            }
+
+            this.changes.OnNext(modelChange);
+
+            return result;
         }
 
         public virtual void Delete(T instance)
         {
             SynchronousTask.DoSync(() => this.Connection.Delete(instance));
-            this.changes.OnNext(new DataModelChange(instance, true));
+            var modelChange = new DataModelChange<T>(instance.Identity, DataModelChangeKind.Deleted);
+            this.changes.OnNext(modelChange);
         }
 
-        public virtual void DeleteId(IUniqueIdentity id)
+        public virtual void DeleteId(Guid id)
         {
-            SynchronousTask.DoSync
-                (() => 
-                 {
-                    var map = this.Connection.GetMapping(typeof(T));
-                    var pk = map.PK;
-                    if (pk == null) {
-                        throw new NotSupportedException ("Cannot delete " + map.TableName + ": it has no PK");
-                    }
+            SynchronousTask.DoSync(() => {
+                var map = this.Connection.GetMapping(typeof(T));
+                var pk = map.PK;
 
-                    var q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
-                    this.Connection.Execute (q, id.Id);
+                if (pk == null) 
+                {
+                    throw new NotSupportedException ("Cannot delete " + map.TableName + ": it has no PK");
+                }
 
-                    this.changes.OnNext(new DataModelChange(id));
-                });
+                var q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
+                this.Connection.Execute (q, id);
+
+                var modelChange = new DataModelChange<T>(id, DataModelChangeKind.Deleted);
+                this.changes.OnNext(modelChange);
+            });
         }
     }    
 }

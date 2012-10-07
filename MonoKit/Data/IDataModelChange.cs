@@ -17,15 +17,19 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-//
 
 namespace MonoKit.Data
 {
     using System;
 
-    public interface IDataModelChange : IDataModelEvent
+    public interface IDataModelChange : IEvent
     {
-        IDataModel Item { get; }
-        bool Deleted { get; }
+        Guid DataModelId { get; set; }
+
+        Type DataModelType { get; set; }
+
+        object DataModel { get; }
+
+        DataModelChangeKind Change { get; }
     }
 }

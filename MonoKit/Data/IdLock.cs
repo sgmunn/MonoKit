@@ -26,15 +26,15 @@ namespace MonoKit.Data
 
     public sealed class IdLock : IDisposable
     {
-        private static readonly ConcurrentDictionary<IUniqueIdentity, object> Locks = new ConcurrentDictionary<IUniqueIdentity, object>();
+        private static readonly ConcurrentDictionary<Guid, object> Locks = new ConcurrentDictionary<Guid, object>();
 
-        private readonly IUniqueIdentity id;
+        private readonly Guid id;
         
         private readonly object lockObject;
 
         private bool isDisposed;
 
-        public IdLock(IUniqueIdentity id)
+        public IdLock(Guid id)
         {
             this.id = id;
             this.lockObject = Locks.GetOrAdd(id, x => new object());

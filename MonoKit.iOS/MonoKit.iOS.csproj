@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -59,7 +59,6 @@
     <Compile Include="UI\UIViewControllerExtensions.cs" />
     <Compile Include="UI\ViewDefinition.cs" />
     <Compile Include="Data\SQLite\SQLite.cs" />
-    <Compile Include="Domain\Data\SQLite\SnapshotRepository.cs" />
     <Compile Include="Threading\Tasks\UIKitScheduler.cs" />
     <Compile Include="Reactive\Concurrency\UIKitMainThreadScheduler.cs" />
     <Compile Include="Reactive\UIKitObservableExtensions.cs" />
@@ -74,7 +73,6 @@
     <Compile Include="UI\AwesomeMenu\Menu.cs" />
     <Compile Include="UI\AwesomeMenu\MenuDefaults.cs" />
     <Compile Include="UI\AwesomeMenu\MenuItemSelectedEventArgs.cs" />
-    <Compile Include="Domain\Data\SQLite\SerializedEvent.cs" />
     <Compile Include="Data\SQLite\SqlRepository_T.cs" />
     <Compile Include="Data\SQLite\SqlUnitOfWorkScope.cs" />
     <Compile Include="Domain\Data\SQLite\SqlDomainContext.cs" />
@@ -82,27 +80,18 @@
     <Compile Include="Domain\Data\SQLite\AggregateManifest.cs" />
     <Compile Include="Domain\Data\SQLite\EventStoreRepository.cs" />
     <Compile Include="UI\DefaultElementViewDefintions.cs" />
+    <Compile Include="Domain\Data\SQLite\SerializedAggregateEvent.cs" />
+    <Compile Include="Domain\Data\SQLite\SqlSnapshotRepository.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\" />
-    <Folder Include="Domain\" />
-    <Folder Include="Data\" />
-    <Folder Include="Data\SQLite\" />
-    <Folder Include="Domain\Data\" />
-    <Folder Include="Domain\Data\SQLite\" />
-    <Folder Include="Reactive\" />
-    <Folder Include="Threading\" />
-    <Folder Include="Threading\Tasks\" />
-    <Folder Include="Reactive\Concurrency\" />
-    <Folder Include="UI\Metro\" />
-    <Folder Include="UI\ViewControllers\" />
-    <Folder Include="UI\ViewDeck\" />
-    <Folder Include="UI\AwesomeMenu\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\MonoKit\MonoKit.csproj">
       <Project>{7BA35695-77B9-4237-AE28-396B0E5DDF7F}</Project>
       <Name>MonoKit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MonoKit.Domain\MonoKit.Domain.csproj">
+      <Project>{6963B532-C840-4E53-AC65-7A812C744A11}</Project>
+      <Name>MonoKit.Domain</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

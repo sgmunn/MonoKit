@@ -18,6 +18,7 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
+using MonoKit.Data;
 
 namespace MonoKitSample.Domain
 {
@@ -41,7 +42,7 @@ namespace MonoKitSample.Domain
             var context = new TestDomainContext(SnapshotSourcedDB.Main, manifest, null, domainBus);
 
             // registrations
-            context.RegisterSnapshot<SnapshotTestRoot>(c => new SnapshotRepository<TestSnapshot>(SnapshotSourcedDB.Main));
+            context.RegisterSnapshot<SnapshotTestRoot>(c => new SqlSnapshotRepository<TestSnapshot>(SnapshotSourcedDB.Main));
 
             context.RegisterBuilder<SnapshotTestRoot>((c) => 
                  new TransactionReadModelBuilder(new SqlRepository<TransactionDataContract>(SnapshotSourcedDB.Main)));
@@ -53,13 +54,13 @@ namespace MonoKitSample.Domain
         {
             var context = GetDomainContext();
 
-            var id = new TestAggregateId(TestId);
+            var id = TestId;
 
             var executor = context.NewCommandExecutor<SnapshotTestRoot>();
 
             executor.Execute(new TestCommand1 
                 { 
-                    AggregateId = new TestAggregateId(id),
+                    AggregateId = id,
                     Name = Guid.NewGuid().ToString().Substring(0, 8),
                 });
         }
@@ -68,13 +69,13 @@ namespace MonoKitSample.Domain
         {
             var context = GetDomainContext();
 
-            var id = new TestAggregateId(TestId);
+            var id = TestId;
 
             var executor = context.NewCommandExecutor<SnapshotTestRoot>();
 
             executor.Execute(new TestCommand2 
                 { 
-                    AggregateId = new TestAggregateId(id),
+                    AggregateId = id,
                     Description = Guid.NewGuid().ToString().Substring(0, 8),
                     Amount = 100,
                 });

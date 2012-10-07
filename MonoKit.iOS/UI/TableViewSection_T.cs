@@ -31,7 +31,7 @@ namespace MonoKit.UI
     using MonoKit.DataBinding;
     using MonoKit.Interactivity;
     
-    public class TableViewSection<TItem> : TableViewSectionBase, IEnumerable<TItem>, INotifyCollectionChanged
+    public class TableViewSection<TItem> : TableViewSectionBase, IEnumerable<TItem>, INotifyCollectionChanged where TItem : IDisposable
     {
         private int notifyCollectionChanges;
         
@@ -83,6 +83,11 @@ namespace MonoKit.UI
 
         public override void Clear()
         {
+            foreach (var item in this.Items)
+            {
+                item.Dispose();
+            }
+
             this.Items.Clear();
             
             var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);

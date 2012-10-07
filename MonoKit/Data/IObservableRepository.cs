@@ -17,7 +17,7 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-//
+using MonoKit.Domain;
 
 namespace MonoKit.Data
 {
@@ -25,7 +25,7 @@ namespace MonoKit.Data
 
     public interface IObservableRepository
     {
-        IObservable<IDataModelEvent> Changes { get; }
+        IObservable<IDataModelChange> Changes { get; }
     }
 }
 

@@ -19,12 +19,12 @@
 //  --------------------------------------------------------------------------------------------------------------------
 // 
 
-namespace MonoKit.Data
+namespace MonoKit.Domain.Data
 {
     using System;
 
-    public interface IDataModelEventBus
-    {
-        void Publish(IDataModelEvent evt);
-    }
+//    public interface IDataModelEventBus
+//    {
+//        void Publish(IDomainEvent evt);
+//    }
 }

@@ -32,7 +32,7 @@ namespace MonoKitSample.Domain
             this.CommandId = Guid.NewGuid();
         }
 
-        public IUniqueIdentity AggregateId { get; set; }
+        public Guid AggregateId { get; set; }
         
         public Guid CommandId { get; set; }
     }

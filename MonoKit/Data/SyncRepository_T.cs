@@ -40,38 +40,44 @@ namespace MonoKit.Data
 
         public T New()
         {
-            return SynchronousTask.GetSync(
-                () => { return this.repository.New(); });
+            return SynchronousTask.GetSync(() => { 
+                return this.repository.New(); 
+            });
         }
 
-        public T GetById(IUniqueIdentity id)
+        public T GetById(Guid id)
         {
-            return SynchronousTask.GetSync(
-                () => { return this.repository.GetById(id); });
+            return SynchronousTask.GetSync(() => { 
+                return this.repository.GetById(id); 
+            });
         }
 
         public IEnumerable<T> GetAll()
         {
-            return SynchronousTask.GetSync(
-                () => { return this.repository.GetAll(); });
+            return SynchronousTask.GetSync(() => { 
+                return this.repository.GetAll(); 
+            });
         }
 
-        public void Save(T instance)
+        public SaveResult Save(T instance)
         {
-            SynchronousTask.DoSync(
-                () => { this.repository.Save(instance); });
+            return SynchronousTask.GetSync(() => { 
+                return this.repository.Save(instance); 
+            });
         }
 
         public void Delete(T instance)
         {
-            SynchronousTask.DoSync(
-                () => { this.repository.Delete(instance); });
+            SynchronousTask.DoSync(() => { 
+                this.repository.Delete(instance); 
+            });
         }
 
-        public void DeleteId(IUniqueIdentity id)
+        public void DeleteId(Guid id)
         {
-            SynchronousTask.DoSync(
-                () => { this.repository.DeleteId(id); });
+            SynchronousTask.DoSync(() => { 
+                this.repository.DeleteId(id); 
+            });
         }
     }
 }

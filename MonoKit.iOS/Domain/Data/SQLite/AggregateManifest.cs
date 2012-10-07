@@ -17,35 +17,22 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-//
 
 namespace MonoKit.Domain.Data.SQLite
 {
     using System;
     using MonoKit.Data.SQLite;
-    using MonoKit.Data;
 
     public class AggregateManifest : IAggregateManifestItem
     {
-        [Ignore]
-        public IUniqueIdentity Identity
-        {
-            get
-            {
-                return new AggregateManifestId(this.Id);
-            }
-        }
-
         [PrimaryKey]
-        public Guid Id { get; set; }
+        public Guid Identity { get; set; }
 
         public int Version { get; set; }
 
-        public string AggregateType { get; set; }
-
         public override string ToString()
         {
-            return string.Format("[{3}] {1} {2}", Identity, Id.ToString().Substring(0, 8), Version, AggregateType);
+            return string.Format("[{0}] {1}", Identity.ToString().Substring(0, 8), Version);
         }
     }
 }

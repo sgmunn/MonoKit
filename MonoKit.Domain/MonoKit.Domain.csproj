@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6963B532-C840-4E53-AC65-7A812C744A11}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MonoKit.Domain</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>MonoKit.Domain</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+    <Reference Include="System.Runtime.Serialization" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\MonoKit\MonoKit.csproj">
+      <Project>{7BA35695-77B9-4237-AE28-396B0E5DDF7F}</Project>
+      <Name>MonoKit</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AggregateRoot.cs" />
+    <Compile Include="AggregateRoot_TState.cs" />
+    <Compile Include="CommandExecutor_T.cs" />
+    <Compile Include="ConcurrencyException.cs" />
+    <Compile Include="DefaultEventSerializer.cs" />
+    <Compile Include="DefaultScope.cs" />
+    <Compile Include="DomainCommandExecutor_T.cs" />
+    <Compile Include="DomainContext.cs" />
+    <Compile Include="DomainEvent.cs" />
+    <Compile Include="DomainEvent_T.cs" />
+    <Compile Include="DomainNamespace.cs" />
+    <Compile Include="EventExtensions.cs" />
+    <Compile Include="EventSourcedAggregateRepository_T.cs" />
+    <Compile Include="IAggregateCommand.cs" />
+    <Compile Include="IAggregateEvent.cs" />
+    <Compile Include="IAggregateManifestItem.cs" />
+    <Compile Include="IAggregateManifestRepository.cs" />
+    <Compile Include="IAggregateRepository_T.cs" />
+    <Compile Include="IAggregateRoot.cs" />
+    <Compile Include="ICommandExecutor_T.cs" />
+    <Compile Include="IDomainContext.cs" />
+    <Compile Include="IDomainEvent.cs" />
+    <Compile Include="IDomainEventBus.cs" />
+    <Compile Include="IEventSerializer.cs" />
+    <Compile Include="IEventSourced.cs" />
+    <Compile Include="IEventStoreRepository.cs" />
+    <Compile Include="InMemoryEventStoreRepository_T.cs" />
+    <Compile Include="IReadModelBuilder.cs" />
+    <Compile Include="IReadModelBuilder_T.cs" />
+    <Compile Include="ISerializedAggregateEvent.cs" />
+    <Compile Include="ISnapshot.cs" />
+    <Compile Include="ISnapshotRepository.cs" />
+    <Compile Include="ISnapshotSupport.cs" />
+    <Compile Include="ObservableDomainEventBus.cs" />
+    <Compile Include="ReadModelBuilder.cs" />
+    <Compile Include="ReadModelBuildingEventBus_T.cs" />
+    <Compile Include="SnapshotAggregateRepository_T.cs" />
+    <Compile Include="UnitOfWorkEventBus.cs" />
+  </ItemGroup>
+</Project>

@@ -2,3 +2,9 @@ Samples/AwesomeMenuSample/bin
 Samples/AwesomeMenuSample/obj
 Tests/MonoKit.UnitTests/bin
 Tests/MonoKit.UnitTests/obj
+MonoKit.iOS/obj
+MonoKit/obj
+Samples/MonoKitSample/obj
+_ReSharper.MonoKit.VS
+_ReSharper.MonoKit
+MonoKit.Domain/bin

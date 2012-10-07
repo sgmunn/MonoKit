@@ -46,7 +46,7 @@ namespace MonoKitSample
         {
         }
 
-        public IRepository<T> NewRepository<T>() where T: class, IDataModel, new()
+        public IRepository<T> NewRepository<T>() where T: class, IId, new()
         {
             return new SqlRepository<T>(this);
         }

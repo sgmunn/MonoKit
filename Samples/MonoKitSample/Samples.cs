@@ -100,7 +100,7 @@ namespace MonoKitSample
             section.Header = "Sample Elements";
             
             section.Add(new ButtonElement("Button"));
-            section.Add(new StringElement("String"));
+            section.Add(new StringElement("String") {Command = this.UpdateText });
             section.Add(new SubtitleStringElement("Subtitle String", "Subtitle"));
             section.Add(new Value1StringElement("Value1 String", "Detail"));
             section.Add(new Value2StringElement("Value2 String", "Detail"));
@@ -116,6 +116,11 @@ namespace MonoKitSample
             
 
             this.rootController.PushViewController(tb, true);
+        }
+
+        private void UpdateText(Element e)
+        {
+            ((StringElement)e).Text = "Changed!";
         }
                 
         protected void GotoBindingSamples(Element element)

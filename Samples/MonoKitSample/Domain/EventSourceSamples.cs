@@ -18,6 +18,7 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 //
+using MonoKit.Data;
 
 namespace MonoKitSample.Domain
 {
@@ -57,13 +58,13 @@ namespace MonoKitSample.Domain
         {
             var context = GetDomainContext();
 
-            var id = new TestAggregateId(TestId);
+            var id = TestId;
 
             var executor = context.NewCommandExecutor<EventSourcedRoot>();
 
             executor.Execute(new TestCommand1 
                 { 
-                    AggregateId = new TestAggregateId(id),
+                    AggregateId = id,
                     Name = Guid.NewGuid().ToString().Substring(0, 8),
                 });
         }
@@ -72,13 +73,13 @@ namespace MonoKitSample.Domain
         {
             var context = GetDomainContext();
 
-            var id = new TestAggregateId(TestId);
+            var id = TestId;
 
             var executor = context.NewCommandExecutor<EventSourcedRoot>();
 
             executor.Execute(new TestCommand2 
                 { 
-                    AggregateId = new TestAggregateId(id),
+                    AggregateId = id,
                     Description = Guid.NewGuid().ToString().Substring(0, 8),
                     Amount = 100,
                 });

@@ -22,12 +22,11 @@ namespace MonoKit.Domain.Data.SQLite
 {
     using System;
     using MonoKit.Data.SQLite;
-    using MonoKit.Data;
     using MonoKit.Tasks;
 
     public class SqlAggregateManifestRepository : IAggregateManifestRepository
     {
-        private const string UpdateSql = "update AggregateManifest set Version = ? where Id = ? and Version = ?";
+        private const string UpdateSql = "update AggregateManifest set Version = ? where Identity = ? and Version = ?";
 
         private readonly SQLiteConnection connection;
 
@@ -36,37 +35,38 @@ namespace MonoKit.Domain.Data.SQLite
             this.connection = connection;
         }
 
-        public void UpdateManifest(IUniqueIdentity id, int currentVersion, int newVersion)
+        public void UpdateManifest(Guid aggregateId, int currentVersion, int newVersion)
         {
-            Console.WriteLine(string.Format("Update manifest {0} - {1} - {2}", id, currentVersion, newVersion));
+            Console.WriteLine(string.Format("Update manifest {0} - {1} - {2}", aggregateId, currentVersion, newVersion));
+            bool updated = false;
 
             try
             {
-            var updated = SynchronousTask.GetSync(() => this.DoUpdate(id, currentVersion, newVersion));
+                updated = SynchronousTask.GetSync(() => this.DoUpdate(aggregateId, currentVersion, newVersion));
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("** Unable to update Aggregate Manifest **", ex);
+            }
 
             if (!updated)
             {
                 Console.WriteLine("AggregateManifest FAILED");
                 throw new ConcurrencyException();
             }
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("** Unable to update Aggregate Manifest **", ex);
-            }
         }
 
-        private bool DoUpdate(IUniqueIdentity id, int currentVersion, int newVersion)
+        private bool DoUpdate(Guid aggregateId, int currentVersion, int newVersion)
         {
             if (currentVersion == 0)
             {
                 Console.WriteLine("..insert");
-                this.connection.Insert(new AggregateManifest { Id = id.Id, Version = newVersion, AggregateType = id.GetType().Name });
+                this.connection.Insert(new AggregateManifest { Identity = aggregateId, Version = newVersion, });
             }
             else
             {
                 Console.WriteLine("..update");
-                var rows = this.connection.Execute(UpdateSql, newVersion, id.Id, currentVersion);
+                var rows = this.connection.Execute(UpdateSql, newVersion, aggregateId, currentVersion);
                 return rows == 1;
             }
 

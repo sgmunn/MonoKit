@@ -46,7 +46,7 @@ namespace MonoKitSample.Domain
         protected EventSourcedDB() : base(SampleDatabasePath())
         {
             this.CreateTable<AggregateManifest>();
-            this.CreateTable<SerializedEvent>();
+            this.CreateTable<SerializedAggregateEvent>();
             this.CreateTable<TransactionDataContract>();
         }
     }

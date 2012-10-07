@@ -20,6 +20,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
+    <NoStdLib>True</NoStdLib>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -30,25 +31,13 @@
     <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="DataBinding\" />
-    <Folder Include="Interactivity\" />
-    <Folder Include="UI\" />
-    <Folder Include="Domain\" />
-    <Folder Include="Domain\Data\" />
-    <Folder Include="Tasks\" />
-    <Folder Include="Reactive\" />
-    <Folder Include="Reactive\Disposables\" />
-    <Folder Include="Reactive\Subjects\" />
-    <Folder Include="Reactive\Concurrency\" />
-    <Folder Include="Reactive\Linq\" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBinding\Binding.cs" />
     <Compile Include="DataBinding\BindingOperations.cs" />
@@ -57,13 +46,13 @@
     <Compile Include="DataBinding\BooleanToStringConverter.cs" />
     <Compile Include="DataBinding\BindingDefinition.cs" />
     <Compile Include="DataBinding\BindingTemplate.cs" />
-    <Compile Include="Interactivity\Behaviour.cs" />
     <Compile Include="DataBinding\AttachedProperty.cs" />
     <Compile Include="DataBinding\DataContextAttachedProperty.cs" />
     <Compile Include="DataBinding\AttachedPropertyChangedEventArgs.cs" />
     <Compile Include="DataBinding\PropertyChangedCallback.cs" />
     <Compile Include="DataBinding\AttachedPropertyMetadata.cs" />
     <Compile Include="DataBinding\AttachedPropertyExtensions.cs" />
+    <Compile Include="Interactivity\Behaviour.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="IEdit.cs" />
     <Compile Include="KeyValueWeakReference.cs" />
@@ -72,43 +61,20 @@
     <Compile Include="UI\IViewDefinition.cs" />
     <Compile Include="UI\IDataViewWrapper.cs" />
     <Compile Include="EventProxy.cs" />
-    <Compile Include="Domain\AggregateRoot.cs" />
-    <Compile Include="Domain\IAggregateRoot.cs" />
     <Compile Include="Data\IRepository_T.cs" />
     <Compile Include="Data\IUnitOfWork.cs" />
     <Compile Include="Data\IUnitOfWorkScope.cs" />
-    <Compile Include="Domain\DefaultScope.cs" />
-    <Compile Include="Domain\ICommandExecutor_T.cs" />
-    <Compile Include="Domain\IEventSourced.cs" />
-    <Compile Include="Domain\CommandExecutor_T.cs" />
-    <Compile Include="Domain\Data\IAggregateRepository_T.cs" />
-    <Compile Include="Domain\Data\IEventStoreRepository.cs" />
-    <Compile Include="Domain\Data\ConcurrencyException.cs" />
-    <Compile Include="Domain\DomainNamespace.cs" />
-    <Compile Include="Domain\Data\InMemoryEventStoreRepository_T.cs" />
-    <Compile Include="Domain\IDomainContext.cs" />
-    <Compile Include="Domain\DomainCommandExecutor_T.cs" />
-    <Compile Include="Domain\IDomainEventBus.cs" />
     <Compile Include="Tasks\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Tasks\SyncTaskScheduler.cs" />
-    <Compile Include="Domain\ISnapshotSupport.cs" />
     <Compile Include="Data\SyncRepository_T.cs" />
-    <Compile Include="Domain\Data\ISnapshotRepository.cs" />
-    <Compile Include="Domain\Data\SnapshotAggregateRepository_T.cs" />
-    <Compile Include="Domain\DomainContext.cs" />
-    <Compile Include="Domain\Data\IEventSerializer.cs" />
-    <Compile Include="Domain\Data\DefaultEventSerializer.cs" />
-    <Compile Include="Domain\Data\ReadModelBuilder.cs" />
     <Compile Include="Reactive\Disposables\Disposable.cs" />
     <Compile Include="Reactive\Disposables\NullDisposable.cs" />
     <Compile Include="Reactive\Subjects\Subject_T.cs" />
-    <Compile Include="Domain\ObservableDomainEventBus.cs" />
     <Compile Include="Reactive\AnonymousObservable_T.cs" />
     <Compile Include="Reactive\AnonymousObserver_T.cs" />
     <Compile Include="Reactive\Disposables\AnonymousDisposable.cs" />
     <Compile Include="Reactive\Unit.cs" />
     <Compile Include="Reactive\Disposables\CompositeDisposable.cs" />
-    <Compile Include="Domain\UnitOfWorkEventBus.cs" />
     <Compile Include="Reactive\Concurrency\IScheduler.cs" />
     <Compile Include="ObservableExtensions.cs" />
     <Compile Include="Reactive\Concurrency\ImmediateScheduler.cs" />
@@ -116,35 +82,25 @@
     <Compile Include="Reactive\ScheduledObserver.cs" />
     <Compile Include="Reactive\EmptyActions.cs" />
     <Compile Include="Reactive\Linq\Observable.cs" />
-    <Compile Include="Domain\AggregateRoot_TState.cs" />
     <Compile Include="Data\IRepositoryUnitOfWork_T.cs" />
-    <Compile Include="Data\Identity.cs" />
     <Compile Include="Tasks\SyncScheduler.cs" />
-    <Compile Include="Domain\Data\EventSourcedAggregateRepository_T.cs" />
     <Compile Include="Data\IObservableRepository.cs" />
-    <Compile Include="Domain\IAggregateEvent.cs" />
-    <Compile Include="Data\IUniqueIdentity.cs" />
-    <Compile Include="Data\IDataModel.cs" />
-    <Compile Include="Data\IDataModelEvent.cs" />
     <Compile Include="Data\IDataModelEventBus.cs" />
     <Compile Include="Data\IDataModelChange.cs" />
-    <Compile Include="Data\DataModelChange.cs" />
     <Compile Include="Data\UnitOfWorkRepository_T.cs" />
     <Compile Include="Data\DictionaryRepository_T.cs" />
-    <Compile Include="Domain\Data\IReadModelBuilder.cs" />
     <Compile Include="Data\IdLock.cs" />
-    <Compile Include="Domain\Data\ISnapshot.cs" />
     <Compile Include="MethodExecutor.cs" />
     <Compile Include="Data\IConnectedRepository.cs" />
     <Compile Include="Tasks\SynchronousTask.cs" />
-    <Compile Include="Domain\Data\ISerializedEvent.cs" />
-    <Compile Include="Domain\Data\SerializedEventId.cs" />
     <Compile Include="Data\IRepository_TData_TKey.cs" />
-    <Compile Include="Domain\ReadModelBuildingEventBus_T.cs" />
-    <Compile Include="Domain\Data\AggregateManifestId.cs" />
-    <Compile Include="Domain\Data\IAggregateManifestItem.cs" />
-    <Compile Include="Domain\Data\IAggregateManifestRepository.cs" />
-    <Compile Include="Domain\IAggregateCommand.cs" />
     <Compile Include="DataBinding\DecimalToStringConverter.cs" />
+    <Compile Include="DataBinding\DateTimeToStringConverter.cs" />
+    <Compile Include="Data\SaveResult.cs" />
+    <Compile Include="Data\DataModelChangeKind.cs" />
+    <Compile Include="Data\IId.cs" />
+    <Compile Include="Data\DataModelChange_T.cs" />
+    <Compile Include="Data\DataModelChange.cs" />
+    <Compile Include="Data\IEvent.cs" />
   </ItemGroup>
 </Project>

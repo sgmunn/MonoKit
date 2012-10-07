@@ -70,7 +70,6 @@ namespace MonoKit.Metro
             this.panners = new List<UIPanGestureRecognizer>();
             this.Initialize();
         }
-                        
 
         public UIColor TextColor { get; set; }
 
@@ -120,6 +119,23 @@ namespace MonoKit.Metro
             }
 
             controller.DidMoveToParentViewController(this);
+        }
+
+        public override void WillMoveToParentViewController(UIViewController parent)
+        {
+            base.WillMoveToParentViewController(parent);
+            if (parent == null)
+            {
+                this.items.Clear();
+
+                foreach (var c in this.ChildViewControllers)
+                {
+                    c.WillMoveToParentViewController(null);
+                    c.View.RemoveFromSuperview();
+                    c.RemoveFromParentViewController();
+                    c.Dispose();
+                }
+            }
         }
 
         /// <summary>
@@ -211,6 +227,12 @@ namespace MonoKit.Metro
             }
         }
         
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            this.items.Clear();
+        }
+
         private void InitViews()
         {
             foreach (var item in this.items)
@@ -242,8 +264,11 @@ namespace MonoKit.Metro
 
         private UIViewController presentedController;
 
+        public bool IsNavigating { get; private set; }
+
         public virtual void Present(UIViewController controller, bool animated)
         {
+            this.IsNavigating = true;
             this.AddChildViewController(controller);
             this.presentedController = controller;
 
@@ -259,7 +284,7 @@ namespace MonoKit.Metro
 
             if (animated)
             {
-                UIView.Animate(0.4f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
+                UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
                                {
                     this.ContentView.Frame = new RectangleF(0 - this.contentWidth + this.currentScrolledOffset, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
                     this.TitleView.Alpha = 0f;
@@ -269,6 +294,7 @@ namespace MonoKit.Metro
                 }, () =>
                 {
                     presentedController.DidMoveToParentViewController(this);
+                    this.IsNavigating = false;
                 });
             }
             else
@@ -278,6 +304,7 @@ namespace MonoKit.Metro
                 presentedController.View.Alpha = 1f;
                 presentedController.View.Frame = this.View.Bounds;
                 presentedController.DidMoveToParentViewController(this);
+                this.IsNavigating = false;
             }
         }
 
@@ -288,23 +315,31 @@ namespace MonoKit.Metro
 
         public virtual void Dismiss()
         {
-            if (this.presentedController != null)
+            this.IsNavigating = true;
+            var p = this.presentedController;
+            if (p != null)
             {
-                presentedController.WillMoveToParentViewController(null);
+                p.WillMoveToParentViewController(null);
 
-                UIView.Animate(0.4f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
+                UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
                 {
                     this.TitleView.Alpha = 1f;
                     this.ContentView.Alpha = 1f;
-                    presentedController.View.Frame = new RectangleF(this.ContentView.Bounds.Width, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
+                    p.View.Frame = new RectangleF(this.ContentView.Bounds.Width, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
                     this.ContentView.Frame = new RectangleF(0, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
                     this.ContentView.Alpha = 1f;
-                    presentedController.View.Alpha = 0f;
+                    p.View.Alpha = 0f;
                 }, () =>
                 {
-                    presentedController.View.RemoveFromSuperview();
-                    presentedController.RemoveFromParentViewController();
+                    if (p.View != null)
+                    {
+                        p.View.RemoveFromSuperview();
+                    }
+
+                    p.RemoveFromParentViewController();
+                    p.Dispose();
                     this.presentedController = null;
+                    this.IsNavigating = false;
                 });
             }
         }

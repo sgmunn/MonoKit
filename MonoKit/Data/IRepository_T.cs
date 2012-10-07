@@ -22,7 +22,7 @@ namespace MonoKit.Data
 {
     using System;
 
-    public interface IRepository<T> : IRepository<T, IUniqueIdentity>
+    public interface IRepository<T> : IRepository<T, Guid>
     {
     }
 }

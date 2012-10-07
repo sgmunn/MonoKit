@@ -33,24 +33,11 @@ namespace MonoKitSample
         {
         }
 
-        public IUniqueIdentity Identity { get; set; }
+        [DataMember]
+        public Guid Identity { get; set; }
 
         [DataMember]
-        public Guid IdentityId 
-        { 
-            get
-            {
-                return this.Identity.Id;
-            }
-
-            set
-            {
-                this.Identity = new Identity(value);
-            }
-        }
-
-        [DataMember]
-        public Guid EventId { get; set; }
+        public Guid AggregateId { get; set; }
 
         [DataMember]
         public int Version { get; set; }

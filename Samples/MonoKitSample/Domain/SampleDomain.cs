@@ -37,12 +37,12 @@ namespace MonoKitSample.Domain
         }
     }
 
-    public class TestAggregateId : Identity
-    {
-        public TestAggregateId(Guid id) : base(id)
-        {
-        }
-    }
+//    public class TestAggregateId : Identity
+//    {
+//        public TestAggregateId(Guid id) : base(id)
+//        {
+//        }
+//    }
 
     public class EventSourcedRoot : AggregateRoot, IEventSourced
     {
@@ -100,18 +100,8 @@ namespace MonoKitSample.Domain
 
     public class TestSnapshot : ISnapshot
     {
-        [Ignore]
-        public IUniqueIdentity Identity
-        {
-            get
-            {
-                return new TestAggregateId(this.Id);
-            }
-
-        }
-
         [PrimaryKey]
-        public Guid Id { get; set; }
+        public Guid Identity { get; set; }
 
         public int Version { get; set; }
 
@@ -171,7 +161,7 @@ namespace MonoKitSample.Domain
         public override ISnapshot GetSnapshot()
         {
             var snapshot = this.InternalState;
-            snapshot.Id = this.Identity.Id;
+            snapshot.Identity = this.Identity;
             snapshot.Version = this.Version;
             return snapshot;
         }

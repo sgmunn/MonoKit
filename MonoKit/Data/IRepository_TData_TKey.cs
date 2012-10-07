@@ -32,7 +32,7 @@ namespace MonoKit.Data
 
         IEnumerable<TData> GetAll(); 
 
-        void Save(TData instance);
+        SaveResult Save(TData instance);
 
         void Delete(TData instance);
 

@@ -37,6 +37,8 @@ namespace MonoKit.UI.Elements
         private object data;
 
         private string text;
+
+        private bool disposed;
         
         public Element(string text)
         {
@@ -52,9 +54,13 @@ namespace MonoKit.UI.Elements
                 this.SetBinding("Text", data, binding);
             }
         }
-        
+
         ~Element()
         {
+            if (!this.disposed)
+            {
+                this.Dispose(false);
+            }
         }
         
         public object Data
@@ -121,6 +127,16 @@ namespace MonoKit.UI.Elements
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public void Dispose()
+        {
+            if (!this.disposed)
+            {
+                this.disposed = true;
+                this.Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+        }
+
         public virtual void Execute()
         {
             if (this.Command != null)
@@ -155,6 +171,10 @@ namespace MonoKit.UI.Elements
             }
 
             return false;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
         }
 
         protected void OnPropertyChanged(string propertyName)

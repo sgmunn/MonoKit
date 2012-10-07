@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file=".cs" company="sgmunn">
+//  <copyright file="Observable.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 // 
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,7 +17,6 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-// 
 
 namespace MonoKit.Reactive.Linq
 {
@@ -179,10 +178,12 @@ namespace MonoKit.Reactive.Linq
                     observer.OnError,
                     observer.OnCompleted))
                     );
-
-
         }
 
+        public static IObservable<T> OfType<T>(this IObservable<object> source)
+        {
+            return source.Where (x => x != null && typeof(T).IsAssignableFrom(x.GetType())).Select(x => (T)x);
+        }
 
         public static IObservable<TResult> Select<T, TResult>(this IObservable<T> source, Func<T, TResult> selector)
         {
@@ -207,8 +208,6 @@ namespace MonoKit.Reactive.Linq
                     },
                     observer.OnError,
                     observer.OnCompleted)));
-
-
         }
 
 

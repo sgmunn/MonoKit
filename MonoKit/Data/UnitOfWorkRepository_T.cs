@@ -25,20 +25,20 @@ namespace MonoKit.Data
     using System.Linq;
     using MonoKit.Data;
     
-    public class UnitOfWorkRepository<T> : IRepositoryUnitOfWork<T> where T : IDataModel
+    public class UnitOfWorkRepository<T> : IRepositoryUnitOfWork<T> where T : IId
     {
         private readonly IRepository<T> repository;
 
-        private readonly Dictionary<Guid, IDataModel> savedItems;
+        private readonly Dictionary<Guid, T> savedItems;
         
-        private readonly List<IUniqueIdentity> deletedItemKeys;
+        private readonly List<Guid> deletedItemKeys;
 
         public UnitOfWorkRepository(IRepository<T> repository)
         {
             this.repository = repository;
 
-            this.savedItems = new Dictionary<Guid, IDataModel>();
-            this.deletedItemKeys = new List<IUniqueIdentity>();
+            this.savedItems = new Dictionary<Guid, T>();
+            this.deletedItemKeys = new List<Guid>();
         }
 
         protected IRepository<T> Repository
@@ -61,16 +61,16 @@ namespace MonoKit.Data
             return this.repository.New();
         }
 
-        public T GetById(IUniqueIdentity id)
+        public T GetById(Guid id)
         {
-            if (this.deletedItemKeys.Any(x => x.Id == id.Id))
+            if (this.deletedItemKeys.Any(x => x == id))
             {
                 return default(T);
             }
 
-            if (this.savedItems.ContainsKey(id.Id))
+            if (this.savedItems.ContainsKey(id))
             {
-                return (T)this.savedItems[id.Id];
+                return this.savedItems[id];
             }
 
             return this.repository.GetById(id);
@@ -78,14 +78,21 @@ namespace MonoKit.Data
 
         public IEnumerable<T> GetAll()
         {
-            var saved = this.savedItems.Values.Cast<T>();
+            var saved = this.savedItems.Values;
 
-            return saved.Union(this.Repository.GetAll()).Where(x => !this.deletedItemKeys.Any(y => y.Id == x.Identity.Id));
+            return saved.Union(this.Repository.GetAll()).Where(x => !this.deletedItemKeys.Any(y => y == x.Identity));
         }
 
-        public virtual void Save(T instance)
+        public virtual SaveResult Save(T instance)
         {
-            this.savedItems[instance.Identity.Id] = instance;
+            if (this.savedItems.ContainsKey(instance.Identity))
+            {
+                this.savedItems[instance.Identity] = instance;
+                return SaveResult.Updated;
+            }
+
+            this.savedItems[instance.Identity] = instance;
+            return SaveResult.Added;
         }
 
         public virtual void Delete(T instance)
@@ -94,9 +101,9 @@ namespace MonoKit.Data
             this.DeleteId(id);
         }
 
-        public virtual void DeleteId(IUniqueIdentity id)
+        public virtual void DeleteId(Guid id)
         {
-            if (!this.deletedItemKeys.Any(x => x.Id == id.Id))
+            if (!this.deletedItemKeys.Any(x => x == id))
             {
                 this.deletedItemKeys.Add(id);
             }
@@ -104,7 +111,7 @@ namespace MonoKit.Data
 
         public virtual void Commit()
         {
-            foreach (var item in this.savedItems.Values.Cast<T>())
+            foreach (var item in this.savedItems.Values)
             {
                 this.Repository.Save(item);
             }

@@ -17,49 +17,39 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-//
 
 namespace MonoKit.Data
 {
     using System;
- 
+
     public class DataModelChange : IDataModelChange
     {
-        public DataModelChange(IDataModel item)
+        public DataModelChange(Type dataModelType, Guid id, object dataModel, DataModelChangeKind change)
         {
-            this.Item = item;
-            this.Identity = item.Identity;
-            this.Deleted = false;
+            this.DataModel = dataModel;
+            this.DataModelId = id;
+            this.Change = change;
+            this.DataModelType = dataModelType;
         }
-
-        public DataModelChange(IUniqueIdentity id)
+        
+        public DataModelChange(Type dataModelType, Guid id, DataModelChangeKind change)
         {
-            this.Identity = id;
-            this.Deleted = true;
+            this.DataModelId = id;
+            this.Change = change;
+            this.DataModelType = dataModelType;
         }
-
-        public DataModelChange(IDataModel item, bool deleted)
-        {
-            this.Item = item;
-            this.Identity = item.Identity;
-            this.Deleted = deleted;
-        }
-
-        public DataModelChange(IUniqueIdentity id, bool deleted)
-        {
-            this.Identity = id;
-            this.Deleted = deleted;
-        }
-
-        public IUniqueIdentity Identity { get; set; }
-
-        public IDataModel Item { get; private set; }
-
-        public bool Deleted { get; private set; }
-
+        
+        public Guid DataModelId { get; set; }
+        
+        public Type DataModelType { get; set; }
+        
+        public object DataModel { get; private set; }
+        
+        public DataModelChangeKind Change { get; private set; }
+        
         public override string ToString()
         {
-            return string.Format("[DataModelChange: Identity={0}, Item={1}, Deleted={2}]", Identity, Item, Deleted);
+            return string.Format("[DataModelChange: Type = {0}, Id={1}, Change={2}, DataModel={3}]", DataModelType, DataModelId, Change, DataModel);
         }
     }
 }
