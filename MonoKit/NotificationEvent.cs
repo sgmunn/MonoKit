@@ -39,7 +39,7 @@ namespace MonoKit
 
         public override string ToString()
         {
-            return string.Format("[DomainEvent: DataModelId={0}, DataModelType={1}, Event={2}]", Identity, Type, Event);
+            return string.Format("[NotificationEvent: Id={0}, Type={1}, Event={2}]", Identity, Type, Event);
         }
     }
 }

@@ -27,8 +27,8 @@ namespace MonoKit.Domain.SQLite
 
     public class SqlDomainContext : DomainContext
     {
-        public SqlDomainContext(SQLiteConnection connection, IAggregateManifestRepository manifest, IEventStoreRepository eventStore, INotificationEventBus eventBus) : 
-            base(manifest, eventStore, eventBus)
+        public SqlDomainContext(SQLiteConnection connection, IAggregateManifestRepository manifest, IEventStoreRepository eventStore) : 
+            base(manifest, eventStore)
         {
             this.Connection = connection;
         }

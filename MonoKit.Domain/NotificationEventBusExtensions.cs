@@ -31,7 +31,7 @@ namespace MonoKit.Domain
         /// </summary>            
         public static IObservable<INotificationEvent> ForType<T>(this IObservable<INotificationEvent> source)
         {
-            return source.Where(x => x.Type is T);
+            return source.Where(x => typeof(T).IsAssignableFrom(x.Type));
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace MonoKit.Domain
         public static IObservable<IDataChangeEvent> DataChangesForType<T>(this IObservable<INotificationEvent> source)
         {
             return source.ForType<T>()
-                .Where(x => x.Event is IDataChangeEvent)
+                    .Where(x => typeof(IDataChangeEvent).IsAssignableFrom(x.Event.GetType()))
                     .Select(x => x.Event)
                     .Cast<IDataChangeEvent>();
         }
@@ -52,7 +52,7 @@ namespace MonoKit.Domain
             where T : IAggregateRoot
         {
             return source.ForType<T>()
-                .Where(x => x.Event is IAggregateEvent)
+                .Where(x => typeof(IAggregateEvent).IsAssignableFrom(x.Event.GetType()))
                     .Select(x => x.Event)
                     .Cast<IAggregateEvent>();
         }

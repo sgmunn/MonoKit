@@ -31,6 +31,23 @@ namespace MonoKit.Domain
 
         private readonly Dictionary<Type, Func<IDomainContext, ISnapshotRepository>> registeredSnapshotRepositories;
 
+        public DomainContext()
+        {
+            this.EventBus = new ObservableNotificationEventBus();
+            this.registeredBuilders = new Dictionary<Type, List<Func<IDomainContext, IReadModelBuilder>>>();
+            this.registeredSnapshotRepositories = new Dictionary<Type, Func<IDomainContext, ISnapshotRepository>>();
+        }
+
+        public DomainContext(IAggregateManifestRepository manifest, IEventStoreRepository eventStore)
+        {
+            this.EventBus = new ObservableNotificationEventBus();
+            this.Manifest = manifest;
+            this.EventStore = eventStore;
+            
+            this.registeredBuilders = new Dictionary<Type, List<Func<IDomainContext, IReadModelBuilder>>>();
+            this.registeredSnapshotRepositories = new Dictionary<Type, Func<IDomainContext, ISnapshotRepository>>();
+        }
+
         public DomainContext(IAggregateManifestRepository manifest, IEventStoreRepository eventStore, INotificationEventBus eventBus)
         {
             this.Manifest = manifest;
@@ -41,11 +58,11 @@ namespace MonoKit.Domain
             this.registeredSnapshotRepositories = new Dictionary<Type, Func<IDomainContext, ISnapshotRepository>>();
         }
 
-        public IAggregateManifestRepository Manifest { get; private set; }
+        public IAggregateManifestRepository Manifest { get; protected set; }
 
-        public IEventStoreRepository EventStore { get; private set; }
+        public IEventStoreRepository EventStore { get; protected set; }
 
-        public INotificationEventBus EventBus { get; private set; }
+        public INotificationEventBus EventBus { get; protected set; }
 
         public IEventSerializer EventSerializer { get; protected set; }
 

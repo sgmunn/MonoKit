@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file=".cs" company="sgmunn">
+//  <copyright file="CompositeDisposable.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 // 
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,13 +17,12 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-// 
-using System;
-using System.Collections.Generic;
-
 
 namespace MonoKit.Reactive.Disposables
 {
+    using System;
+    using System.Collections.Generic;
+
     public class CompositeDisposable : IDisposable
     {
         private readonly List<IDisposable> disposables;
