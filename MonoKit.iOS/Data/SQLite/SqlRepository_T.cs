@@ -137,6 +137,7 @@ namespace MonoKit.Data.SQLite
         public virtual void DeleteId(Guid id)
         {
             SynchronousTask.DoSync(() => {
+                Console.WriteLine(string.Format("SqlRepo - Delete {0} {1}", typeof(T), id));
                 var map = this.Connection.GetMapping(typeof(T));
                 var pk = map.PK;
 
