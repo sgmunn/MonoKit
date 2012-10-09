@@ -86,6 +86,8 @@ namespace MonoKit.UI
             {
                 section.Clear();
             }
+
+            this.Sections.Clear();
         }
         
         internal void Add(TableViewSectionBase section)
