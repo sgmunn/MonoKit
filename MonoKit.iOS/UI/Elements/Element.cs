@@ -362,6 +362,7 @@ namespace MonoKit.UI.Elements
         public override void Execute()
         {
             this.Value = !this.Value;
+            base.Execute();
         }
     }
     
