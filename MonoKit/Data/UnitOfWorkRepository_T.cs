@@ -24,12 +24,15 @@ namespace MonoKit.Data
     using System.Collections.Generic;
     using System.Linq;
     using MonoKit.Data;
+
+    //public class IdDictionary<T : Dictionary<Guid, T>
+    //{}
     
     public class UnitOfWorkRepository<T> : IRepositoryUnitOfWork<T> where T : IId
     {
         private readonly IRepository<T> repository;
 
-        private readonly Dictionary<Guid, T> savedItems;
+        private readonly Dictionary<Guid, IId> savedItems;
         
         private readonly List<Guid> deletedItemKeys;
 
@@ -37,7 +40,7 @@ namespace MonoKit.Data
         {
             this.repository = repository;
 
-            this.savedItems = new Dictionary<Guid, T>();
+            this.savedItems = new Dictionary<Guid, IId>();
             this.deletedItemKeys = new List<Guid>();
         }
 
@@ -70,7 +73,7 @@ namespace MonoKit.Data
 
             if (this.savedItems.ContainsKey(id))
             {
-                return this.savedItems[id];
+                return (T)this.savedItems[id];
             }
 
             return this.repository.GetById(id);
@@ -78,7 +81,7 @@ namespace MonoKit.Data
 
         public IEnumerable<T> GetAll()
         {
-            var saved = this.savedItems.Values;
+            var saved = this.savedItems.Values.Cast<T>();
 
             return saved.Union(this.Repository.GetAll()).Where(x => !this.deletedItemKeys.Any(y => y == x.Identity));
         }
@@ -111,7 +114,7 @@ namespace MonoKit.Data
 
         public virtual void Commit()
         {
-            foreach (var item in this.savedItems.Values)
+            foreach (var item in this.savedItems.Values.Cast<T>())
             {
                 this.Repository.Save(item);
             }
