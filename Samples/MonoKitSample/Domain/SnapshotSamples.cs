@@ -32,12 +32,10 @@ namespace MonoKitSample.Domain
 
         public static IDomainContext GetDomainContext()
         {
-            var domainBus = new ObservableNotificationEventBus();
-            domainBus.Subscribe((x) => Console.WriteLine("domain bus event {0}", x));
-
             var manifest = new SqlAggregateManifestRepository(SnapshotSourcedDB.Main);
 
-            var context = new TestDomainContext(SnapshotSourcedDB.Main, manifest, null, domainBus);
+            var context = new TestDomainContext(SnapshotSourcedDB.Main, manifest, null);
+            context.EventBus.Subscribe((x) => Console.WriteLine("domain bus event {0}", x));
 
             // registrations
             context.RegisterSnapshot<SnapshotTestRoot>(c => new SqlSnapshotRepository<TestSnapshot>(SnapshotSourcedDB.Main));

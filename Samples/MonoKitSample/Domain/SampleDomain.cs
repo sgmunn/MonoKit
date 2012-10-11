@@ -29,8 +29,8 @@ namespace MonoKitSample.Domain
 
     public class TestDomainContext : SqlDomainContext
     {
-        public TestDomainContext(SQLiteConnection connection, IAggregateManifestRepository manifest, IEventStoreRepository eventStore, INotificationEventBus eventBus) 
-            : base(connection, manifest, eventStore, eventBus)
+        public TestDomainContext(SQLiteConnection connection, IAggregateManifestRepository manifest, IEventStoreRepository eventStore) 
+            : base(connection, manifest, eventStore)
         {
             this.EventSerializer = new DefaultEventSerializer<EventBase>();
         }
