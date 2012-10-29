@@ -41,4 +41,21 @@ namespace MonoKit.DataBinding
             return System.Convert.ToDecimal((string)value);
         }
     }
+
+    public sealed class CurrencyToStringConverter : IValueConverter
+    {
+        public CurrencyToStringConverter()
+        {
+        }
+        
+        public object Convert (object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return ((decimal)value).ToString("C");
+        }
+        
+        public object ConvertBack (object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return System.Convert.ToDecimal((string)value);
+        }
+    }
 }
