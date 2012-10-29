@@ -70,7 +70,7 @@ namespace MonoKit.Domain
             return result;
         }
 
-        public IEnumerable<T> GetAll()
+        public IList<T> GetAll()
         {
             throw new NotSupportedException();
         }

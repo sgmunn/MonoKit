@@ -26,7 +26,7 @@ namespace MonoKit.Domain
 
     public interface IEventStoreRepository : IRepository<ISerializedAggregateEvent>
     {
-        IEnumerable<ISerializedAggregateEvent> GetAllAggregateEvents(Guid rootId);
+        IList<ISerializedAggregateEvent> GetAllAggregateEvents(Guid rootId);
     }
 }
 

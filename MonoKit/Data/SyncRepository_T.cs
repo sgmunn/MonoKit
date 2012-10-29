@@ -52,7 +52,7 @@ namespace MonoKit.Data
             });
         }
 
-        public IEnumerable<T> GetAll()
+        public IList<T> GetAll()
         {
             return SynchronousTask.GetSync(() => { 
                 return this.repository.GetAll(); 

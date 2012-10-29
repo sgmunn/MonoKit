@@ -84,7 +84,11 @@ namespace MonoKit.Data.SQLite
 
             try
             {
-                return SynchronousTask.GetSync(() => this.Connection.Get<T>(id));
+                //return SynchronousTask.GetSync(() => this.Connection.Get<T>(id));
+                lock (this.Connection)
+                {
+                    return this.Connection.Get<T>(id);
+                }
             }
             catch
             {
@@ -92,24 +96,36 @@ namespace MonoKit.Data.SQLite
             }
         }
 
-        public virtual IEnumerable<T> GetAll()
+        public virtual IList<T> GetAll()
         {
-            return SynchronousTask.GetSync(() => this.Connection.Table<T>().AsEnumerable());
+            //return SynchronousTask.GetSync(() => this.Connection.Table<T>().AsEnumerable());
+            lock (this.Connection)
+            {
+                return this.Connection.Table<T>().ToList();
+            }
         }
 
         public virtual SaveResult Save(T instance)
         {
             var result = SaveResult.Updated;
 
-            SynchronousTask.DoSync(() => {
-                Console.WriteLine(string.Format("SqlRepo - Save {0}", instance));
-
+//            SynchronousTask.DoSync(() => {
+//                //Console.WriteLine(string.Format("SqlRepo - Save {0} {1}", instance.GetType(),instance.Identity));
+//
+//                if (this.Connection.Update(instance) == 0)
+//                {
+//                    this.Connection.Insert(instance);
+//                    result = SaveResult.Added;
+//                }
+//            });
+            lock (this.Connection)
+            {
                 if (this.Connection.Update(instance) == 0)
                 {
                     this.Connection.Insert(instance);
                     result = SaveResult.Added;
                 }
-            });
+            }
 
             IDataChangeEvent modelChange = null;
             switch (result)
@@ -129,29 +145,51 @@ namespace MonoKit.Data.SQLite
 
         public virtual void Delete(T instance)
         {
-            SynchronousTask.DoSync(() => this.Connection.Delete(instance));
+            //SynchronousTask.DoSync(() => this.Connection.Delete(instance));
+            lock (this.Connection)
+            {
+                this.Connection.Delete(instance);  
+            }
+
             var modelChange = new DataChangeEvent<T>(instance.Identity, DataChangeKind.Deleted);
             this.changes.OnNext(modelChange);
         }
 
         public virtual void DeleteId(Guid id)
         {
-            SynchronousTask.DoSync(() => {
-                Console.WriteLine(string.Format("SqlRepo - Delete {0} {1}", typeof(T), id));
+//            SynchronousTask.DoSync(() => {
+//                Console.WriteLine(string.Format("SqlRepo - Delete {0} {1}", typeof(T), id));
+//                var map = this.Connection.GetMapping(typeof(T));
+//                var pk = map.PK;
+//
+//                if (pk == null) 
+//                {
+//                    throw new NotSupportedException ("Cannot delete " + map.TableName + ": it has no PK");
+//                }
+//
+//                var q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
+//                this.Connection.Execute (q, id);
+//
+//                var modelChange = new DataChangeEvent<T>(id, DataChangeKind.Deleted);
+//                this.changes.OnNext(modelChange);
+//            });
+
+            lock (this.Connection)
+            {
                 var map = this.Connection.GetMapping(typeof(T));
                 var pk = map.PK;
-
+                
                 if (pk == null) 
                 {
                     throw new NotSupportedException ("Cannot delete " + map.TableName + ": it has no PK");
                 }
-
+                
                 var q = string.Format ("delete from \"{0}\" where \"{1}\" = ?", map.TableName, pk.Name);
                 this.Connection.Execute (q, id);
+            }
 
-                var modelChange = new DataChangeEvent<T>(id, DataChangeKind.Deleted);
-                this.changes.OnNext(modelChange);
-            });
+            var modelChange = new DataChangeEvent<T>(id, DataChangeKind.Deleted);
+            this.changes.OnNext(modelChange);
         }
     }    
 }

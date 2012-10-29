@@ -53,9 +53,9 @@ namespace MonoKit.Domain
             }
         }
 
-        public IEnumerable<ISerializedAggregateEvent> GetAllAggregateEvents(Guid rootId)
+        public IList<ISerializedAggregateEvent> GetAllAggregateEvents(Guid rootId)
         {
-            return this.GetAll().Where(x => x.AggregateId == rootId).OrderBy(x => x.Version);
+            return this.GetAll().Where(x => x.AggregateId == rootId).OrderBy(x => x.Version).ToList();
         }
     }
 }

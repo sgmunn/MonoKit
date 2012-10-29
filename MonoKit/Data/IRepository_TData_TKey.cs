@@ -30,7 +30,7 @@ namespace MonoKit.Data
 
         TData GetById(TKey id);
 
-        IEnumerable<TData> GetAll(); 
+        IList<TData> GetAll(); 
 
         SaveResult Save(TData instance);
 

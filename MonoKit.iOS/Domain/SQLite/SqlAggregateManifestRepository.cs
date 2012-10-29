@@ -37,12 +37,15 @@ namespace MonoKit.Domain.SQLite
 
         public void UpdateManifest(Guid aggregateId, int currentVersion, int newVersion)
         {
-            Console.WriteLine(string.Format("Update manifest {0} - {1} - {2}", aggregateId, currentVersion, newVersion));
             bool updated = false;
 
             try
             {
-                updated = SynchronousTask.GetSync(() => this.DoUpdate(aggregateId, currentVersion, newVersion));
+                //updated = SynchronousTask.GetSync(() => this.DoUpdate(aggregateId, currentVersion, newVersion));
+                lock (this.connection)
+                {
+                    updated = this.DoUpdate(aggregateId, currentVersion, newVersion);
+                }
             }
             catch (Exception ex)
             {
@@ -60,12 +63,10 @@ namespace MonoKit.Domain.SQLite
         {
             if (currentVersion == 0)
             {
-                Console.WriteLine("..insert");
                 this.connection.Insert(new AggregateManifest { Identity = aggregateId, Version = newVersion, });
             }
             else
             {
-                Console.WriteLine("..update");
                 var rows = this.connection.Execute(UpdateSql, newVersion, aggregateId, currentVersion);
                 return rows == 1;
             }

@@ -79,11 +79,11 @@ namespace MonoKit.Data
             return this.repository.GetById(id);
         }
 
-        public IEnumerable<T> GetAll()
+        public IList<T> GetAll()
         {
             var saved = this.savedItems.Values.Cast<T>();
 
-            return saved.Union(this.Repository.GetAll()).Where(x => !this.deletedItemKeys.Any(y => y == x.Identity));
+            return saved.Union(this.Repository.GetAll()).Where(x => !this.deletedItemKeys.Any(y => y == x.Identity)).ToList();
         }
 
         public virtual SaveResult Save(T instance)

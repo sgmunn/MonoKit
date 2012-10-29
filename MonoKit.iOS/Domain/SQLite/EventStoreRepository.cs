@@ -43,9 +43,9 @@ namespace MonoKit.Domain.SQLite
             return (ISerializedAggregateEvent)base.GetById(id);
         }
 
-        IEnumerable<ISerializedAggregateEvent> IRepository<ISerializedAggregateEvent, Guid>.GetAll()
+        IList<ISerializedAggregateEvent> IRepository<ISerializedAggregateEvent, Guid>.GetAll()
         {
-            return (IEnumerable<ISerializedAggregateEvent>)base.GetAll();
+            return (IList<ISerializedAggregateEvent>)base.GetAll();
         }
 
         public SaveResult Save(ISerializedAggregateEvent instance)
@@ -58,12 +58,16 @@ namespace MonoKit.Domain.SQLite
             base.Delete((SerializedAggregateEvent)instance);
         }
 
-        public IEnumerable<ISerializedAggregateEvent> GetAllAggregateEvents(Guid rootId)
+        public IList<ISerializedAggregateEvent> GetAllAggregateEvents(Guid rootId)
         {
-            var result = SynchronousTask.GetSync(() =>
-                this.Connection.Table<SerializedAggregateEvent>().Where(x => x.AggregateId == rootId).OrderBy(x => x.Version).AsEnumerable());
+            //var result = SynchronousTask.GetSync(() =>
+            //    this.Connection.Table<SerializedAggregateEvent>().Where(x => x.AggregateId == rootId).OrderBy(x => x.Version).AsEnumerable());
 
-            return result.Cast<ISerializedAggregateEvent>();
+            lock (this.Connection)
+            {
+                var result = this.Connection.Table<SerializedAggregateEvent>().Where(x => x.AggregateId == rootId).OrderBy(x => x.Version).AsEnumerable();
+                return result.Cast<ISerializedAggregateEvent>().ToList();
+            }
         }
     }
 }

@@ -29,12 +29,14 @@ namespace MonoKit.Domain.SQLite
     public class SqlSnapshotRepository<T> : ISnapshotRepository 
         where T : class, ISnapshot, new() 
     {
-        private readonly SyncRepository<T> repository;
-        
+        //private readonly SyncRepository<T> repository;
+        private readonly SqlRepository<T> repository;
+
         public SqlSnapshotRepository(SQLiteConnection connection)
         {
-            var repo = new SqlRepository<T>(connection);
-            this.repository = new SyncRepository<T>(repo);
+            //var repo = new SqlRepository<T>(connection);
+            //this.repository = new SyncRepository<T>(repo);
+            this.repository = new SqlRepository<T>(connection);
         }
 
         public ISnapshot New()
@@ -47,9 +49,9 @@ namespace MonoKit.Domain.SQLite
             return ((T)this.repository.GetById(id));
         }
 
-        public IEnumerable<ISnapshot> GetAll()
+        public IList<ISnapshot> GetAll()
         {
-            return this.repository.GetAll().Cast<ISnapshot>();
+            return this.repository.GetAll().Cast<ISnapshot>().ToList();
         }
 
         public SaveResult Save(ISnapshot instance)

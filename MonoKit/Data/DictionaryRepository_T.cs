@@ -17,6 +17,7 @@
 //   IN THE SOFTWARE.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+using System.Linq;
 
 namespace MonoKit.Data
 {
@@ -55,9 +56,9 @@ namespace MonoKit.Data
             return default(T);
         }
 
-        public IEnumerable<T> GetAll()
+        public IList<T> GetAll()
         {
-            return this.Storage.Values;
+            return this.Storage.Values.ToList();
         }
 
         public SaveResult Save(T instance)
