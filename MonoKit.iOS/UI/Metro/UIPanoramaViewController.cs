@@ -313,7 +313,7 @@ namespace MonoKit.Metro
             this.Present(controller, true);
         }
 
-        public virtual void Dismiss()
+        public virtual void Dismiss(bool animated)
         {
             this.IsNavigating = true;
             var p = this.presentedController;
@@ -321,26 +321,46 @@ namespace MonoKit.Metro
             {
                 p.WillMoveToParentViewController(null);
 
-                UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
+                if (animated)
+                {
+                    UIView.Animate(0.3f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, () =>
+                                   {
+                        this.TitleView.Alpha = 1f;
+                        this.ContentView.Alpha = 1f;
+                        p.View.Frame = new RectangleF(this.ContentView.Bounds.Width, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
+                        this.ContentView.Frame = new RectangleF(0, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
+                        this.ContentView.Alpha = 1f;
+                        p.View.Alpha = 0f;
+                    }, () =>
+                    {
+                        if (p.View != null)
+                        {
+                            p.View.RemoveFromSuperview();
+                        }
+                        
+                        p.RemoveFromParentViewController();
+                        p.Dispose();
+                        this.presentedController = null;
+                        this.IsNavigating = false;
+                    });
+                }
+                else
                 {
                     this.TitleView.Alpha = 1f;
                     this.ContentView.Alpha = 1f;
-                    p.View.Frame = new RectangleF(this.ContentView.Bounds.Width, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
+                    //p.View.Frame = new RectangleF(this.ContentView.Bounds.Width, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
                     this.ContentView.Frame = new RectangleF(0, 0, this.ContentView.Bounds.Width, this.ContentView.Bounds.Height);
                     this.ContentView.Alpha = 1f;
-                    p.View.Alpha = 0f;
-                }, () =>
-                {
-                    if (p.View != null)
-                    {
-                        p.View.RemoveFromSuperview();
-                    }
+                    p.View.Hidden = true;
 
+                    p.View.RemoveFromSuperview();
+                    
                     p.RemoveFromParentViewController();
-                    p.Dispose();
+                    //p.Dispose();
                     this.presentedController = null;
                     this.IsNavigating = false;
-                });
+                }
+
             }
         }
 
@@ -405,6 +425,12 @@ namespace MonoKit.Metro
         private void Panned(UIPanGestureRecognizer gestureRecognizer)
         {
             if (this.items.Count < 2 || this.contentWidth <= this.View.Bounds.Width)
+            {
+                return;
+            }
+
+            // quick hack for nested panoramas
+            if (this.presentedController is UIPanoramaViewController)
             {
                 return;
             }
