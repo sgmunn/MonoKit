@@ -51,7 +51,7 @@ namespace MonoKit.UI.AwesomeMenu
         private bool expanded;
         private PointF startPoint;
 
-        public Menu(RectangleF frame) : base(frame)
+        public Menu(RectangleF frame, UIImage image, UIImage highlightImage, UIImage contentImage, UIImage highlightContentImage) : base(frame)
         {
             this.BackgroundColor = UIColor.Clear;
             this.Mode = LayoutMode.Radial;
@@ -67,10 +67,7 @@ namespace MonoKit.UI.AwesomeMenu
 
             this.menuItems = new List<MenuItem>();
 
-            this.addButton = new MenuItem(UIImage.FromFile("Images/bg-addbutton.png"),
-                                          UIImage.FromFile("Images/bg-addbutton-highlighted.png"), 
-                                          UIImage.FromFile("Images/icon-plus.png"), 
-                                          UIImage.FromFile("Images/icon-plus-highlighted.png"));
+            this.addButton = new MenuItem(image, highlightImage, contentImage, highlightContentImage);
 
             this.addButton.Center = this.StartPoint;
             this.addButton.Touched += (sender, e) => this.Expanded = !this.Expanded;
@@ -79,7 +76,7 @@ namespace MonoKit.UI.AwesomeMenu
         }
 
 
-        public Menu(RectangleF frame, IEnumerable<MenuItem> menus) : base(frame)
+        public Menu(RectangleF frame, UIImage image, UIImage highlightImage, UIImage contentImage, UIImage highlightContentImage, IEnumerable<MenuItem> menus) : base(frame)
         {
             this.BackgroundColor = UIColor.Clear;
             this.Mode = LayoutMode.Radial;
@@ -95,10 +92,7 @@ namespace MonoKit.UI.AwesomeMenu
 
             this.menuItems = new List<MenuItem>(menus);
 
-            this.addButton = new MenuItem(UIImage.FromFile("Images/bg-addbutton.png"), 
-                                          UIImage.FromFile("Images/bg-addbutton-highlighted.png"), 
-                                          UIImage.FromFile("Images/icon-plus.png"), 
-                                          UIImage.FromFile("Images/icon-plus-highlighted.png"));
+            this.addButton = new MenuItem(image, highlightImage, contentImage, highlightContentImage);
 
             this.addButton.Touched += (sender, e) => this.Expanded = !this.Expanded;
             this.addButton.Center = this.StartPoint;

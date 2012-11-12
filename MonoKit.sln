@@ -87,7 +87,6 @@ Global
 		{3E337B3C-13E2-4C78-8824-980135A35646}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{3E337B3C-13E2-4C78-8824-980135A35646}.Debug|iPhone.Build.0 = Debug|iPhone
 		{3E337B3C-13E2-4C78-8824-980135A35646}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{3E337B3C-13E2-4C78-8824-980135A35646}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
 		{3E337B3C-13E2-4C78-8824-980135A35646}.Default|Any CPU.ActiveCfg = Debug|iPhoneSimulator
 		{3E337B3C-13E2-4C78-8824-980135A35646}.Default|Any CPU.Build.0 = Debug|iPhoneSimulator
 		{3E337B3C-13E2-4C78-8824-980135A35646}.Release|iPhone.ActiveCfg = Release|iPhone
@@ -194,6 +193,6 @@ Global
 		{D7937D75-2807-4BE4-9F34-5DDF4823A25F} = {AE9D84D2-7B39-4154-95D4-169BCCAA6021}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\iPhoneTest\iPhoneTest.csproj
+		StartupItem = Samples\ViewDeckSample\ViewDeckSample.csproj
 	EndGlobalSection
 EndGlobal

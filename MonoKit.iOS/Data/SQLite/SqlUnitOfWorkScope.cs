@@ -47,13 +47,11 @@ namespace MonoKit.Data.SQLite
                 this.connection.BeginTransaction();
                 try
                 {
-                    Console.WriteLine("SqlUnitOfWork.Commit -- added uow's");
                     foreach (var uow in this.scopedWork)
                     {
                         uow.Commit();
                     }
 
-                    Console.WriteLine("SqlUnitOfWork.Commit -- db connection");
                     this.connection.Commit();
                 }
                 catch (Exception ex)

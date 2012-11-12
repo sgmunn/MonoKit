@@ -34,7 +34,6 @@ namespace MonoKit.UI.AwesomeMenu
 
         public MenuItem() : base()
         {
-            this.BackgroundColor = UIColor.Red;
         }
 
         public MenuItem(UIImage image, UIImage highlightImage, UIImage contentImage, UIImage highlightContentImage)
@@ -43,9 +42,24 @@ namespace MonoKit.UI.AwesomeMenu
             this.Image = image;
             this.HighlightedImage = highlightImage;
             this.UserInteractionEnabled = true;
-            this.contentImageView = new UIImageView(contentImage);
-            this.contentImageView.HighlightedImage = highlightContentImage;
-            this.AddSubview(this.contentImageView);
+
+            // figure this out
+            if (contentImage == null)
+            {
+                contentImage = image;
+            }
+
+            if (contentImage != null)
+            {
+                this.contentImageView = new UIImageView(contentImage);
+
+                if (highlightContentImage != null)
+                {
+                    this.contentImageView.HighlightedImage = highlightContentImage;
+                }
+
+                this.AddSubview(this.contentImageView);
+            }
         }
 
         public MenuItem(UIImage image, UIImage highlightImage, UIImage contentImage)

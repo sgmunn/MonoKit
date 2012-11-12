@@ -90,6 +90,8 @@ namespace ViewDeckSample
             deckController.RightLedge = 40;
             deckController.LeftLedge = 100;
 
+            deckController.Enabled = false;
+
             this.PresentViewController(deckController, true, null);
 
         }
@@ -178,7 +180,7 @@ namespace ViewDeckSample
             var deck = this.ParentViewController as ViewDeckController;
             deck.OpenLeftView();
         }
-                
+
         public void OpenRight(Element element)
         {
             var deck = this.ParentViewController as ViewDeckController;

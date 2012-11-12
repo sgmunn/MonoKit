@@ -258,7 +258,6 @@ namespace MonoKit.UI.Controls
         {
             this.button = new UIButton(UIButtonType.RoundedRect);
             this.button.AutoresizingMask = UIViewAutoresizing.FlexibleMargins;
-            this.button.TintColor = UIColor.Red;
             this.ContentView.AddSubview(this.button);
         }
     }
@@ -347,6 +346,7 @@ namespace MonoKit.UI.Controls
         {
             base.ValueUpdated(newValue);
             this.textField.Text = newValue;
+            this.SetNeedsDisplay();
         }
         
         protected override void TextUpdated (string newValue)
@@ -354,6 +354,7 @@ namespace MonoKit.UI.Controls
             base.TextUpdated (newValue);
             this.textField.Frame = this.CalculateTextFieldFrame(newValue);
             this.ContentView.BringSubviewToFront(this.textField);
+            this.SetNeedsDisplay();
         }
          
         protected override void Dispose (bool disposing)
@@ -444,7 +445,15 @@ namespace MonoKit.UI.Controls
         {
             this.ConfigureCell();
         }
-        
+
+        public UIDateField DateField
+        {
+            get
+            {
+                return this.dateField;
+            }
+        }   
+
         public override void TouchesEnded (NSSet touches, UIEvent evt)
         {
             base.TouchesEnded (touches, evt);
@@ -541,6 +550,14 @@ namespace MonoKit.UI.Controls
             : base(style, reuseIdentifer)
         {
             this.ConfigureCell();
+        }
+
+        public UITextField TextField
+        {
+            get
+            {
+                return this.textField;
+            }
         }
         
         public override void TouchesEnded (NSSet touches, UIEvent evt)

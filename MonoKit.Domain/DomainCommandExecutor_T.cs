@@ -68,11 +68,9 @@ namespace MonoKit.Domain
                         cmd.Execute(command, 0);
                     }
                 
-                    Console.WriteLine("DomainCommandExecutor - commit scope");
                     scope.Commit();
                 }
 
-                Console.WriteLine("DomainCommandExecutor - commit bus");
                 bus.Commit();
             }
         }
