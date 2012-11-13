@@ -27,7 +27,7 @@ namespace MonoKit.DataBinding
     /// </summary>
     public interface IPropertyInjection
     {
-        void AddInjectedProperty(InjectedProperty property, object value);
+        void SetInjectedProperty(InjectedProperty property, object value);
         object GetInjectedProperty(InjectedProperty property);
         void RemoveInjectedProperty(InjectedProperty property);
         void RemoveAllInjectedProperties();

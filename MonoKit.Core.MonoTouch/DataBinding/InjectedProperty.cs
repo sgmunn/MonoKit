@@ -21,12 +21,15 @@
 namespace MonoKit.DataBinding
 {
     using System;
-    
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents the definition of an property that can be injected into an object that supports IPropertyInjection
     /// </summary>
-    public class InjectedProperty
+    public sealed class InjectedProperty
     {
+        private static Dictionary<string, InjectedProperty> registeredProperties = new Dictionary<string, InjectedProperty>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MonoKit.DataBinding.InjectedProperty"/> class.
         /// </summary>
@@ -39,12 +42,7 @@ namespace MonoKit.DataBinding
             Type propertyType
             )
         {
-            return new  InjectedProperty
-            {
-                PropertyName = propertyName,
-                PropertyType = propertyType,
-                Metadata = new InjectedPropertyMetadata(),
-            };
+            return InjectedProperty.Register(propertyName, propertyType, new InjectedPropertyMetadata());
         }
         
         public static InjectedProperty Register(
@@ -53,12 +51,28 @@ namespace MonoKit.DataBinding
             InjectedPropertyMetadata metadata
             )
         {
-            return new  InjectedProperty
+            InjectedProperty property = null;
+            if (registeredProperties.TryGetValue(propertyName, out property))
             {
-                PropertyName = propertyName,
-                PropertyType = propertyType,
-                Metadata = metadata,
-            };
+                // check type
+                if (propertyType != property.PropertyType)
+                {
+                    throw new InvalidOperationException(string.Format("InjectedProperty \"{0}\" has already been registered as a different type \"{1}\"", propertyName, property.PropertyType.FullName));
+                }
+            }
+            else
+            {
+                property = new  InjectedProperty
+                {
+                    PropertyName = propertyName,
+                    PropertyType = propertyType,
+                    Metadata = metadata,
+                };
+
+                registeredProperties.Add(propertyName, property);
+            }
+
+            return property;
         }
         
         public string PropertyName {get; private set;}

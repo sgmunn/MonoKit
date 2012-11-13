@@ -26,22 +26,33 @@ namespace MonoKit.DataBinding
 
     public sealed class InjectedPropertyStore : IPropertyInjection
     {
-        private readonly Dictionary<InjectedProperty, object> injectedProperties;
+        private readonly object owner;
 
-        public InjectedPropertyStore()
+        private readonly Dictionary<string, object> injectedProperties;
+
+        public InjectedPropertyStore(object owner)
         {
-            this.injectedProperties = new Dictionary<InjectedProperty, object>();
+            this.owner = owner;
+            this.injectedProperties = new Dictionary<string, object>();
         }
 
-        public void AddInjectedProperty(InjectedProperty property, object value)
+        public void SetInjectedProperty(InjectedProperty property, object value)
         {
-            this.injectedProperties[property] = value;
+            object oldValue = null;
+            this.injectedProperties.TryGetValue(property.PropertyName, out oldValue);
+
+            this.injectedProperties[property.PropertyName] = value;
+
+            if (oldValue != value && property.Metadata.ChangeCallback != null)
+            {
+                property.Metadata.ChangeCallback(this.owner, new InjectedPropertyChangedEventArgs(property, value, oldValue));
+            }
         }
 
         public object GetInjectedProperty(InjectedProperty property)
         {
             object value = null;
-            if (this.injectedProperties.TryGetValue(property, out value))
+            if (this.injectedProperties.TryGetValue(property.PropertyName, out value))
             {
                 return value;
             }
@@ -52,7 +63,7 @@ namespace MonoKit.DataBinding
         public void RemoveInjectedProperty(InjectedProperty property)
         {
             object value = null;
-            if (this.injectedProperties.TryGetValue(property, out value))
+            if (this.injectedProperties.TryGetValue(property.PropertyName, out value))
             {
                 var disposable = value as IDisposable;
                 if (disposable != null)
@@ -60,7 +71,7 @@ namespace MonoKit.DataBinding
                     disposable.Dispose();
                 }
 
-                this.injectedProperties.Remove(property);
+                this.injectedProperties.Remove(property.PropertyName);
             }
         }
 

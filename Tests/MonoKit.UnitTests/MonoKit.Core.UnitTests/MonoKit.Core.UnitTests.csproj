@@ -40,6 +40,12 @@
   <ItemGroup>
     <Compile Include="Test1.cs" />
     <Compile Include="DataBinding\InjectedProperties\GivenAnInjectablePropertyStore.cs" />
+    <Compile Include="DataBinding\InjectedProperties\DisposableObject.cs" />
+    <Compile Include="DataBinding\InjectedProperties\Test2Property.cs" />
+    <Compile Include="DataBinding\InjectedProperties\TestProperty.cs" />
+    <Compile Include="DataBinding\InjectedProperties\GivenAnInjectablePropertyStoreWithADisposableValue.cs" />
+    <Compile Include="DataBinding\InjectedProperties\GivenAnInjectablePropertyStoreWithAValueSet.cs" />
+    <Compile Include="DataBinding\InjectedProperties\GivenAnEmptyInjectablePropertyStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataBinding\" />
