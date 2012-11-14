@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InjectedPropertyChangedEventArgs.cs" company="sgmunn">
+// <copyright file="ReflectionExtensions.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,39 +18,46 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.DataBinding
+namespace MonoKit
 {
     using System;
- 
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
     /// <summary>
-    /// Occurs when the injected property value changes
+    /// Extension methods for reflection
     /// </summary>
-    public sealed class InjectedPropertyChangedEventArgs
+    public static class ReflectionExtensions
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.InjectedPropertyChangedEventArgs"/> class.
-        /// </summary>
-        public InjectedPropertyChangedEventArgs(InjectedProperty property, object newValue, object oldValue)
+        /// Gets all Types that have the given attribute defined
+        /// </summary>        
+        public static IQueryable<Type> GetTypesWith<TAttribute>(bool inherit) where TAttribute: System.Attribute
         {
-            this.Property = property;
-            this.NewValue = newValue;
-            this.OldValue = oldValue;
+            return from a in AppDomain.CurrentDomain.GetAssemblies().AsQueryable()
+                from t in a.GetTypes()
+                    where t.IsDefined(typeof(TAttribute),inherit)
+                    select t;
         }
         
         /// <summary>
-        /// Gets the new value of the property
+        /// Gets the attributes for a given Type as a Queryable
         /// </summary>
-        public object NewValue {get; private set;}
+        public static IQueryable<Attribute> GetAttributes(Type objectType)
+        {
+            return System.Attribute.GetCustomAttributes(objectType).AsQueryable();
+        }
 
-        /// <summary>
-        /// Gets the old value of the property
-        /// </summary>
-        public object OldValue {get; private set;}
+        public static IEnumerable<T> GetAttributes<T>(this MemberInfo member, bool inherit)
+        {
+            return Attribute.GetCustomAttributes(member, inherit).OfType<T>();
+        }
         
-        /// <summary>
-        /// Gets the property that changed value
-        /// </summary>
-        public InjectedProperty Property {get; private set;}
+        public static PropertyInfo GetPropertyInfo(this object instance, string propertyName)
+        {
+            return instance.GetType().GetProperty(propertyName);
+        }
     }
 }
 

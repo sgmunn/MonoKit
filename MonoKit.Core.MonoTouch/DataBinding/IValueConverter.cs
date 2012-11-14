@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InjectedPropertyChangedEventArgs.cs" company="sgmunn">
+// <copyright file="IValueConverter.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,36 +21,15 @@
 namespace MonoKit.DataBinding
 {
     using System;
+    using System.Globalization;
  
     /// <summary>
-    /// Occurs when the injected property value changes
+    /// Defines an interface for converting a value to another type and back.
     /// </summary>
-    public sealed class InjectedPropertyChangedEventArgs
+    public interface IValueConverter
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.InjectedPropertyChangedEventArgs"/> class.
-        /// </summary>
-        public InjectedPropertyChangedEventArgs(InjectedProperty property, object newValue, object oldValue)
-        {
-            this.Property = property;
-            this.NewValue = newValue;
-            this.OldValue = oldValue;
-        }
-        
-        /// <summary>
-        /// Gets the new value of the property
-        /// </summary>
-        public object NewValue {get; private set;}
-
-        /// <summary>
-        /// Gets the old value of the property
-        /// </summary>
-        public object OldValue {get; private set;}
-        
-        /// <summary>
-        /// Gets the property that changed value
-        /// </summary>
-        public InjectedProperty Property {get; private set;}
+        object Convert(object value, Type targetType, object parameter, CultureInfo culture);
+        object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture);
     }
 }
 

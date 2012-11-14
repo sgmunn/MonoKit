@@ -11,3 +11,4 @@ MonoKit.Domain/bin
 Tests/MonoKit.UnitTests/MonoKit.Core.UnitTests/bin
 Tests/MonoKit.UnitTests/Test.MonoKit.Core.MonoTouch/bin
 MonoKit.Core.MonoTouch/bin
+Tests/MonoKit.UnitTests/Test.MonoKit.Core.MonoTouch/obj

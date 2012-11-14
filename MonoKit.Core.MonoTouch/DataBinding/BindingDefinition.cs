@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InjectedPropertyMetadata.cs" company="sgmunn">
+// <copyright file="BindingDefinition.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,56 +21,46 @@
 namespace MonoKit.DataBinding
 {
     using System;
- 
+
     /// <summary>
-    /// Represents additional metadata about an InjectedProperty.
+    /// Defines a binding between a target property and a binding to a source property
     /// </summary>
-    public sealed class InjectedPropertyMetadata
+    public sealed class BindingDefinition
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.InjectedPropertyMetadata"/> class.
+        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.BindingDefinition"/> class.
         /// </summary>
-        public InjectedPropertyMetadata()
+        public BindingDefinition(string property)
         {
+            this.PropertyName = property;
+            this.Binding = new Binding(property);
         }
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.InjectedPropertyMetadata"/> class.
+        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.BindingDefinition"/> class.
         /// </summary>
-        public InjectedPropertyMetadata(object defaultValue)
+        public BindingDefinition(string targetProperty, string sourceProperty)
         {
-            this.DefaultValue = defaultValue;
+            this.PropertyName = targetProperty;
+            this.Binding = new Binding(sourceProperty);
         }
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.InjectedPropertyMetadata"/> class.
+        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.BindingDefinition"/> class.
         /// </summary>
-        public InjectedPropertyMetadata(PropertyChangedCallback changeCallback)
+        public BindingDefinition(string targetProperty, Binding binding)
         {
-            this.ChangeCallback = changeCallback;
+            this.PropertyName = targetProperty;
+            this.Binding = binding;
         }
         
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.InjectedPropertyMetadata"/> class.
-        /// </summary>
-        public InjectedPropertyMetadata(object defaultValue, PropertyChangedCallback changeCallback)
+        public string PropertyName
         {
-            this.DefaultValue = defaultValue;
-            this.ChangeCallback = changeCallback;
+            get;
+            private set;
         }
         
-        /// <summary>
-        /// Gets or sets the default value to return if a value has not been set for an object
-        /// </summary>
-        public object DefaultValue
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets or sets the callback for when the value is changed for an object
-        /// </summary>
-        public PropertyChangedCallback ChangeCallback
+        public Binding Binding
         {
             get;
             private set;

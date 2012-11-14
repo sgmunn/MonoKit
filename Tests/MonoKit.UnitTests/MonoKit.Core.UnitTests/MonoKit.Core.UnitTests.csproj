@@ -46,10 +46,22 @@
     <Compile Include="DataBinding\InjectedProperties\GivenAnInjectablePropertyStoreWithADisposableValue.cs" />
     <Compile Include="DataBinding\InjectedProperties\GivenAnInjectablePropertyStoreWithAValueSet.cs" />
     <Compile Include="DataBinding\InjectedProperties\GivenAnEmptyInjectablePropertyStore.cs" />
+    <Compile Include="DataBinding\Bindings\GivenABinding.cs" />
+    <Compile Include="DataBinding\Bindings\SimpleSourceObject.cs" />
+    <Compile Include="DataBinding\Bindings\SimpleTargetObject.cs" />
+    <Compile Include="DataBinding\Bindings\BindingPerformance.cs" />
+    <Compile Include="DataBinding\Bindings\GivenABindingThatIsOneWayToSource.cs" />
+    <Compile Include="DataBinding\Bindings\GivenABindingThatIsOneWay.cs" />
+    <Compile Include="DataBinding\Bindings\GivenADisposedExpression.cs" />
+    <Compile Include="DataBinding\Bindings\GivenABindingThatIsTwoWay.cs" />
+    <Compile Include="DataBinding\Bindings\GivenASourceAndTargetWithSetProperties.cs" />
+    <Compile Include="DataBinding\Bindings\GivenABindingExpression.cs" />
+    <Compile Include="DataBinding\Bindings\GivenASourceAndTarget.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataBinding\" />
     <Folder Include="DataBinding\InjectedProperties\" />
+    <Folder Include="DataBinding\Bindings\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\MonoKit.Core.MonoTouch\MonoKit.Core.MonoTouch.csproj">

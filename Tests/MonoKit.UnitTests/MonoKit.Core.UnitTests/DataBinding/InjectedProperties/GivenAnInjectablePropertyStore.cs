@@ -11,6 +11,6 @@ namespace MonoKit.Core.UnitTests.InjectedProperties
             this.PropertyStore = new InjectedPropertyStore(this);
         }
 
-        public InjectedPropertyStore PropertyStore { get; set; }
+        public InjectedPropertyStore PropertyStore { get; private set; }
     }
 }
