@@ -59,15 +59,16 @@ namespace MonoKit.DataBinding
         /// </summary>
         public BindingExpression(object target, string targetProperty, object source, Binding binding)
         {
+            this.PropertyAccessor = new ReflectionPropertyAccessor(targetProperty);
             this.Initialize(target, targetProperty, source, binding);
         }
         
         /// <summary>
         /// Initializes a new instance of the <see cref="MonoKit.DataBinding.BindingExpression"/> class.
         /// </summary>
-        public BindingExpression(object target, string targetProperty, BindingAssistant bindingAssistant, object source, Binding binding)
+        public BindingExpression(object target, string targetProperty, IPropertyAccessor accessor, object source, Binding binding)
         {
-            this.BindingAssistant = bindingAssistant;
+            this.PropertyAccessor = accessor;
             this.Initialize(target, targetProperty, source, binding);
         }
 
@@ -94,12 +95,8 @@ namespace MonoKit.DataBinding
         /// <summary>
         /// Gets the name of the target property.
         /// </summary>
-        public string TargetProperty
-        {
-            get;
-            private set;
-        }
-        
+        public string TargetProperty { get; private set; }
+
         /// <summary>
         /// Gets the source of the binding.
         /// </summary>
@@ -114,13 +111,9 @@ namespace MonoKit.DataBinding
         /// <summary>
         /// Gets the binding for Source.
         /// </summary>
-        public Binding Binding
-        {
-            get;
-            private set;
-        }
+        public Binding Binding { get; private set; }
 
-        public BindingAssistant BindingAssistant { get; private set; }
+        public IPropertyAccessor PropertyAccessor { get; set; }
         
         /// <summary>
         /// Updates the target object from the source object.
@@ -137,9 +130,9 @@ namespace MonoKit.DataBinding
             {
                 var sourceValue = this.Binding.GetSourceValue(this.Source, this.targetPropertyInfo.PropertyType);
 
-                if (this.BindingAssistant != null && this.BindingAssistant.PropertySetter != null)
+                if (this.PropertyAccessor != null)
                 {
-                    this.BindingAssistant.PropertySetter(target, sourceValue);
+                    this.PropertyAccessor.SetValue(target, sourceValue);
                 }
                 else
                 {
@@ -161,9 +154,9 @@ namespace MonoKit.DataBinding
             var target = this.Target;
             if (target != null)
             {
-                if (this.BindingAssistant != null && this.BindingAssistant.PropertyGetter != null)
+                if (this.PropertyAccessor != null)
                 {
-                    this.Binding.UpdateSourceValue(this.Source, this.BindingAssistant.PropertyGetter(target));
+                    this.Binding.UpdateSourceValue(this.Source, this.PropertyAccessor.GetValue(target));
                 }
                 else
                 {

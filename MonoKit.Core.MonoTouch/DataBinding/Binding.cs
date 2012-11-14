@@ -33,13 +33,14 @@ namespace MonoKit.DataBinding
         {
             this.Mode = BindingMode.TwoWay;
             this.PropertyName = propertyName;
+            this.PropertyAccessor = new ReflectionPropertyAccessor(propertyName);
         }
 
-        public Binding(string propertyName, BindingAssistant bindingAssistant)
+        public Binding(string propertyName, IPropertyAccessor accessor)
         {
             this.Mode = BindingMode.TwoWay;
             this.PropertyName = propertyName;
-            this.BindingAssistant = bindingAssistant;
+            this.PropertyAccessor = accessor;
         }
 
         public string PropertyName
@@ -66,7 +67,7 @@ namespace MonoKit.DataBinding
             set;
         }
 
-        public BindingAssistant BindingAssistant { get; private set; }
+        public IPropertyAccessor PropertyAccessor { get; set; }
 
         public object GetSourceValue(object sourceObject, Type targetType)
         {
@@ -75,9 +76,9 @@ namespace MonoKit.DataBinding
                 return null;
             }
 
-            if (this.BindingAssistant != null && this.BindingAssistant.PropertyGetter != null)
+            if (this.PropertyAccessor != null)
             {
-                return this.ConvertValue(this.BindingAssistant.PropertyGetter(sourceObject), targetType);
+                return this.ConvertValue(this.PropertyAccessor.GetValue(sourceObject), targetType);
             }
             else
             {
@@ -100,9 +101,9 @@ namespace MonoKit.DataBinding
                 newValue = this.ConvertBackValue(newValue, propInfo.GetType());
             }
 
-            if (this.BindingAssistant != null && this.BindingAssistant.PropertySetter != null)
+            if (this.PropertyAccessor != null)
             {
-                this.BindingAssistant.PropertySetter(sourceObject, newValue);
+                this.PropertyAccessor.SetValue(sourceObject, newValue);
             }
             else
             {

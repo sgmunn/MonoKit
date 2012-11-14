@@ -46,12 +46,22 @@
     <Compile Include="DataBinding\PropertyChangedCallback.cs" />
     <Compile Include="DataBinding\InjectedPropertyChangedEventArgs.cs" />
     <Compile Include="DataBinding\InjectedPropertyStore.cs" />
-    <Compile Include="DataBinding\BindingDefinition.cs" />
     <Compile Include="DataBinding\Binding.cs" />
     <Compile Include="DataBinding\BindingMode.cs" />
     <Compile Include="DataBinding\IValueConverter.cs" />
     <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="DataBinding\BindingExpression.cs" />
-    <Compile Include="DataBinding\BindingAssistant.cs" />
+    <Compile Include="DataBinding\BooleanToStringConverter.cs" />
+    <Compile Include="DataBinding\DateTimeToStringConverter.cs" />
+    <Compile Include="DataBinding\DecimalToStringConverter.cs" />
+    <Compile Include="DataBinding\CurrencyToStringConverter.cs" />
+    <Compile Include="DataBinding\DataContextInjectedProperty.cs" />
+    <Compile Include="DataBinding\BindingOperations.cs" />
+    <Compile Include="DataBinding\IBindingScope.cs" />
+    <Compile Include="DataBinding\BindingScope.cs" />
+    <Compile Include="DataBinding\BindingScopeInjectedProperty.cs" />
+    <Compile Include="DataBinding\IPropertyAccessor.cs" />
+    <Compile Include="DataBinding\DelegatePropertyAccessor.cs" />
+    <Compile Include="DataBinding\ReflectionPropertyAccessor.cs" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="BindingAssistant.cs" company="sgmunn">
+//  <copyright file="CurrencyToStringConverter.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,26 +21,26 @@
 namespace MonoKit.DataBinding
 {
     using System;
-
+ 
     /// <summary>
-    /// Provides a way to assist bindings in getting and setting properties. 
+    /// Decimal to string converter, specifically for using C as the string format.
     /// </summary>
-    /// <remarks>
-    /// The primary purpose for this class is provide a means by which bindings can perform faster than using
-    /// propertyInfo.GetValue / .SetValue
-    /// A secondary reason allows arbitrarily complex bindings to compex properties - currently binding only support
-    /// a simple property
-    /// </remarks>
-    public class BindingAssistant
+    public sealed class CurrencyToStringConverter : IValueConverter
     {
-        public BindingAssistant(Func<object, object> propertyGetter, Action<object, object> propertySetter)
+        public static IValueConverter Instance = new CurrencyToStringConverter();
+        
+        private CurrencyToStringConverter()
         {
-            this.PropertyGetter = propertyGetter;
-            this.PropertySetter = propertySetter;
         }
-
-        public Func<object, object> PropertyGetter { get; private set; }
-
-        public Action<object, object> PropertySetter { get; private set; }
+        
+        public object Convert (object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return ((decimal)value).ToString("C");
+        }
+        
+        public object ConvertBack (object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return System.Convert.ToDecimal((string)value);
+        }
     }
 }

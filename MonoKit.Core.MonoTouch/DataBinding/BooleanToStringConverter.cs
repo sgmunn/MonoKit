@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BindingDefinition.cs" company="sgmunn">
+// <copyright file="BooleanToStringConverter.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,49 +21,26 @@
 namespace MonoKit.DataBinding
 {
     using System;
-
+ 
     /// <summary>
-    /// Defines a binding between a target property and a binding to a source property
+    /// Boolean to string converter.
     /// </summary>
-    public sealed class BindingDefinition
+    public sealed class BooleanToStringConverter : IValueConverter
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.BindingDefinition"/> class.
-        /// </summary>
-        public BindingDefinition(string property)
+        public static IValueConverter Instance = new BooleanToStringConverter();
+
+        private BooleanToStringConverter()
         {
-            this.PropertyName = property;
-            this.Binding = new Binding(property);
         }
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.BindingDefinition"/> class.
-        /// </summary>
-        public BindingDefinition(string targetProperty, string sourceProperty)
+
+        public object Convert (object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            this.PropertyName = targetProperty;
-            this.Binding = new Binding(sourceProperty);
+            return value.ToString();
         }
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.BindingDefinition"/> class.
-        /// </summary>
-        public BindingDefinition(string targetProperty, Binding binding)
+
+        public object ConvertBack (object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            this.PropertyName = targetProperty;
-            this.Binding = binding;
-        }
-        
-        public string PropertyName
-        {
-            get;
-            private set;
-        }
-        
-        public Binding Binding
-        {
-            get;
-            private set;
+            return System.Convert.ToBoolean((string)value);
         }
     }
 }
