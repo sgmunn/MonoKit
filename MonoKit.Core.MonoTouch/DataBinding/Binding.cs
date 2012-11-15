@@ -96,16 +96,14 @@ namespace MonoKit.DataBinding
                 return null;
             }
 
-            if (this.PropertyAccessor != null)
+            var sourceValue = this.PropertyAccessor.GetValue(sourceObject);
+
+            if (this.Converter != null)
             {
-                return this.ConvertValue(this.PropertyAccessor.GetValue(sourceObject), targetType);
+                sourceValue = this.Converter.Convert(sourceValue, targetType, this.ConverterParameter, CultureInfo.CurrentUICulture);
             }
-            else
-            {
-            
-            var result = GetSourceValue(sourceObject, sourceObject.GetPropertyInfo(this.PropertyName));
-            return this.ConvertValue(result, targetType);
-            }
+
+            return sourceValue;
         }
         
         public void UpdateSourceValue(object sourceObject, object newValue)
@@ -118,56 +116,14 @@ namespace MonoKit.DataBinding
             if (this.Converter != null)
             {
                 var propInfo = sourceObject.GetPropertyInfo(this.PropertyName);
-                newValue = this.ConvertBackValue(newValue, propInfo.GetType());
+                newValue = this.Converter.ConvertBack(newValue, propInfo.GetType(), this.ConverterParameter, CultureInfo.CurrentUICulture);
             }
 
-            if (this.PropertyAccessor != null)
-            {
-                this.PropertyAccessor.SetValue(sourceObject, newValue);
-            }
-            else
-            {
-                SetSourceValue(sourceObject, sourceObject.GetPropertyInfo(this.PropertyName), newValue);
-            }
+            this.PropertyAccessor.SetValue(sourceObject, newValue);
         }
         
         public void Dispose()
         {
-        }
-        
-        private object ConvertValue(object value, Type targetType)
-        {
-            object result = value;
-            
-            if (this.Converter != null)
-            {
-                result = this.Converter.Convert(result, targetType, this.ConverterParameter, CultureInfo.CurrentUICulture);
-            }
-            
-            return result;
-        }
-                
-        private object ConvertBackValue(object value, Type targetType)
-        {
-            return this.Converter.ConvertBack(value, targetType, this.ConverterParameter, CultureInfo.CurrentUICulture);
-        }
-
-        private static object GetSourceValue(object o, PropertyInfo propertyInfo)
-        {
-            if (o != null && propertyInfo != null)
-            {
-                return propertyInfo.GetValue(o, null);
-            }
-            
-            return null;
-        }
-
-        private static void SetSourceValue(object o, PropertyInfo propertyInfo, object newValue)
-        {
-            if (o != null && propertyInfo != null && propertyInfo.CanWrite)
-            {
-                propertyInfo.SetValue(o, newValue, null);
-            }
         }
     }
 }

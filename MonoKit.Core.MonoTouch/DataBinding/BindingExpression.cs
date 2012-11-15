@@ -23,9 +23,11 @@ namespace MonoKit.DataBinding
     using System;
     using System.ComponentModel;
     using System.Reflection;
-    using System.Globalization;
     
     // todo: this class needs some performance work.
+    // - using weak references is a little expensive, maybe we should offer an option to use a hard reference,
+    //   users would have to mindful of cleaning up their bindings.
+
     // when values are updated it takes a while to pass that value to the target
     // could this be faster with passed in handler for updating properties in the binding definition
     
@@ -158,12 +160,15 @@ namespace MonoKit.DataBinding
         /// </summary>
         public Binding Binding { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the property accessor for getting and setting property values
+        /// </summary>
         public IPropertyAccessor PropertyAccessor { get; set; }
         
         /// <summary>
         /// Updates the target object from the source object.
         /// </summary>
-        public void UpdateTarget()
+        public void UpdateTarget(object sourceObject)
         {
             if (this.Binding.Mode == BindingMode.OneWayToSource)
             {
@@ -173,17 +178,22 @@ namespace MonoKit.DataBinding
             var target = this.Target;
             if (target != null)
             {
-                var sourceValue = this.Binding.GetSourceValue(this.Source, this.targetPropertyInfo.PropertyType);
-
-                if (this.PropertyAccessor != null)
-                {
-                    this.PropertyAccessor.SetValue(target, sourceValue);
-                }
-                else
-                {
-                    BindingExpression.SetValue(target, this.targetPropertyInfo, sourceValue);
-                }
+                var sourceValue = this.Binding.GetSourceValue(sourceObject, this.targetPropertyInfo.PropertyType);
+                this.PropertyAccessor.SetValue(target, sourceValue);
             }
+        }
+        
+        /// <summary>
+        /// Updates the source object from the Target object.
+        /// </summary>
+        public void UpdateSource(object targetObject)
+        {
+            if (this.Binding.Mode == BindingMode.OneWay)
+            {
+                return;
+            }
+            
+            this.Binding.UpdateSourceValue(this.Source, this.PropertyAccessor.GetValue(targetObject));
         }
         
         /// <summary>
@@ -199,18 +209,10 @@ namespace MonoKit.DataBinding
             var target = this.Target;
             if (target != null)
             {
-                if (this.PropertyAccessor != null)
-                {
-                    this.Binding.UpdateSourceValue(this.Source, this.PropertyAccessor.GetValue(target));
-                }
-                else
-                {
-                    var targetValue = BindingExpression.GetValue(this.Target, this.targetPropertyInfo);
-                    this.Binding.UpdateSourceValue(this.Source, targetValue);
-                }
+                this.Binding.UpdateSourceValue(this.Source, this.PropertyAccessor.GetValue(target));
             }            
         }
-        
+
         /// <summary>
         /// Releases all resource used by the <see cref="MonoKit.DataBinding.BindingExpression"/> object.
         /// </summary>
@@ -272,46 +274,7 @@ namespace MonoKit.DataBinding
             
             this.targetPropertyInfo = target.GetPropertyInfo(this.TargetProperty);
             
-            this.UpdateTarget();
-        }
-        
-        /// <summary>
-        /// Converts the value.
-        /// </summary>
-        private object ConvertValue(object value, PropertyInfo propertyInfo)
-        {
-            object convertedValue = value;
-            
-            if (this.Binding.Converter != null)
-            {
-                convertedValue = Binding.Converter.Convert(value, propertyInfo.PropertyType, Binding.ConverterParameter, CultureInfo.CurrentUICulture);
-            }
-            
-            return convertedValue;
-        }
-        
-        /// <summary>
-        /// Gets the value of an object with the given property info.
-        /// </summary>
-        private static object GetValue(object o, PropertyInfo propertyInfo)
-        {
-            if (o != null && propertyInfo != null)
-            {
-                return propertyInfo.GetValue(o, null);
-            }
-            
-            return null;
-        }
-        
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        private static void SetValue(object o, PropertyInfo propertyInfo, object newValue)
-        {
-            if (o != null && propertyInfo != null && propertyInfo.CanWrite)
-            {
-                propertyInfo.SetValue(o, newValue, null);
-            }
+            this.UpdateTarget(source);
         }
   
         /// <summary>
@@ -350,7 +313,7 @@ namespace MonoKit.DataBinding
         {
             if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName.Equals(this.Binding.PropertyName))
             {
-                this.UpdateTarget();
+                this.UpdateTarget(sender);
             }
         }
 
@@ -361,7 +324,7 @@ namespace MonoKit.DataBinding
         {
             if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName.Equals(this.TargetProperty))
             {
-                this.UpdateSource();
+                this.UpdateSource(sender);
             }
         }
     }

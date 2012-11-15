@@ -5,7 +5,7 @@ namespace MonoKit.Core.UnitTests.Bindings
 {
     public abstract class GivenABindingExpression : GivenASourceAndTarget
     {
-        public BindingExpression Expression { get; private set; }
+        public BindingExpression Expression { get; protected set; }
 
         public override void SetUp()
         {

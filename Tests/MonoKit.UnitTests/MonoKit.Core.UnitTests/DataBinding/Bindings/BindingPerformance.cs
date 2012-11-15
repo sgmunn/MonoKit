@@ -16,9 +16,11 @@ namespace MonoKit.Core.UnitTests.Bindings
         [Test]
         public void WhenSettingTheTargetProperty1000TimesWithTheDefaultPropertyAccessor_ThenTheSpeedIsOK()
         {
+            int key = 0;
             for (int i= 0;i<1000;i++)
             {
-                this.Target.PropertyA = Guid.NewGuid().ToString();
+                this.Target.PropertyA = string.Format("{0}", key);
+                key++;
             }
 
             Assert.True(true);
@@ -39,9 +41,11 @@ namespace MonoKit.Core.UnitTests.Bindings
 
             this.Expression.PropertyAccessor = target;
 
+            int key = 0;
             for (int i= 0;i<1000;i++)
             {
-                this.Target.PropertyA = Guid.NewGuid().ToString();
+                this.Target.PropertyA = string.Format("{0}", key);
+                key++;
             }
             
             Assert.True(true);

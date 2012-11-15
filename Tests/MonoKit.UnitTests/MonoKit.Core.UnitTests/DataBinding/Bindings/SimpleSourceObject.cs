@@ -6,7 +6,8 @@ namespace MonoKit.Core.UnitTests.Bindings
     public class SimpleSourceObject : INotifyPropertyChanged
     {
         private string property1;
-        
+        private bool property2;
+
         public event PropertyChangedEventHandler PropertyChanged; 
         
         public string Property1
@@ -26,6 +27,23 @@ namespace MonoKit.Core.UnitTests.Bindings
             }
         }
         
+        public bool Property2
+        {
+            get
+            {
+                return this.property2;
+            }
+            
+            set
+            {
+                if (value != this.property2)
+                {
+                    this.property2 = value;
+                    this.NotifyPropertyChanged("Property2");
+                }
+            }
+        }
+
         private void NotifyPropertyChanged(string propertyName)
         {
             var handler = this.PropertyChanged;

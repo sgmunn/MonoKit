@@ -40,6 +40,16 @@ namespace MonoKit.DataBinding
 
         public object ConvertBack (object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if ((string)value == "1")
+            {
+                return true;
+            }
+
+            if ((string)value == "0")
+            {
+                return false;
+            }
+            
             return System.Convert.ToBoolean((string)value);
         }
     }

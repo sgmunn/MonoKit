@@ -57,6 +57,7 @@
     <Compile Include="DataBinding\Bindings\GivenASourceAndTargetWithSetProperties.cs" />
     <Compile Include="DataBinding\Bindings\GivenABindingExpression.cs" />
     <Compile Include="DataBinding\Bindings\GivenASourceAndTarget.cs" />
+    <Compile Include="DataBinding\Bindings\GivenAValueConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataBinding\" />
