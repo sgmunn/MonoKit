@@ -17,14 +17,14 @@ namespace MonoKit.Core.UnitTests.Bindings
         }
         
         [Test]
-        public void WhenSettingTheTargetProperty_ThenTheSourceIsUpdated()
+        public void WhenSettingTheTargetProperty_ThenTheTargetIsConvertedBack()
         {
             this.Target.PropertyA = "1";
             Assert.True(this.Source.Property2);
         }
         
         [Test]
-        public void WhenSettingTheSourceProperty_ThenTheTargetIsUpdated()
+        public void WhenSettingTheSourceProperty_ThenTheSourceIsConverted()
         {
             this.Source.Property2 = true;
             Assert.AreEqual("True", this.Target.PropertyA);
