@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="BindingScope.cs" company="sgmunn">
+//  <copyright file="NotificationEvent.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,53 +18,28 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.DataBinding
+namespace MonoKit
 {
     using System;
-    using System.Collections.Generic;
 
-    public class BindingScope : IBindingScope
+    public sealed class NotificationEvent : INotificationEvent
     {
-        private readonly List<BindingExpression> exresssions;
-
-        public BindingScope()
+        public NotificationEvent(Type type, Guid id, INotification evt )
         {
-            this.exresssions = new List<BindingExpression>();
+            this.Identity = id;
+            this.Type = type;
+            this.Event = evt;
         }
 
-        public void AddBinding(BindingExpression expression)
-        {
-            if (expression == null)
-            {
-                throw new ArgumentNullException("expression");
-            }
-            
-            this.exresssions.Add(expression);
-        }        
+        public Guid Identity { get; private set; }
+        
+        public Type Type { get; private set; }
+        
+        public INotification Event { get; private set; }
 
-        public void RemoveBinding(BindingExpression expression)
+        public override string ToString()
         {
-            this.exresssions.Remove(expression);
-        }        
-
-        public void ClearBindings()
-        {
-            foreach (var expression in exresssions)
-            {
-                expression.Dispose();
-            }
-
-            this.exresssions.Clear();
-        }        
-
-        public BindingExpression[] GetBindingExpressions()
-        {
-            return this.exresssions.ToArray();
-        }        
-
-        public void Dispose()
-        {
-            this.ClearBindings();
-        }       
+            return string.Format("[NotificationEvent: Id={0}, Type={1}, Event={2}]", Identity, Type, Event);
+        }
     }
 }

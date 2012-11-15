@@ -59,6 +59,26 @@ namespace MonoKit.DataBinding
         /// </summary>
         public BindingExpression(object target, string targetProperty, object source, Binding binding)
         {
+            if (target == null)
+            {
+                throw new ArgumentNullException("target");
+            }
+
+            if (string.IsNullOrEmpty(targetProperty))
+            {
+                throw new ArgumentNullException("targetProperty");
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+
             this.PropertyAccessor = new ReflectionPropertyAccessor(targetProperty);
             this.Initialize(target, targetProperty, source, binding);
         }
@@ -68,6 +88,31 @@ namespace MonoKit.DataBinding
         /// </summary>
         public BindingExpression(object target, string targetProperty, IPropertyAccessor accessor, object source, Binding binding)
         {
+            if (target == null)
+            {
+                throw new ArgumentNullException("target");
+            }
+            
+            if (string.IsNullOrEmpty(targetProperty))
+            {
+                throw new ArgumentNullException("targetProperty");
+            }
+            
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+            
+            if (accessor == null)
+            {
+                throw new ArgumentNullException("accessor");
+            }
+
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+            
             this.PropertyAccessor = accessor;
             this.Initialize(target, targetProperty, source, binding);
         }

@@ -35,6 +35,11 @@ namespace MonoKit.DataBinding
     {
         public DelegatePropertyAccessor(string propertyPath, Func<object, object> getter, Action<object, object> setter)
         {
+            if (string.IsNullOrEmpty(propertyPath))
+            {
+                throw new ArgumentNullException("propertyPath");
+            }
+            
             this.PropertyPath = propertyPath;
             this.Getter = getter;
             this.Setter = setter;

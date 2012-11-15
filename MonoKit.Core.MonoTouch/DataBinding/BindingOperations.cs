@@ -65,34 +65,34 @@ namespace MonoKit.DataBinding
         /// <summary>
         /// Sets a binding between target and source.
         /// </summary>
-        public static BindingExpression AddBinding(this IBindingScope target, object source, string propertyName)
+        public static BindingExpression AddBinding(this IBindingScope scope, object target, object source, string propertyName)
         {
-            return target.AddBinding(propertyName, source, new Binding(propertyName));
+            return scope.AddBinding(target, propertyName, source, new Binding(propertyName));
         }
         
         /// <summary>
         /// Sets the binding between target and source.
         /// </summary>
-        public static BindingExpression AddBinding(this IBindingScope target, string targetPropertyName, object source, string sourcePropertyName)
+        public static BindingExpression AddBinding(this IBindingScope scope, object target, string targetPropertyName, object source, string sourcePropertyName)
         {
-            return target.AddBinding(targetPropertyName, source, new Binding(sourcePropertyName));
+            return scope.AddBinding(target, targetPropertyName, source, new Binding(sourcePropertyName));
         }
   
         /// <summary>
         /// Sets the binding between target and source.
         /// </summary>
-        public static BindingExpression AddBinding(this IBindingScope target, object source, Binding binding)
+        public static BindingExpression AddBinding(this IBindingScope scope, object target, object source, Binding binding)
         {
-            return target.AddBinding(binding.PropertyName, source, binding);
+            return scope.AddBinding(target, binding.PropertyName, source, binding);
         }
         
         /// <summary>
         /// Sets the binding between target and source.
         /// </summary>
-        public static BindingExpression AddBinding(this IBindingScope target, string propertyName, object source, Binding binding)
+        public static BindingExpression AddBinding(this IBindingScope scope, object target, string propertyName, object source, Binding binding)
         {
             var expression = new BindingExpression(target, propertyName, source, binding);
-            target.AddBinding(expression);
+            scope.AddBinding(expression);
             return expression;
         }
         
@@ -103,7 +103,7 @@ namespace MonoKit.DataBinding
         {
             var scope = target.GetBindingScopeOrDefault();
 
-            return scope.AddBinding(propertyName, source, new Binding(propertyName));
+            return scope.AddBinding(target, propertyName, source, new Binding(propertyName));
         }
         
         /// <summary>
@@ -113,7 +113,7 @@ namespace MonoKit.DataBinding
         {
             var scope = target.GetBindingScopeOrDefault();
             
-            return scope.AddBinding(targetPropertyName, source, new Binding(sourcePropertyName));
+            return scope.AddBinding(target, targetPropertyName, source, new Binding(sourcePropertyName));
         }
         
         /// <summary>
@@ -123,7 +123,7 @@ namespace MonoKit.DataBinding
         {
             var scope = target.GetBindingScopeOrDefault();
             
-            return scope.AddBinding(binding.PropertyName, source, binding);
+            return scope.AddBinding(target, binding.PropertyName, source, binding);
         }
         
         /// <summary>

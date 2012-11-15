@@ -6,6 +6,16 @@ namespace MonoKit.Core.UnitTests
     {
     }
 
+    // todo: add appropriate argument null exceptions
+
+
+
+
+    // todo: we can have a PropertyAccessor that is specific to one thread as well, 
+    // this can be useful in both regular and one-time binds to UI objects, we can call bind from the background
+    // and still have the UI update - might still have issues for UILabels etc
+
+
     // todo: write tests for GetPropertyInfo for nested properties - ReflectionPropertyAccessor
     
     // todo: determine if we want to have to always use a property accessor - I think yes at the moment. (Binding / Expression)

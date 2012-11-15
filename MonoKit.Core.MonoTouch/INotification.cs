@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="BindingScope.cs" company="sgmunn">
+//  <copyright file="INotification.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,53 +18,14 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.DataBinding
+namespace MonoKit
 {
     using System;
-    using System.Collections.Generic;
 
-    public class BindingScope : IBindingScope
+    /// <summary>
+    /// An event or notification that something has happened
+    /// </summary>
+    public interface INotification
     {
-        private readonly List<BindingExpression> exresssions;
-
-        public BindingScope()
-        {
-            this.exresssions = new List<BindingExpression>();
-        }
-
-        public void AddBinding(BindingExpression expression)
-        {
-            if (expression == null)
-            {
-                throw new ArgumentNullException("expression");
-            }
-            
-            this.exresssions.Add(expression);
-        }        
-
-        public void RemoveBinding(BindingExpression expression)
-        {
-            this.exresssions.Remove(expression);
-        }        
-
-        public void ClearBindings()
-        {
-            foreach (var expression in exresssions)
-            {
-                expression.Dispose();
-            }
-
-            this.exresssions.Clear();
-        }        
-
-        public BindingExpression[] GetBindingExpressions()
-        {
-            return this.exresssions.ToArray();
-        }        
-
-        public void Dispose()
-        {
-            this.ClearBindings();
-        }       
     }
 }

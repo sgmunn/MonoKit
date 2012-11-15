@@ -38,6 +38,11 @@ namespace MonoKit.DataBinding
 
         public void SetInjectedProperty(InjectedProperty property, object value)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException("property");
+            }
+            
             object oldValue = null;
             this.injectedProperties.TryGetValue(property.PropertyName, out oldValue);
 
@@ -51,6 +56,11 @@ namespace MonoKit.DataBinding
 
         public object GetInjectedProperty(InjectedProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException("property");
+            }
+            
             object value = null;
             if (this.injectedProperties.TryGetValue(property.PropertyName, out value))
             {
@@ -62,6 +72,11 @@ namespace MonoKit.DataBinding
 
         public void RemoveInjectedProperty(InjectedProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException("property");
+            }
+            
             object value = null;
             if (this.injectedProperties.TryGetValue(property.PropertyName, out value))
             {

@@ -26,6 +26,11 @@ namespace MonoKit.DataBinding
     {
         public ReflectionPropertyAccessor(string propertyPath)
         {
+            if (string.IsNullOrEmpty(propertyPath))
+            {
+                throw new ArgumentNullException("propertyPath");
+            }
+            
             this.PropertyPath = propertyPath;
         }
         

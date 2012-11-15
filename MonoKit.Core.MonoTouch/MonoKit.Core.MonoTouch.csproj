@@ -63,5 +63,11 @@
     <Compile Include="DataBinding\IPropertyAccessor.cs" />
     <Compile Include="DataBinding\DelegatePropertyAccessor.cs" />
     <Compile Include="DataBinding\ReflectionPropertyAccessor.cs" />
+    <Compile Include="ICommand.cs" />
+    <Compile Include="INotification.cs" />
+    <Compile Include="INotificationEvent.cs" />
+    <Compile Include="INotificationEventBus.cs" />
+    <Compile Include="WeakEventWrapper.cs" />
+    <Compile Include="NotificationEvent.cs" />
   </ItemGroup>
 </Project>

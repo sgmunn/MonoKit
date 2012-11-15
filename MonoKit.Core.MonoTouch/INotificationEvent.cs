@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="BindingScope.cs" company="sgmunn">
+//  <copyright file="INotificationEvent.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,53 +18,28 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.DataBinding
+namespace MonoKit
 {
     using System;
-    using System.Collections.Generic;
 
-    public class BindingScope : IBindingScope
+    /// <summary>
+    /// Represents a notification of something that relates to an indentifiable resource
+    /// </summary>
+    public interface INotificationEvent
     {
-        private readonly List<BindingExpression> exresssions;
+        /// <summary>
+        /// Gets the identity of the resource for which the notification is for.
+        /// </summary>
+        Guid Identity { get; }
 
-        public BindingScope()
-        {
-            this.exresssions = new List<BindingExpression>();
-        }
+        /// <summary>
+        /// Gets the type of the resource for which the notification is for.
+        /// </summary>
+        Type Type { get; }
 
-        public void AddBinding(BindingExpression expression)
-        {
-            if (expression == null)
-            {
-                throw new ArgumentNullException("expression");
-            }
-            
-            this.exresssions.Add(expression);
-        }        
-
-        public void RemoveBinding(BindingExpression expression)
-        {
-            this.exresssions.Remove(expression);
-        }        
-
-        public void ClearBindings()
-        {
-            foreach (var expression in exresssions)
-            {
-                expression.Dispose();
-            }
-
-            this.exresssions.Clear();
-        }        
-
-        public BindingExpression[] GetBindingExpressions()
-        {
-            return this.exresssions.ToArray();
-        }        
-
-        public void Dispose()
-        {
-            this.ClearBindings();
-        }       
+        /// <summary>
+        /// Gets the event that raised the notification
+        /// </summary>
+        INotification Event { get; }
     }
 }

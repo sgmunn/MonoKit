@@ -31,6 +31,11 @@ namespace MonoKit.DataBinding
     {
         public Binding(string propertyName)
         {
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                throw new ArgumentNullException("propertyName");
+            }
+
             this.Mode = BindingMode.TwoWay;
             this.PropertyName = propertyName;
             this.PropertyAccessor = new ReflectionPropertyAccessor(propertyName);
@@ -38,6 +43,16 @@ namespace MonoKit.DataBinding
 
         public Binding(string propertyName, IPropertyAccessor accessor)
         {
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                throw new ArgumentNullException("propertyName");
+            }
+            
+            if (accessor == null)
+            {
+                throw new ArgumentNullException("accessor");
+            }
+            
             this.Mode = BindingMode.TwoWay;
             this.PropertyName = propertyName;
             this.PropertyAccessor = accessor;
@@ -71,6 +86,11 @@ namespace MonoKit.DataBinding
 
         public object GetSourceValue(object sourceObject, Type targetType)
         {
+            if (targetType == null)
+            {
+                throw new ArgumentNullException("targetType");
+            }
+
             if (sourceObject == null)
             {
                 return null;
