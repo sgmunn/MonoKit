@@ -22,14 +22,10 @@ namespace MonoKit.DataBinding
 {
     using System;
     using System.ComponentModel;
-    using System.Reflection;
     
-    // todo: this class needs some performance work.
+    // todo: binding expression and binding performance
     // - using weak references is a little expensive, maybe we should offer an option to use a hard reference,
     //   users would have to mindful of cleaning up their bindings.
-
-    // when values are updated it takes a while to pass that value to the target
-    // could this be faster with passed in handler for updating properties in the binding definition
     
     /// <summary>
     /// An instance of a Binding between two objects.
@@ -52,9 +48,9 @@ namespace MonoKit.DataBinding
         private bool disposed = false;
         
         /// <summary>
-        /// The property info of the target objects property.
+        /// The property type of the target's property.
         /// </summary>
-        private PropertyInfo targetPropertyInfo;
+        private Type targetPropertyType;
         
         /// <summary>
         /// Initializes a new instance of the <see cref="MonoKit.DataBinding.BindingExpression"/> class.
@@ -178,7 +174,7 @@ namespace MonoKit.DataBinding
             var target = this.Target;
             if (target != null)
             {
-                var sourceValue = this.Binding.GetSourceValue(sourceObject, this.targetPropertyInfo.PropertyType);
+                var sourceValue = this.Binding.GetSourceValue(sourceObject, this.targetPropertyType);
                 this.PropertyAccessor.SetValue(target, sourceValue);
             }
         }
@@ -272,7 +268,7 @@ namespace MonoKit.DataBinding
             this.RegisterForPropertyChangesOnSource();
             this.RegisterForPropertyChangesOnTarget();
             
-            this.targetPropertyInfo = target.GetPropertyInfo(this.TargetProperty);
+            this.targetPropertyType = target.GetPropertyInfo(this.TargetProperty).PropertyType;
             
             this.UpdateTarget(source);
         }

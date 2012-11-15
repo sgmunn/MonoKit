@@ -38,6 +38,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="DataBinding\" />
+    <Folder Include="Runtime\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBinding\IPropertyInjection.cs" />
@@ -69,5 +70,6 @@
     <Compile Include="INotificationEventBus.cs" />
     <Compile Include="WeakEventWrapper.cs" />
     <Compile Include="NotificationEvent.cs" />
+    <Compile Include="Runtime\MethodExecutor.cs" />
   </ItemGroup>
 </Project>

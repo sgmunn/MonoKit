@@ -58,11 +58,14 @@
     <Compile Include="DataBinding\Bindings\GivenABindingExpression.cs" />
     <Compile Include="DataBinding\Bindings\GivenASourceAndTarget.cs" />
     <Compile Include="DataBinding\Bindings\GivenAValueConverter.cs" />
+    <Compile Include="Runtime\MethodExecutionPerformance.cs" />
+    <Compile Include="Runtime\GivenAnObjectToExecuteAMethodOn.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataBinding\" />
     <Folder Include="DataBinding\InjectedProperties\" />
     <Folder Include="DataBinding\Bindings\" />
+    <Folder Include="Runtime\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\MonoKit.Core.MonoTouch\MonoKit.Core.MonoTouch.csproj">
