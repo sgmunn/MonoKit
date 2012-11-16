@@ -61,12 +61,21 @@
     <Compile Include="Runtime\GivenAnObjectToExecuteAMethodOn.cs" />
     <Compile Include="DataBinding\Bindings\WeakBindingPerformance.cs" />
     <Compile Include="DataBinding\InjectedProperties\GivenAnInjectableObject.cs" />
+    <Compile Include="Data\GivenADictionaryRepository.cs" />
+    <Compile Include="Data\GivenAnEmptyDictionaryRepository.cs" />
+    <Compile Include="Data\GivenADictionaryRepositoryWithItems.cs" />
+    <Compile Include="Data\GivenAUnitOfWorkRepository.cs" />
+    <Compile Include="Data\GivenAnEmptyUowRepository.cs" />
+    <Compile Include="Data\GivenAUowRepositoryWithItems.cs" />
+    <Compile Include="Reactive\Given.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataBinding\" />
     <Folder Include="DataBinding\InjectedProperties\" />
     <Folder Include="DataBinding\Bindings\" />
     <Folder Include="Runtime\" />
+    <Folder Include="Data\" />
+    <Folder Include="Reactive\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\MonoKit.Core.MonoTouch\MonoKit.Core.MonoTouch.csproj">

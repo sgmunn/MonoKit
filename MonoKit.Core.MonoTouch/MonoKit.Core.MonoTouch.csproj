@@ -39,6 +39,8 @@
   <ItemGroup>
     <Folder Include="DataBinding\" />
     <Folder Include="Runtime\" />
+    <Folder Include="Data\" />
+    <Folder Include="Reactive\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBinding\IPropertyInjection.cs" />
@@ -76,5 +78,38 @@
     <Compile Include="DataBinding\IInjectedPropertyStore.cs" />
     <Compile Include="DataBinding\InjectedPropertyBindingExtensions.cs" />
     <Compile Include="Runtime\ReflectionExtensions.cs" />
+    <Compile Include="Data\IdLock.cs" />
+    <Compile Include="Data\IId.cs" />
+    <Compile Include="Data\IObservableRepository.cs" />
+    <Compile Include="Data\IRepository_T.cs" />
+    <Compile Include="Data\IRepository_TData_TKey.cs" />
+    <Compile Include="Data\IRepositoryUnitOfWork_T.cs" />
+    <Compile Include="Data\IUnitOfWork.cs" />
+    <Compile Include="Data\IUnitOfWorkScope.cs" />
+    <Compile Include="Data\DataChangeEvent.cs" />
+    <Compile Include="Data\DataChangeEvent_T.cs" />
+    <Compile Include="Data\DataChangeKind.cs" />
+    <Compile Include="Data\DictionaryRepository_T.cs" />
+    <Compile Include="Data\IConnectedRepository.cs" />
+    <Compile Include="Data\IDataChangeEvent.cs" />
+    <Compile Include="Data\SaveResult.cs" />
+    <Compile Include="Data\SyncRepository_T.cs" />
+    <Compile Include="Data\UnitOfWorkRepository_T.cs" />
+    <Compile Include="Data\IdDictionaryRepository_T.cs" />
+    <Compile Include="Reactive\AnonymousObservable_T.cs" />
+    <Compile Include="Reactive\AnonymousObserver_T.cs" />
+    <Compile Include="Reactive\EmptyActions.cs" />
+    <Compile Include="Reactive\Observer.cs" />
+    <Compile Include="Reactive\ScheduledObserver.cs" />
+    <Compile Include="Reactive\Unit.cs" />
+    <Compile Include="Reactive\AnonymousDisposable.cs" />
+    <Compile Include="Reactive\CompositeDisposable.cs" />
+    <Compile Include="Reactive\Disposable.cs" />
+    <Compile Include="Reactive\NullDisposable.cs" />
+    <Compile Include="Reactive\ImmediateScheduler.cs" />
+    <Compile Include="Reactive\IScheduler.cs" />
+    <Compile Include="Reactive\Observable.cs" />
+    <Compile Include="Reactive\Subject_T.cs" />
+    <Compile Include="Reactive\ObservableExtensions.cs" />
   </ItemGroup>
 </Project>
