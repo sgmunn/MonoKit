@@ -18,7 +18,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit
+namespace MonoKit.Runtime
 {
     using System;
     using System.Collections.Generic;

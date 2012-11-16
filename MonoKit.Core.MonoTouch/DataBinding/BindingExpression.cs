@@ -22,7 +22,8 @@ namespace MonoKit.DataBinding
 {
     using System;
     using System.ComponentModel;
-    
+    using MonoKit.Runtime;
+
     /// <summary>
     /// An instance of a Binding between two objects.
     /// </summary>

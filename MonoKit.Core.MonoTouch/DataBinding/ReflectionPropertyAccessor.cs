@@ -21,6 +21,7 @@
 namespace MonoKit.DataBinding
 {
     using System;
+    using MonoKit.Runtime;
 
     public sealed class ReflectionPropertyAccessor : IPropertyAccessor
     {

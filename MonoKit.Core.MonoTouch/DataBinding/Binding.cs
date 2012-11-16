@@ -23,6 +23,7 @@ namespace MonoKit.DataBinding
     using System;
     using System.Reflection;
     using System.Globalization;
+    using MonoKit.Runtime;
 
     /// <summary>
     /// Defines a binding to a (source) property.

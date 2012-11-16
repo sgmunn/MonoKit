@@ -50,7 +50,6 @@
     <Compile Include="DataBinding\Binding.cs" />
     <Compile Include="DataBinding\BindingMode.cs" />
     <Compile Include="DataBinding\IValueConverter.cs" />
-    <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="DataBinding\BooleanToStringConverter.cs" />
     <Compile Include="DataBinding\DateTimeToStringConverter.cs" />
     <Compile Include="DataBinding\DecimalToStringConverter.cs" />
@@ -76,5 +75,6 @@
     <Compile Include="DataBinding\BindingScopeExtensions.cs" />
     <Compile Include="DataBinding\IInjectedPropertyStore.cs" />
     <Compile Include="DataBinding\InjectedPropertyBindingExtensions.cs" />
+    <Compile Include="Runtime\ReflectionExtensions.cs" />
   </ItemGroup>
 </Project>
