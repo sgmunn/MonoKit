@@ -51,13 +51,11 @@
     <Compile Include="DataBinding\BindingMode.cs" />
     <Compile Include="DataBinding\IValueConverter.cs" />
     <Compile Include="ReflectionExtensions.cs" />
-    <Compile Include="DataBinding\BindingExpression.cs" />
     <Compile Include="DataBinding\BooleanToStringConverter.cs" />
     <Compile Include="DataBinding\DateTimeToStringConverter.cs" />
     <Compile Include="DataBinding\DecimalToStringConverter.cs" />
     <Compile Include="DataBinding\CurrencyToStringConverter.cs" />
     <Compile Include="DataBinding\DataContextInjectedProperty.cs" />
-    <Compile Include="DataBinding\BindingOperations.cs" />
     <Compile Include="DataBinding\IBindingScope.cs" />
     <Compile Include="DataBinding\BindingScope.cs" />
     <Compile Include="DataBinding\BindingScopeInjectedProperty.cs" />
@@ -71,5 +69,12 @@
     <Compile Include="WeakEventWrapper.cs" />
     <Compile Include="NotificationEvent.cs" />
     <Compile Include="Runtime\MethodExecutor.cs" />
+    <Compile Include="DataBinding\IBindingExpression.cs" />
+    <Compile Include="DataBinding\WeakBindingExpression.cs" />
+    <Compile Include="DataBinding\BindingExpression.cs" />
+    <Compile Include="DataBinding\OneTimeBindingExtensions.cs" />
+    <Compile Include="DataBinding\BindingScopeExtensions.cs" />
+    <Compile Include="DataBinding\IInjectedPropertyStore.cs" />
+    <Compile Include="DataBinding\InjectedPropertyBindingExtensions.cs" />
   </ItemGroup>
 </Project>

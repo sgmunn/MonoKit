@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BindingExpression.cs" company="sgmunn">
+// <copyright file="WeakBindingExpression.cs" company="sgmunn">
 //   (c) sgmunn 2012  
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -24,10 +24,20 @@ namespace MonoKit.DataBinding
     using System.ComponentModel;
     
     /// <summary>
-    /// An instance of a Binding between two objects.
+    /// An instance of a Binding between two objects that uses weak references between target and source
     /// </summary>
-    public sealed class BindingExpression : IBindingExpression
+    public sealed class WeakBindingExpression : IBindingExpression
     {
+        /// <summary>
+        /// The target object that is bound
+        /// </summary>
+        private WeakReference target;
+        
+        /// <summary>
+        /// The source object that is bound.
+        /// </summary>
+        private WeakReference source;
+  
         /// <summary>
         /// Indicates that the expression has been disposed.
         /// </summary>
@@ -39,9 +49,9 @@ namespace MonoKit.DataBinding
         private Type targetPropertyType;
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.BindingExpression"/> class.
+        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.WeakBindingExpression"/> class.
         /// </summary>
-        public BindingExpression(object target, string targetProperty, object source, Binding binding)
+        public WeakBindingExpression(object target, string targetProperty, object source, Binding binding)
         {
             if (target == null)
             {
@@ -68,9 +78,9 @@ namespace MonoKit.DataBinding
         }
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.BindingExpression"/> class.
+        /// Initializes a new instance of the <see cref="MonoKit.DataBinding.WeakBindingExpression"/> class.
         /// </summary>
-        public BindingExpression(object target, string targetProperty, IPropertyAccessor accessor, object source, Binding binding)
+        public WeakBindingExpression(object target, string targetProperty, IPropertyAccessor accessor, object source, Binding binding)
         {
             if (target == null)
             {
@@ -103,9 +113,9 @@ namespace MonoKit.DataBinding
 
         /// <summary>
         /// Releases unmanaged resources and performs other cleanup operations before the
-        /// <see cref="MonoKit.DataBinding.BindingExpression"/> is reclaimed by garbage collection.
+        /// <see cref="MonoKit.DataBinding.WeakBindingExpression"/> is reclaimed by garbage collection.
         /// </summary>
-        ~BindingExpression()
+        ~WeakBindingExpression()
         {
             Dispose(false);
         }
@@ -113,7 +123,13 @@ namespace MonoKit.DataBinding
         /// <summary>
         /// Gets the target of the binding
         /// </summary>
-        public object Target { get; private set; }
+        public object Target
+        {
+            get
+            {
+                return this.target.Target;
+            }
+        }
         
         /// <summary>
         /// Gets the name of the target property.
@@ -123,7 +139,13 @@ namespace MonoKit.DataBinding
         /// <summary>
         /// Gets the source of the binding.
         /// </summary>
-        public object Source { get; private set; }
+        public object Source
+        {
+            get
+            {
+                return this.source.Target;
+            }
+        }
         
         /// <summary>
         /// Gets the binding for Source.
@@ -203,8 +225,6 @@ namespace MonoKit.DataBinding
                 {
                     this.Binding.Dispose();
                     this.UnregisterForChanges();
-                    this.Source = null;
-                    this.Target = null;
                 }
                 
                 disposed = true;
@@ -236,8 +256,8 @@ namespace MonoKit.DataBinding
         /// </summary>
         private void Initialize(object target, string targetProperty, object source, Binding binding)
         {
-            this.Target = target;
-            this.Source = source;
+            this.target = new WeakReference(target);
+            this.source = new WeakReference(source);
             this.TargetProperty = targetProperty;
             this.Binding = binding;
 

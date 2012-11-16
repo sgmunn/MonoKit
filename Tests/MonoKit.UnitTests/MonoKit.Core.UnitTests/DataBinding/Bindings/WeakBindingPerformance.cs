@@ -5,7 +5,7 @@ using MonoKit.DataBinding;
 namespace MonoKit.Core.UnitTests.Bindings
 {
     [TestFixture]
-    public class BindingPerformance : GivenABindingExpression
+    public class WeakBindingPerformance : GivenABindingExpression
     {
         [SetUp]
         public override void SetUp()
@@ -22,7 +22,7 @@ namespace MonoKit.Core.UnitTests.Bindings
                 this.Target.PropertyA = string.Format("{0}", key);
                 key++;
             }
-            
+
             Assert.True(true);
         }
         
@@ -34,13 +34,13 @@ namespace MonoKit.Core.UnitTests.Bindings
                                                       (s,v) => { ((SimpleSourceObject)s).Property1 = (string)v; });
             
             this.Binding.PropertyAccessor = source;
-            
+
             var target = new DelegatePropertyAccessor("PropertyA",
                                                       (s) => ((SimpleTargetObject)s).PropertyA,
                                                       (s,v) => { ((SimpleTargetObject)s).PropertyA = (string)v; });
-            
+
             this.Expression.PropertyAccessor = target;
-            
+
             int key = 0;
             for (int i= 0;i<1000;i++)
             {
@@ -50,12 +50,5 @@ namespace MonoKit.Core.UnitTests.Bindings
             
             Assert.True(true);
         }
-
-        
-        protected override IBindingExpression GetExpression()
-        {
-            return new BindingExpression(this.Target, "PropertyA", this.Source, this.Binding);
-        }
-
     }
 }

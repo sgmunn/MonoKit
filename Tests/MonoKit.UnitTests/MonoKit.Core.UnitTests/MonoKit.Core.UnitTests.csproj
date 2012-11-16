@@ -39,7 +39,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Test1.cs" />
-    <Compile Include="DataBinding\InjectedProperties\GivenAnInjectablePropertyStore.cs" />
     <Compile Include="DataBinding\InjectedProperties\DisposableObject.cs" />
     <Compile Include="DataBinding\InjectedProperties\Test2Property.cs" />
     <Compile Include="DataBinding\InjectedProperties\TestProperty.cs" />
@@ -60,6 +59,8 @@
     <Compile Include="DataBinding\Bindings\GivenAValueConverter.cs" />
     <Compile Include="Runtime\MethodExecutionPerformance.cs" />
     <Compile Include="Runtime\GivenAnObjectToExecuteAMethodOn.cs" />
+    <Compile Include="DataBinding\Bindings\WeakBindingPerformance.cs" />
+    <Compile Include="DataBinding\InjectedProperties\GivenAnInjectableObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataBinding\" />

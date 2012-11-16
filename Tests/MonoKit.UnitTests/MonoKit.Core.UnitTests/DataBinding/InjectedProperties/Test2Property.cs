@@ -15,12 +15,12 @@ namespace MonoKit.Core.UnitTests.InjectedProperties
         
         public static string GetTest2Property(this IPropertyInjection owner)
         {
-            return (string)owner.GetInjectedProperty(Test2Property.Test);
+            return (string)owner.InjectedProperties.GetInjectedProperty(Test2Property.Test);
         }
 
         public static void SetTest2Property(this IPropertyInjection owner, string value)
         {
-            owner.SetInjectedProperty(Test2Property.Test, value);
+            owner.InjectedProperties.SetInjectedProperty(Test2Property.Test, value);
         }
         
         public static void TestPropertyChanged(object target, InjectedPropertyChangedEventArgs e)

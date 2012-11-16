@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="IPropertyInjection.cs" company="sgmunn">
+//  <copyright file="IBindingExpression.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -22,12 +22,46 @@ namespace MonoKit.DataBinding
 {
     using System;
 
-    /// <summary>
-    /// Represents an object that can have additional properties injected into it at runtime
-    /// </summary>
-    public interface IPropertyInjection
+    public interface IBindingExpression : IDisposable
     {
-        IInjectedPropertyStore InjectedProperties { get; }
+        /// <summary>
+        /// Gets the target of the binding
+        /// </summary>
+        object Target { get; }
+        
+        /// <summary>
+        /// Gets the name of the target property.
+        /// </summary>
+        string TargetProperty { get; }
+        
+        /// <summary>
+        /// Gets the source of the binding.
+        /// </summary>
+        object Source { get; }
+        
+        /// <summary>
+        /// Gets the binding for Source.
+        /// </summary>
+        Binding Binding { get; }
+        
+        /// <summary>
+        /// Gets or sets the property accessor for getting and setting property values
+        /// </summary>
+        IPropertyAccessor PropertyAccessor { get; set; }
+        
+        /// <summary>
+        /// Updates the target object from the source object.
+        /// </summary>
+        void UpdateTarget(object sourceObject);
+        
+        /// <summary>
+        /// Updates the source object from the Target object.
+        /// </summary>
+        void UpdateSource(object targetObject);
+        
+        /// <summary>
+        /// Updates the source object from the Target object.
+        /// </summary>
+        void UpdateSource();
     }
 }
-

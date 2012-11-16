@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="IPropertyInjection.cs" company="sgmunn">
+//  <copyright file="IInjectedPropertyStore.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,11 +23,13 @@ namespace MonoKit.DataBinding
     using System;
 
     /// <summary>
-    /// Represents an object that can have additional properties injected into it at runtime
+    /// Stores injected properties
     /// </summary>
-    public interface IPropertyInjection
+    public interface IInjectedPropertyStore
     {
-        IInjectedPropertyStore InjectedProperties { get; }
+        void SetInjectedProperty(InjectedProperty property, object value);
+        object GetInjectedProperty(InjectedProperty property);
+        void RemoveInjectedProperty(InjectedProperty property);
+        void RemoveAllInjectedProperties();
     }
 }
-

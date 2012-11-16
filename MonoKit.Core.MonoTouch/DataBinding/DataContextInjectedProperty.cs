@@ -38,12 +38,12 @@ namespace MonoKit.DataBinding
         
         public static object GetDataContext(this IPropertyInjection owner)
         {
-            return owner.GetInjectedProperty(DataContextInjectedProperty.DataContextProperty);
+            return owner.InjectedProperties.GetInjectedProperty(DataContextInjectedProperty.DataContextProperty);
         }
         
         public static void SetDataContext(this IPropertyInjection owner, object value)
         {
-            owner.SetInjectedProperty(DataContextInjectedProperty.DataContextProperty, value);
+            owner.InjectedProperties.SetInjectedProperty(DataContextInjectedProperty.DataContextProperty, value);
         }
         
         private static void DataContextChanged(object target, InjectedPropertyChangedEventArgs e)

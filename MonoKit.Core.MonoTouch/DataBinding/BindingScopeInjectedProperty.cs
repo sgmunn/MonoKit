@@ -34,7 +34,7 @@ namespace MonoKit.DataBinding
         
         public static IBindingScope GetBindingScope(this IPropertyInjection owner)
         {
-            return (IBindingScope)owner.GetInjectedProperty(BindingScopeInjectedProperty.BindingScopeProperty);
+            return (IBindingScope)owner.InjectedProperties.GetInjectedProperty(BindingScopeInjectedProperty.BindingScopeProperty);
         }
         
         public static IBindingScope GetBindingScopeOrDefault(this IPropertyInjection owner)
@@ -51,7 +51,7 @@ namespace MonoKit.DataBinding
 
         public static void SetBindingScope(this IPropertyInjection owner, IBindingScope value)
         {
-            owner.SetInjectedProperty(BindingScopeInjectedProperty.BindingScopeProperty, value);
+            owner.InjectedProperties.SetInjectedProperty(BindingScopeInjectedProperty.BindingScopeProperty, value);
         }
 
         private static void BindingScopeChanged(object target, InjectedPropertyChangedEventArgs e)

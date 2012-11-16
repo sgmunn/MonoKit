@@ -24,7 +24,7 @@ namespace MonoKit.DataBinding
     using System.Collections.Generic;
     using System.Linq;
 
-    public sealed class InjectedPropertyStore : IPropertyInjection
+    public sealed class InjectedPropertyStore : IInjectedPropertyStore
     {
         private readonly object owner;
 

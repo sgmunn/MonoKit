@@ -27,9 +27,9 @@ namespace MonoKit.DataBinding
     /// </summary>
     public interface IBindingScope : IDisposable
     {
-        void AddBinding(BindingExpression expression);
-        void RemoveBinding(BindingExpression expression);
+        void AddBinding(IBindingExpression expression);
+        void RemoveBinding(IBindingExpression expression);
         void ClearBindings();
-        BindingExpression[] GetBindingExpressions();
+        IBindingExpression[] GetBindingExpressions();
     }
 }

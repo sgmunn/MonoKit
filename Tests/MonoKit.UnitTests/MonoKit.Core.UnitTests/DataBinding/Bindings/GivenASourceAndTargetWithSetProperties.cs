@@ -18,7 +18,7 @@ namespace MonoKit.Core.UnitTests.Bindings
         [Test]
         public void WhenBindingTheSourceAndTarget_ThenTheTargetPropertyIsUpdated()
         {
-            new BindingExpression(this.Target, "PropertyA", this.Source, this.Binding);
+            new WeakBindingExpression(this.Target, "PropertyA", this.Source, this.Binding);
             Assert.AreEqual(this.Source.Property1, this.Target.PropertyA);
         }
     }

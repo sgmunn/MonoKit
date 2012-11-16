@@ -25,14 +25,14 @@ namespace MonoKit.DataBinding
 
     public class BindingScope : IBindingScope
     {
-        private readonly List<BindingExpression> exresssions;
+        private readonly List<IBindingExpression> exresssions;
 
         public BindingScope()
         {
-            this.exresssions = new List<BindingExpression>();
+            this.exresssions = new List<IBindingExpression>();
         }
 
-        public void AddBinding(BindingExpression expression)
+        public void AddBinding(IBindingExpression expression)
         {
             if (expression == null)
             {
@@ -42,7 +42,7 @@ namespace MonoKit.DataBinding
             this.exresssions.Add(expression);
         }        
 
-        public void RemoveBinding(BindingExpression expression)
+        public void RemoveBinding(IBindingExpression expression)
         {
             this.exresssions.Remove(expression);
         }        
@@ -57,7 +57,7 @@ namespace MonoKit.DataBinding
             this.exresssions.Clear();
         }        
 
-        public BindingExpression[] GetBindingExpressions()
+        public IBindingExpression[] GetBindingExpressions()
         {
             return this.exresssions.ToArray();
         }        
