@@ -4,6 +4,14 @@ using NUnit.Framework;
 
 namespace MonoKit.Core.UnitTests.Reactive
 {
+    // mostly for testing on device, 
+    // ImmediateScheduler
+    // Observable
+    // ScheduledObserver
+    // Subject
+
+
+
     [TestFixture]
     public class Given
     {

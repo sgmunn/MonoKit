@@ -24,7 +24,7 @@ namespace MonoKit.Reactive
 
     public sealed class ImmediateScheduler : IScheduler
     {
-        private static readonly ImmediateScheduler instance = new ImmediateScheduler ();
+        private static readonly ImmediateScheduler instance = new ImmediateScheduler();
 
         public static ImmediateScheduler Instance 
         {
@@ -33,11 +33,6 @@ namespace MonoKit.Reactive
 
         private ImmediateScheduler()
         {
-        }
-
-        public IDisposable Schedule<TState>(TState state, Func<IScheduler, TState, IDisposable> action)
-        {
-            return action(this, state);
         }
 
         public IDisposable Schedule(Action action)

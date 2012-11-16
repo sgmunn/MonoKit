@@ -40,49 +40,62 @@ namespace MonoKit.Reactive
 
         public void OnCompleted()
         {
-            this.queue.Enqueue(() =>
+            lock (this.queue)
             {
-                this.observer.OnCompleted();
-            });
+                this.queue.Enqueue(() =>
+                {
+                    this.observer.OnCompleted();
+                });
+            }
 
             this.ScheduleFromQueue();
         }
 
         public void OnError(Exception error)
         {
-            this.queue.Enqueue(() =>
+            lock (this.queue)
             {
-                this.observer.OnError(error);
-            });
+                this.queue.Enqueue(() =>
+                {
+                    this.observer.OnError(error);
+                });
+            }
 
             this.ScheduleFromQueue();
         }
 
         public void OnNext(T value)
         {
-            // todo: locking
-            this.queue.Enqueue(() =>
+            lock (this.queue)
             {
-                this.observer.OnNext(value);
-            });
+                this.queue.Enqueue(() =>
+                {
+                    this.observer.OnNext(value);
+                });
+            }
 
             this.ScheduleFromQueue();
         }
 
         public void Dispose()
         {
+            lock (this.queue)
+            {
+                this.queue.Clear();
+            }
         }
 
         private void ScheduleFromQueue()
         {
-            // todo: locking 
-            //var disposable = 
             this.scheduler.Schedule(() =>
             {
-                var action = this.queue.Dequeue();
-                if (action != null)
+                lock (this.queue)
                 {
-                    action();
+                    var action = this.queue.Dequeue();
+                    if (action != null)
+                    {
+                        action();
+                    }
                 }
             });
         }

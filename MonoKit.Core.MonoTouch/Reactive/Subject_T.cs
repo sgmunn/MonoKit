@@ -29,7 +29,7 @@ namespace MonoKit.Reactive
         
         private object lockObject = new object();
 
-        private bool stopped;
+        private Int32 stopped = 0;
 
         private bool disposed;
         
@@ -40,7 +40,7 @@ namespace MonoKit.Reactive
         
         public IDisposable Subscribe(IObserver<T> observer)
         {
-            if (this.stopped)
+            if (this.stopped != 0)
             {
                 observer.OnCompleted();
             }
@@ -58,7 +58,7 @@ namespace MonoKit.Reactive
         public virtual void OnNext(T value)
         {
             this.CheckDisposed();
-            if (this.stopped)
+            if (this.stopped != 0)
             {
                 // or throw?
                 return;
@@ -73,7 +73,7 @@ namespace MonoKit.Reactive
         public void OnCompleted()
         {
             this.CheckDisposed();
-            this.stopped = true;
+            this.stopped = 1;
             foreach (var observer in this.GetCurrentObservers())
             {
                 observer.OnCompleted();

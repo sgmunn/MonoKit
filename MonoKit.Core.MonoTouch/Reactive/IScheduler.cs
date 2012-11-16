@@ -24,8 +24,9 @@ namespace MonoKit.Reactive
 
     public interface IScheduler
     {
-        // returns cancellation disposable, 
-        //IDisposable Schedule<TState>(TState state, Func<IScheduler, TState, IDisposable> action);
+        /// <summary>
+        /// Schedule the specified action and returns a disposable that is the cancellation token
+        /// </summary>
         IDisposable Schedule(Action action);
     }
 }

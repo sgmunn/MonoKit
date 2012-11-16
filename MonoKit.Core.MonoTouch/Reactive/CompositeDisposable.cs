@@ -39,17 +39,23 @@ namespace MonoKit.Reactive
 
         public void Add(IDisposable disposable)
         {
-            this.disposables.Add(disposable);
+            lock (this.disposables)
+            {
+                this.disposables.Add(disposable);
+            }
         }
 
         public void Clear()
         {
-            foreach (var disposable in this.disposables)
+            lock (this.disposables)
             {
-                disposable.Dispose();
-            }
+                foreach (var disposable in this.disposables)
+                {
+                    disposable.Dispose();
+                }
 
-            this.disposables.Clear();
+                this.disposables.Clear();
+            }
         }
     }
 }
