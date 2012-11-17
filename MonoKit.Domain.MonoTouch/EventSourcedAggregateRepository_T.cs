@@ -38,6 +38,21 @@ namespace MonoKit.Domain
   
         public EventSourcedAggregateRepository(IEventSerializer serializer, IEventStoreRepository repository, IAggregateManifestRepository manifest, INotificationEventBus eventBus)
         {
+            if (serializer == null)
+            {
+                throw new ArgumentNullException("serializer");
+            }
+
+            if (repository == null)
+            {
+                throw new ArgumentNullException("repository");
+            }
+
+            if (manifest == null)
+            {
+                throw new ArgumentNullException("manifest");
+            }
+
             this.serializer = serializer;
             this.repository = repository;
             this.eventBus = eventBus;

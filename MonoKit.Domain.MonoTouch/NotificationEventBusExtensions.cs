@@ -40,7 +40,7 @@ namespace MonoKit.Domain
         public static IObservable<IDataChangeEvent> DataChangesForType<T>(this IObservable<INotificationEvent> source)
         {
             return source.ForType<T>()
-                    .Where(x => typeof(IDataChangeEvent).IsAssignableFrom(x.Event.GetType()))
+                .Where(x => typeof(IDataChangeEvent).IsAssignableFrom(x.Event.GetType()))
                     .Select(x => x.Event)
                     .Cast<IDataChangeEvent>();
         }

@@ -36,6 +36,7 @@
     <Reference Include="System.Core" />
     <Reference Include="MonoTouch.NUnitLite" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Json" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -50,5 +51,32 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrap.cs" />
+    <Compile Include="Repositories\GivenAnInMemoryEventStoreRepository.cs" />
+    <Compile Include="Repositories\TestSerializedEvent.cs" />
+    <Compile Include="Repositories\GivenAnInMemoryEventStore.cs" />
+    <Compile Include="TestAggregateRoot.cs" />
+    <Compile Include="Repositories\GivenAnInMemorySnapshotRepository.cs" />
+    <Compile Include="Repositories\MockAggregateManifestRepository.cs" />
+    <Compile Include="Repositories\MockBus.cs" />
+    <Compile Include="Repositories\GivenAnEventSourcedAggregateRepository.cs" />
+    <Compile Include="Repositories\GivenASnapshotSourcedAggregateRepository.cs" />
+    <Compile Include="Repositories\SnapshotSourced\GivenAnEmptyRepository.cs" />
+    <Compile Include="Repositories\SnapshotSourced\GivenAnAggregateWith1000UncommittedEvents.cs" />
+    <Compile Include="Repositories\SnapshotSourced\GivenAnAggregateWithUncommittedEvents.cs" />
+    <Compile Include="Repositories\SnapshotSourced\GivenAnAggregateWithNoUncommittedEvents.cs" />
+    <Compile Include="Repositories\SnapshotSourced\GivenANewAggregateWithUncommittedEvents.cs" />
+    <Compile Include="Repositories\EventSourcing\GivenANewAggregateWithUncommittedEvents.cs" />
+    <Compile Include="Repositories\EventSourcing\GivenAnAggregateWithNoUncommittedEvents.cs" />
+    <Compile Include="Repositories\SnapshotSourced\GivenAExistingAggregateWithUncommittedEvents.cs" />
+    <Compile Include="Repositories\EventSourcing\GivenAExistingAggregateWithUncommittedEvents.cs" />
+    <Compile Include="Repositories\EventSourcing\GivenAnEmptyRepository.cs" />
+    <Compile Include="Repositories\EventSourcing\GivenAnAggregateWithUncommittedEvents.cs" />
+    <Compile Include="Repositories\EventSourcing\GivenAnAggregateWith1000StoredEvents.cs" />
+    <Compile Include="Repositories\EventSourcing\GivenAnAggregateWith1000UncommittedEvents.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+    <Folder Include="Repositories\EventSourcing\" />
+    <Folder Include="Repositories\SnapshotSourced\" />
   </ItemGroup>
 </Project>
