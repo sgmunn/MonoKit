@@ -78,7 +78,7 @@
     <Folder Include="Reactive\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\MonoKit.Core.MonoTouch\MonoKit.Core.MonoTouch.csproj">
+    <ProjectReference Include="..\..\MonoKit.Core.MonoTouch\MonoKit.Core.MonoTouch.csproj">
       <Project>{2CD8E58A-E1C4-4F41-9004-7484C5DABA9E}</Project>
       <Name>MonoKit.Core.MonoTouch</Name>
     </ProjectReference>

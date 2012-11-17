@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file=".cs" company="sgmunn">
+//  <copyright file="EventExtensions.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,24 +17,22 @@
 //    IN THE SOFTWARE.
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
-//
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
-
-namespace MonoKit.UnitTests
+namespace MonoKit.Domain
 {
-    public class Application
+    using System;
+    using MonoKit.Data;
+    
+    public static class EventExtensions
     {
-        // This is the main entry point of the application.
-        static void Main(string[] args)
+        public static INotificationEvent AsDomainEvent(this IDataChangeEvent dataChange)
         {
-            // if you want to use a different Application Delegate class from "AppDelegate"
-            // you can specify it here.
-            UIApplication.Main(args, null, "AppDelegate");
+            return new NotificationEvent(dataChange.DataType, dataChange.DataId, dataChange);
+        }
+        
+        public static INotificationEvent AsDomainEvent(this IAggregateEvent aggregateEvent, Type aggregateType)
+        {
+            return new NotificationEvent(aggregateType, aggregateEvent.AggregateId, aggregateEvent);
         }
     }
 }

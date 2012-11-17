@@ -81,6 +81,7 @@
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
     <Reference Include="MonoTouch.NUnitLite" />
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -91,9 +92,21 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\MonoKit.Core.UnitTests\MonoKit.Core.UnitTests.csproj">
+    <ProjectReference Include="..\MonoKit.Domain.UnitTests.MonoTouch\MonoKit.Domain.UnitTests.MonoTouch.csproj">
+      <Project>{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}</Project>
+      <Name>MonoKit.Domain.UnitTests.MonoTouch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MonoKit.Domain.MonoTouch\MonoKit.Domain.MonoTouch.csproj">
+      <Project>{1980C6AF-E548-4199-8C56-3F3838E94B00}</Project>
+      <Name>MonoKit.Domain.MonoTouch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MonoKit.Core.UnitTests.MonoTouch\MonoKit.Core.UnitTests.MonoTouch.csproj">
       <Project>{8B49C0E8-21FA-498A-8262-3805D1A4962E}</Project>
-      <Name>MonoKit.Core.UnitTests</Name>
+      <Name>MonoKit.Core.UnitTests.MonoTouch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MonoKit.Core.MonoTouch\MonoKit.Core.MonoTouch.csproj">
+      <Project>{2CD8E58A-E1C4-4F41-9004-7484C5DABA9E}</Project>
+      <Name>MonoKit.Core.MonoTouch</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

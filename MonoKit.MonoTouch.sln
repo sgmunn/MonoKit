@@ -23,15 +23,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AwesomeMenuSample", "Sample
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AE9D84D2-7B39-4154-95D4-169BCCAA6021}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKit.UnitTests", "Tests\MonoKit.UnitTests\MonoKit.UnitTests.csproj", "{D7937D75-2807-4BE4-9F34-5DDF4823A25F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.MonoKit.Core.MonoTouch", "Tests\Test.MonoKit.Core.MonoTouch\Test.MonoKit.Core.MonoTouch.csproj", "{371D6E44-E499-4136-A871-A5EA5260A209}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.MonoKit.Core.MonoTouch", "Tests\MonoKit.UnitTests\Test.MonoKit.Core.MonoTouch\Test.MonoKit.Core.MonoTouch.csproj", "{371D6E44-E499-4136-A871-A5EA5260A209}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKit.Core.UnitTests.MonoTouch", "Tests\MonoKit.Core.UnitTests.MonoTouch\MonoKit.Core.UnitTests.MonoTouch.csproj", "{8B49C0E8-21FA-498A-8262-3805D1A4962E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKit.Core.UnitTests", "Tests\MonoKit.UnitTests\MonoKit.Core.UnitTests\MonoKit.Core.UnitTests.csproj", "{8B49C0E8-21FA-498A-8262-3805D1A4962E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKit.Domain.UnitTests.MonoTouch", "Tests\MonoKit.Domain.UnitTests.MonoTouch\MonoKit.Domain.UnitTests.MonoTouch.csproj", "{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKit.Domain", "MonoKit.Domain\MonoKit.Domain.csproj", "{6963B532-C840-4E53-AC65-7A812C744A11}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKit.Core.MonoTouch", "MonoKit.Core.MonoTouch\MonoKit.Core.MonoTouch.csproj", "{2CD8E58A-E1C4-4F41-9004-7484C5DABA9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKit.Domain.MonoTouch", "MonoKit.Domain.MonoTouch\MonoKit.Domain.MonoTouch.csproj", "{1980C6AF-E548-4199-8C56-3F3838E94B00}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,20 @@ Global
 		{117E23FD-8455-43C2-A54E-B530DE5B88AF}.Release|iPhone.ActiveCfg = Release|iPhone
 		{117E23FD-8455-43C2-A54E-B530DE5B88AF}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{117E23FD-8455-43C2-A54E-B530DE5B88AF}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Release|iPhone.Build.0 = Release|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{1980C6AF-E548-4199-8C56-3F3838E94B00}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{2CD8E58A-E1C4-4F41-9004-7484C5DABA9E}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
 		{2CD8E58A-E1C4-4F41-9004-7484C5DABA9E}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
 		{2CD8E58A-E1C4-4F41-9004-7484C5DABA9E}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
@@ -116,6 +132,20 @@ Global
 		{3E337B3C-13E2-4C78-8824-980135A35646}.Release|iPhone.ActiveCfg = Release|iPhone
 		{3E337B3C-13E2-4C78-8824-980135A35646}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{3E337B3C-13E2-4C78-8824-980135A35646}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Release|iPhone.Build.0 = Release|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{6963B532-C840-4E53-AC65-7A812C744A11}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
 		{6963B532-C840-4E53-AC65-7A812C744A11}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
 		{6963B532-C840-4E53-AC65-7A812C744A11}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
@@ -206,11 +236,11 @@ Global
 		{D1EE78E4-82A0-4BB9-A699-2F0038395243} = {84CBAC2D-25BB-40EF-8F13-1E616587AFA4}
 		{117E23FD-8455-43C2-A54E-B530DE5B88AF} = {84CBAC2D-25BB-40EF-8F13-1E616587AFA4}
 		{3E337B3C-13E2-4C78-8824-980135A35646} = {84CBAC2D-25BB-40EF-8F13-1E616587AFA4}
-		{D7937D75-2807-4BE4-9F34-5DDF4823A25F} = {AE9D84D2-7B39-4154-95D4-169BCCAA6021}
 		{371D6E44-E499-4136-A871-A5EA5260A209} = {AE9D84D2-7B39-4154-95D4-169BCCAA6021}
 		{8B49C0E8-21FA-498A-8262-3805D1A4962E} = {AE9D84D2-7B39-4154-95D4-169BCCAA6021}
+		{629A7FA5-C326-4D4B-AE5A-F0D48D0FAD7F} = {AE9D84D2-7B39-4154-95D4-169BCCAA6021}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Tests\MonoKit.UnitTests\Test.MonoKit.Core.MonoTouch\Test.MonoKit.Core.MonoTouch.csproj
+		StartupItem = Tests\Test.MonoKit.Core.MonoTouch\Test.MonoKit.Core.MonoTouch.csproj
 	EndGlobalSection
 EndGlobal
