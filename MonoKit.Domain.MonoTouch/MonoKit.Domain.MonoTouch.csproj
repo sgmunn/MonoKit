@@ -8,7 +8,7 @@
     <ProjectGuid>{1980C6AF-E548-4199-8C56-3F3838E94B00}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>MonoKit.Domain.MonoTouch</RootNamespace>
+    <RootNamespace>MonoKit.Domain</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>MonoKit.Domain.MonoTouch</AssemblyName>
   </PropertyGroup>

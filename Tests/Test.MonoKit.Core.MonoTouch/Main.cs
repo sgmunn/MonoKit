@@ -1,7 +1,7 @@
 using System;
 using MonoTouch.UIKit;
 
-namespace Test.MonoKit.Core.MonoTouch
+namespace MonoKit.MonoTouch.Tests
 {
     public class Application
     {

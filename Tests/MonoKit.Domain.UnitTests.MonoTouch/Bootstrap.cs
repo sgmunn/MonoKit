@@ -1,5 +1,7 @@
 
-namespace MonoKit.Domain.UnitTests.MonoTouch
+using NUnit.Framework;
+
+namespace MonoKit.Domain.UnitTests
 {
     using System;
 
@@ -7,6 +9,16 @@ namespace MonoKit.Domain.UnitTests.MonoTouch
     {
         public Bootstrap()
         {
+        }
+    }
+
+    [TestFixture]
+    public class Given
+    {
+        [Test]
+        public void Dummy()
+        {
+
         }
     }
 }
