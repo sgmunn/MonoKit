@@ -1,6 +1,3 @@
-
-using NUnit.Framework;
-
 namespace MonoKit.Domain.UnitTests
 {
     using System;
@@ -12,24 +9,11 @@ namespace MonoKit.Domain.UnitTests
         }
     }
 
-    // aggregate
     // command executor
     // DomainCommandExecutor
     // DomainContext
-    // --EventSourcedAggregateRepository
     // ReadModelBuilder
     // ReadModelBuildingEventBus
-    // SnapshotAggregateRepository --> InMemorySnapshotAggregateRepository
     // UnitOfWorkEventBus
-
-    [TestFixture]
-    public class Given
-    {
-        [Test]
-        public void Dummy()
-        {
-
-        }
-    }
 }
 

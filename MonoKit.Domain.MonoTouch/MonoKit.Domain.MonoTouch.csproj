@@ -73,6 +73,7 @@
     <Compile Include="SnapshotAggregateRepository_T.cs" />
     <Compile Include="UnitOfWorkEventBus.cs" />
     <Compile Include="InMemorySnapshotRepository_T.cs" />
+    <Compile Include="NullAggregateManifestRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKit.Core.MonoTouch\MonoKit.Core.MonoTouch.csproj">

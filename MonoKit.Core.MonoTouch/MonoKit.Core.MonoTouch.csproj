@@ -41,6 +41,8 @@
     <Folder Include="Runtime\" />
     <Folder Include="Data\" />
     <Folder Include="Reactive\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Runtime\Css\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBinding\IPropertyInjection.cs" />
@@ -111,5 +113,44 @@
     <Compile Include="Reactive\Observable.cs" />
     <Compile Include="Reactive\Subject_T.cs" />
     <Compile Include="Reactive\ObservableExtensions.cs" />
+    <Compile Include="ViewModels\SimpleElement.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="ViewModels\StringElement.cs" />
+    <Compile Include="ViewModels\BooleanElement.cs" />
+    <Compile Include="ViewModels\DateTimeElement.cs" />
+    <Compile Include="ViewModels\IntegerElement.cs" />
+    <Compile Include="ViewModels\DecimalElement.cs" />
+    <Compile Include="Runtime\Css\CSSParser.cs" />
+    <Compile Include="Runtime\Css\Parser.cs" />
+    <Compile Include="Runtime\Css\Scanner.cs" />
+    <Compile Include="Runtime\Css\Model\Attribute.cs" />
+    <Compile Include="Runtime\Css\Model\AttributeOperator.cs" />
+    <Compile Include="Runtime\Css\Model\CSS.cs" />
+    <Compile Include="Runtime\Css\Model\CSSDocument.cs" />
+    <Compile Include="Runtime\Css\Model\Combinator.cs" />
+    <Compile Include="Runtime\Css\Model\Declaration.cs" />
+    <Compile Include="Runtime\Css\Model\Directive.cs" />
+    <Compile Include="Runtime\Css\Model\DirectiveType.cs" />
+    <Compile Include="Runtime\Css\Model\Expression.cs" />
+    <Compile Include="Runtime\Css\Model\Function.cs" />
+    <Compile Include="Runtime\Css\Model\IDeclarationContainer.cs" />
+    <Compile Include="Runtime\Css\Model\IRuleSetContainer.cs" />
+    <Compile Include="Runtime\Css\Model\ISelectorContainer.cs" />
+    <Compile Include="Runtime\Css\Model\Import.cs" />
+    <Compile Include="Runtime\Css\Model\Media.cs" />
+    <Compile Include="Runtime\Css\Model\MediaTag.cs" />
+    <Compile Include="Runtime\Css\Model\Medium.cs" />
+    <Compile Include="Runtime\Css\Model\Property.cs" />
+    <Compile Include="Runtime\Css\Model\PropertyValue.cs" />
+    <Compile Include="Runtime\Css\Model\RuleSet.cs" />
+    <Compile Include="Runtime\Css\Model\Selector.cs" />
+    <Compile Include="Runtime\Css\Model\SimpleSelector.cs" />
+    <Compile Include="Runtime\Css\Model\Tag.cs" />
+    <Compile Include="Runtime\Css\Model\TagType.cs" />
+    <Compile Include="Runtime\Css\Model\Term.cs" />
+    <Compile Include="Runtime\Css\Model\TermType.cs" />
+    <Compile Include="Runtime\Css\Model\Unit.cs" />
+    <Compile Include="Runtime\Css\Model\ValueType.cs" />
+    <Compile Include="Runtime\Css\CssExtensions.cs" />
   </ItemGroup>
 </Project>

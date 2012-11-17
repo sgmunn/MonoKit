@@ -68,6 +68,7 @@
     <Compile Include="Data\GivenAUowRepositoryWithItems.cs" />
     <Compile Include="Reactive\Given.cs" />
     <Compile Include="Bootstrap.cs" />
+    <Compile Include="Runtime\GivenSomeCss.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataBinding\" />

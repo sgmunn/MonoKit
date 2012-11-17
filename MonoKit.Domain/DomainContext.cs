@@ -24,7 +24,7 @@ namespace MonoKit.Domain
     using System.Collections.Generic;
     using System.Linq;
     using MonoKit.Data;
-    
+
     public abstract class DomainContext : IDomainContext
     {
         private readonly Dictionary<Type, List<Func<IDomainContext, IReadModelBuilder>>> registeredBuilders;
