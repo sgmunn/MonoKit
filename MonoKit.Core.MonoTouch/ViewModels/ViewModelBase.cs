@@ -22,24 +22,44 @@ namespace MonoKit.ViewModels
 {
     using System;
     using System.ComponentModel;
-    
-    public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
-    {
-        private bool disposed;
+    using MonoKit.Reactive;
 
+    public abstract class ViewModelBase : IViewModel, ILifetime, ICommand
+    {
+        private readonly CompositeDisposable lifetimeScope;
+
+        private bool disposed;
+        
         public ViewModelBase()
         {
+            this.lifetimeScope = new CompositeDisposable();
         }
 
         ~ViewModelBase()
         {
+            Console.WriteLine("~ViewModelBase - {0}", this.GetType().ToString());
             this.Dispose(false);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public CompositeDisposable Lifetime
+        {
+            get
+            {
+                return this.lifetimeScope;
+            }
+        }
+
+        public DelegateCommand Command
+        {
+            get;
+            set;
+        }
         
         public void Dispose()
         {
+            Console.WriteLine("Dispose.ViewModelBase");
             if (!this.disposed)
             {
                 this.disposed = true;
@@ -48,8 +68,30 @@ namespace MonoKit.ViewModels
             }
         }
         
+        public virtual void Execute()
+        {
+            if (this.Command != null)
+            {
+                this.Command.Execute();
+            }
+        }
+        
+        public virtual bool GetCanExecute()
+        {
+            if (this.Command != null)
+            {
+                return this.Command.GetCanExecute();
+            }
+
+            return true;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                this.lifetimeScope.Dispose();
+            }
         }
         
         protected void NotifyPropertyChanged(string propertyName)

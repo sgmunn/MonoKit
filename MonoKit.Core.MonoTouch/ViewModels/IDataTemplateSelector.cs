@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="DecimalElement.cs" company="sgmunn">
+//  <copyright file="IDataTemplateSelector.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -22,40 +22,21 @@ namespace MonoKit.ViewModels
 {
     using System;
     
-    public class DecimalElement : SimpleElement
+    public enum TemplateMatch
     {
-        private decimal value;
+        None,
+        Assignable,
+        Exact
+    }
 
-        public DecimalElement()
-        {
-        }
-
-        public DecimalElement(string text)
-        {
-            this.Text = text;
-        }
-
-        public DecimalElement(string text, decimal value)
-        {
-            this.Text = text;
-            this.Value = value;
-        }
-
-        public decimal Value
-        {
-            get
-            {
-                return this.value;
-            }
-            
-            set
-            {
-                if (this.value != value)
-                {
-                    this.value = value;
-                    this.NotifyPropertyChanged("Value");
-                }
-            }
-        }
+    public interface IDataTemplateSelector
+    {
+        string ReuseIdentifier { get; }
+        Type ViewType { get; }
+        TemplateMatch AppliesToViewModel(object viewModel);
+        object CreateView();
+        void InitializeView(object view);
+        void BindViewModel(object viewModel, object view);
+        float CalculateHeight(object viewModel);
     }
 }

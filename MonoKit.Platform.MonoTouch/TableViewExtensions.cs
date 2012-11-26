@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="IntegerElement.cs" company="sgmunn">
+//  <copyright file="TableViewExtensions.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,44 +18,23 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.ViewModels
+namespace MonoKit
 {
     using System;
-    
-    public class IntegerElement : SimpleElement
+    using MonoTouch.UIKit;
+
+    public static class TableViewExtensions
     {
-        private int value;
-        
-        public IntegerElement()
+        public static UITableView GetTableView(this UITableViewCell cell)
         {
-        }
-        
-        public IntegerElement(string text)
-        {
-            this.Text = text;
-        }
-        
-        public IntegerElement(string text, int value)
-        {
-            this.Text = text;
-            this.Value = value;
-        }
-        
-        public int Value
-        {
-            get
+            var result = cell.Superview;
+            while (result != null && !typeof(UITableView).IsAssignableFrom(result.GetType()))
             {
-                return this.value;
+                result = result.Superview;
             }
-            
-            set
-            {
-                if (this.value != value)
-                {
-                    this.value = value;
-                    this.NotifyPropertyChanged("Value");
-                }
-            }
+
+            return result as UITableView;
         }
     }
 }
+

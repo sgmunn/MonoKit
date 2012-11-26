@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="BooleanElement.cs" company="sgmunn">
+//  <copyright file="SectionViewModel.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,39 +21,76 @@
 namespace MonoKit.ViewModels
 {
     using System;
-    
-    public class BooleanElement : SimpleElement
+    using System.Collections;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+
+    public class SectionViewModel : ViewModelBase, ISection
     {
-        private bool value;
-        
-        public BooleanElement()
+        private object header;
+        private object footer;
+
+        public SectionViewModel()
         {
+            this.Items = new ObservableCollection<object>();
         }
 
-        public BooleanElement(string text)
-        {
-            this.Text = text;
-        }
-
-        public BooleanElement(string text, bool value)
-        {
-            this.Text = text;
-            this.Value = value;
-        }
-
-        public bool Value
-        {
+        public object Header 
+        { 
             get
             {
-                return this.value;
+                return this.header;
+            }
+
+            set
+            {
+                if (value != this.header)
+                {
+                    this.header = value;
+                    this.NotifyPropertyChanged("Header");
+                }
+            }
+        }
+
+        public object Footer 
+        { 
+            get
+            {
+                return this.footer;
             }
             
             set
             {
-                if (this.value != value)
+                if (value != this.footer)
                 {
-                    this.value = value;
-                    this.NotifyPropertyChanged("Value");
+                    this.footer = value;
+                    this.NotifyPropertyChanged("Footer");
+                }
+            }
+        }
+
+        public IList Items 
+        { 
+            get; 
+            private set; 
+        }
+
+        public object this[int index]
+        {
+            get
+            {
+                return this.Items[index];
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                foreach (var item in this.Items.OfType<IDisposable>())
+                {
+                    item.Dispose();
                 }
             }
         }

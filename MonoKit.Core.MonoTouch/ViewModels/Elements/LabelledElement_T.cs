@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="SimpleElement.cs" company="sgmunn">
+//  <copyright file="LabelledElement_T.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,59 +18,38 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.ViewModels
+namespace MonoKit.ViewModels.Elements
 {
     using System;
 
-    public interface IViewModelStyle
+    public abstract class LabelledElement<T> : SimpleElement
     {
-       // string ViewType { get; }
-
-        /*
-         * Need to get the view, bind the view to the view model
-         * here we need to inject any behaviours that we might want
-         * /
-         * */
-
-
-//        Type ViewType { get; }
-//        void Bind(object target, object dataContext);
-//        object Param { get; }
-//        List<Type> Behaviours { get; }
-//        bool Renders(object data);
-    }
-
-
-
-
-    public class X{}
-    // todo: put a command (tap) on this or viewmodel base
-  
-    // query - add binding scope for binding data objects to this
-    public abstract class SimpleElement : ViewModelBase
-    {
-        private string text;
-
-        public SimpleElement()
+        private T value;
+        
+        public LabelledElement()
         {
         }
         
-        public string Text
+        public T Value
         {
             get
             {
-                return this.text;
+                return this.value;
             }
             
             set
             {
-                if (this.text != value)
+                if (!object.Equals(this.value, value))
                 {
-                    this.text = value;
-                    this.NotifyPropertyChanged("Text");
+                    this.value = value;
+                    this.NotifyPropertyChanged("Value");
                 }
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0} - {1}", this.Text, this.Value);
+        }
     }
 }
-

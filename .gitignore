@@ -17,3 +17,6 @@ Tests/MonoKit.Core.UnitTests.MonoTouch/bin
 Tests/MonoKit.Domain.UnitTests.MonoTouch/bin
 Tests/Test.MonoKit.Core.MonoTouch/bin
 Tests/Test.MonoKit.Core.MonoTouch/obj
+Samples/Sample.MonoTouch.TableViews.Phone/bin
+MonoKit.Platform.MonoTouch/bin
+Samples/Sample.MonoTouch.TableViews.Phone/obj

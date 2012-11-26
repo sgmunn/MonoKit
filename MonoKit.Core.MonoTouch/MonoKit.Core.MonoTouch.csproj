@@ -43,6 +43,7 @@
     <Folder Include="Reactive\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Runtime\Css\" />
+    <Folder Include="ViewModels\Elements\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBinding\IPropertyInjection.cs" />
@@ -113,13 +114,7 @@
     <Compile Include="Reactive\Observable.cs" />
     <Compile Include="Reactive\Subject_T.cs" />
     <Compile Include="Reactive\ObservableExtensions.cs" />
-    <Compile Include="ViewModels\SimpleElement.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="ViewModels\StringElement.cs" />
-    <Compile Include="ViewModels\BooleanElement.cs" />
-    <Compile Include="ViewModels\DateTimeElement.cs" />
-    <Compile Include="ViewModels\IntegerElement.cs" />
-    <Compile Include="ViewModels\DecimalElement.cs" />
     <Compile Include="Runtime\Css\CSSParser.cs" />
     <Compile Include="Runtime\Css\Parser.cs" />
     <Compile Include="Runtime\Css\Scanner.cs" />
@@ -152,5 +147,29 @@
     <Compile Include="Runtime\Css\Model\Unit.cs" />
     <Compile Include="Runtime\Css\Model\ValueType.cs" />
     <Compile Include="Runtime\Css\CssExtensions.cs" />
+    <Compile Include="ViewModels\IViewModel.cs" />
+    <Compile Include="ViewModels\ILifetime.cs" />
+    <Compile Include="ViewModels\SectionRoot.cs" />
+    <Compile Include="ViewModels\Section.cs" />
+    <Compile Include="ViewModels\ISection.cs" />
+    <Compile Include="ViewModels\ISectionRoot.cs" />
+    <Compile Include="ViewModels\SectionViewModel.cs" />
+    <Compile Include="ViewModels\RootViewModel.cs" />
+    <Compile Include="ViewModels\IDataTemplateSelector.cs" />
+    <Compile Include="ViewModels\DataTemplateSelector.cs" />
+    <Compile Include="ViewModels\INavigationRequest.cs" />
+    <Compile Include="ViewModels\NavigationRequest.cs" />
+    <Compile Include="ViewModels\INavigationService.cs" />
+    <Compile Include="ViewModels\Elements\LabelledStringElement.cs" />
+    <Compile Include="ViewModels\Elements\SimpleElement.cs" />
+    <Compile Include="ViewModels\Elements\LabelledElement_T.cs" />
+    <Compile Include="ViewModels\Elements\LabelledBooleanElement.cs" />
+    <Compile Include="ViewModels\Elements\LabelledCheckboxElement.cs" />
+    <Compile Include="ViewModels\Elements\LabelledDateTimeElement.cs" />
+    <Compile Include="ViewModels\Elements\LabelledDecimalElement.cs" />
+    <Compile Include="ViewModels\Elements\LabelledIntegerElement.cs" />
+    <Compile Include="Runtime\IResolver.cs" />
+    <Compile Include="ViewModels\DelegateCommand.cs" />
+    <Compile Include="DataBinding\Behaviour.cs" />
   </ItemGroup>
 </Project>

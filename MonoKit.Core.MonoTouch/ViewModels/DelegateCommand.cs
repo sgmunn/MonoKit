@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="DateTimeElement.cs" company="sgmunn">
+//  <copyright file=".cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,41 +21,43 @@
 namespace MonoKit.ViewModels
 {
     using System;
-    
-    public class DateTimeElement : SimpleElement
+    using System.ComponentModel;
+    using MonoKit.Reactive;
+
+    public sealed class DelegateCommand : ICommand
     {
-        private DateTime value;
-        
-        public DateTimeElement()
+        private Action command;
+
+        private Func<bool> canExecute;
+
+        public DelegateCommand(Action command)
         {
+            this.command = command;
         }
-        
-        public DateTimeElement(string text)
+
+        public DelegateCommand(Action command, Func<bool> canExecute)
         {
-            this.Text = text;
+            this.command = command;
+            this.canExecute = canExecute;
         }
-        
-        public DateTimeElement(string text, DateTime value)
+
+        public void Execute()
         {
-            this.Text = text;
-            this.Value = value;
-        }
-        
-        public DateTime Value
-        {
-            get
+            if (this.command != null && this.GetCanExecute())
             {
-                return this.value;
+                this.command();
             }
-            
-            set
+        }
+
+        public bool GetCanExecute()
+        {
+            if (this.canExecute != null)
             {
-                if (this.value != value)
-                {
-                    this.value = value;
-                    this.NotifyPropertyChanged("Value");
-                }
+                return this.canExecute();
             }
+
+            return true;
         }
     }
+    
 }
