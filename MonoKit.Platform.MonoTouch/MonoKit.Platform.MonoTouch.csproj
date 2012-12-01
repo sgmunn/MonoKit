@@ -57,8 +57,21 @@
     <Compile Include="Controls\TextInputBehaviour.cs" />
     <Compile Include="TableViewExtensions.cs" />
     <Compile Include="Controls\IFocusableInputCell.cs" />
+    <Compile Include="UIViewControllerExtensions.cs" />
+    <Compile Include="Controls\PageControl.cs" />
+    <Compile Include="Controls\UIDateField.cs" />
+    <Compile Include="Tasks\UIKitScheduler.cs" />
+    <Compile Include="Reactive\UIKitObservableExtensions.cs" />
+    <Compile Include="Reactive\UIKitMainThreadScheduler.cs" />
+    <Compile Include="Controls\DateInputTableViewCell.cs" />
+    <Compile Include="Controls\DecimalInputTableViewCell.cs" />
+    <Compile Include="Controls\SizingTableViewSource.cs" />
+    <Compile Include="Controls\CollectionViewController.cs" />
+    <Compile Include="Controls\CollectionViewCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controls\" />
+    <Folder Include="Tasks\" />
+    <Folder Include="Reactive\" />
   </ItemGroup>
 </Project>

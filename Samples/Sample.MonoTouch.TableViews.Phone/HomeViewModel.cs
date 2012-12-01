@@ -31,6 +31,74 @@ namespace Sample.TableViews
     using MonoKit.ViewModels;
     using MonoTouch.UIKit;
 
+    public class HomeViewModel : RootViewModel
+    {
+        private readonly INavigationService navigation;
+        
+        public HomeViewModel(INavigationService navigation)
+        {
+            this.navigation = navigation;
+            this.Load();
+        }
+        
+        private void Load()
+        {
+            var section1 = new SectionViewModel()
+            {
+                Header = "TableView",
+                Items = 
+                {
+                    new SimpleElement("TableView Samples") { 
+                        Command = new DelegateCommand(() => this.navigation.NavigateTo(new HomeViewModelX(this.navigation))) 
+                    },
+                    new SimpleElement("CollectionView Samples") { 
+                        Command = new DelegateCommand(() => this.navigation.NavigateTo(new CollectionViewSampleViewModel())) 
+                    },
+                }
+            };
+
+            this.Sections.Add(section1);
+        }
+    }
+
+    public class CollectionViewSampleViewModel : RootViewModel
+    {
+        public CollectionViewSampleViewModel()
+        {
+            this.Load();
+        }
+
+        private void Load()
+        {
+            var section1 = new SectionViewModel()
+            {
+                Header = "CollectionView",
+                Items = 
+                {
+                    new SimpleElement("Add") { 
+                        Command = new DelegateCommand(() => this.Sections[0].Items.Add("Added")) 
+                    },
+                    new SimpleElement("Remove") { 
+                        Command = new DelegateCommand(() => this.Sections[0].Items.RemoveAt(this.Sections[0].Items.Count-1)) 
+                    },
+                    new SimpleElement("Add") { 
+                        Command = new DelegateCommand(() => this.Sections.Add(new SectionViewModel())) 
+                    },
+                    new SimpleElement("Add") { 
+                        Command = new DelegateCommand(() => this.Sections[1].Items.Add("Added")) 
+                    },
+                    "hello",
+                    123,
+                }
+            };
+            
+            this.Sections.Add(section1);
+            this.Sections.Add(new SectionViewModel() { Items = {""}});
+        }
+    }
+
+
+
     public class RandomObject
     {
         ~RandomObject()
@@ -74,16 +142,17 @@ namespace Sample.TableViews
         }
     }
 
-    public class HomeViewModel : RootViewModel
+    public class HomeViewModelX : RootViewModel
     {
         private readonly INavigationService navigation;
 
-        public HomeViewModel(INavigationService navigation)
+        public HomeViewModelX(INavigationService navigation)
         {
             this.navigation = navigation;
+            this.Load();
         }
 
-        public void Load()
+        private void Load()
         {
             var section1 = new SectionViewModel()
             {
@@ -97,6 +166,8 @@ namespace Sample.TableViews
                     new LabelledStringInputElement() { Text = "Input 1",  },
                     123,
                     new LabelledStringInputElement() { Text = "Input 2",  },
+                    new LabelledDateTimeInputElement() { Text = "",  },
+                    new LabelledDecimalInputElement() { Text = "Amt",  },
                     new LabelledCheckboxElement() { Text = "Checkbox", Value = false },
                     new LabelledBooleanElement() { Text = "Boolean", Value = false },
                 }

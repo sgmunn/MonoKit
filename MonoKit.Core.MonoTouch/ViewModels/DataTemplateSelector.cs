@@ -21,6 +21,7 @@
 namespace MonoKit.ViewModels
 {
     using System;
+    using System.Collections.Generic;
 
     public class DataTemplateSelector : IDataTemplateSelector
     {
@@ -30,10 +31,12 @@ namespace MonoKit.ViewModels
         private Action<object> initializer;
         private Action<object, object> binder;
         private Func<object, float> height;
+        private readonly Dictionary<string, object> attributes;
 
         public DataTemplateSelector(string reuseIdentifier)
         {
             this.ReuseIdentifier = reuseIdentifier;
+            this.attributes = new Dictionary<string, object>();
         }
         
         public string ReuseIdentifier
@@ -46,6 +49,20 @@ namespace MonoKit.ViewModels
         {
             get;
             private set;
+        }
+
+        public object this [string attribute] 
+        { 
+            get
+            {
+                object result;
+                if (this.attributes.TryGetValue(attribute, out result))
+                {
+                    return result;
+                }
+
+                return null;
+            }
         }
 
         public DataTemplateSelector WhenSelecting<TViewModel>(Func<TViewModel, bool> selector)
@@ -65,6 +82,13 @@ namespace MonoKit.ViewModels
 
             this.ViewType = typeof(TView);
             this.creator = creator;
+            
+            return this;
+        }
+
+        public DataTemplateSelector Creates<TView>()
+        {
+            this.ViewType = typeof(TView);
             
             return this;
         }
@@ -107,6 +131,12 @@ namespace MonoKit.ViewModels
         public DataTemplateSelector HavingHeight(float height)
         {
             this.height = (vm) => height;
+            return this;
+        }
+        
+        public DataTemplateSelector HavingAttribute(string key, object attribute)
+        {
+            this.attributes.Add(key, attribute);
             return this;
         }
 

@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="IDataTemplateSelector.cs" company="sgmunn">
+//  <copyright file=".cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,26 +18,32 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.ViewModels
+namespace MonoKit.Controls
 {
     using System;
-    
-    public enum TemplateMatch
-    {
-        None,
-        Assignable,
-        Exact
-    }
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.Drawing;
+    using System.Linq;
+    using MonoKit.ViewModels;
+    using MonoKit.ViewModels.Elements;
+    using MonoKit.DataBinding;
+    using MonoKit.Reactive;
+    using MonoTouch.Foundation;
+    using MonoTouch.UIKit;
 
-    public interface IDataTemplateSelector
+    public class CollectionViewCell : UICollectionViewCell
     {
-        string ReuseIdentifier { get; }
-        Type ViewType { get; }
-        TemplateMatch AppliesToViewModel(object viewModel);
-        object CreateView();
-        void InitializeView(object view);
-        void BindViewModel(object viewModel, object view);
-        float CalculateHeight(object viewModel);
-        object this [string attribute] { get; }
+        public CollectionViewCell() : base()
+        {
+
+        }
+
+        public CollectionViewCell(RectangleF frame) : base(frame)
+        {
+            
+        }
     }
+    
 }

@@ -18,6 +18,7 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 using MonoKit.ViewModels;
+using MonoTouch.Foundation;
 
 namespace Sample.TableViews
 {
@@ -25,37 +26,52 @@ namespace Sample.TableViews
     using MonoKit.Controls;
     using MonoTouch.UIKit;
 
-    public class HomeController : UIViewController
+    public class HomeController : TableViewController, INavigationService
     {
         public HomeController()
         {
             this.Title = "Home";
 
-            this.NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s,e) => {
-                this.NavigationController.PushViewController(new StandardViewController(), true);
-            });
-
-            this.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s,e) => {
-                this.NavigationController.PushViewController(new AlternateViewController(), true);
-            });
+            var vm = new HomeViewModel(this);
+            this.ViewModel = vm;
         }
 
-        public override void ViewDidLoad()
+        public void NavigateTo(INavigationRequest request)
         {
-            base.ViewDidLoad();
+            this.NavigationController.PushViewController(new TableViewController() { ViewModel = request.ViewModel }, true);
+        }
+        
+        public void NavigateTo(IViewModel viewModel)
+        {
+            if (viewModel is CollectionViewSampleViewModel)
+            {
+                this.NavigationController.PushViewController(new CollectionViewController() { ViewModel = viewModel }, true);
+            }
+            else
+            {
+                this.NavigationController.PushViewController(new TableViewController() { ViewModel = viewModel }, true);
+            }
+        }
+        
+        public void Close(IViewModel viewModel)
+        {
         }
     }
 
     public class StandardViewController : TableViewController, INavigationService
     {
-        public StandardViewController()
+        public StandardViewController() : base(UITableViewStyle.Plain, new HomeTableViewSource())
         {
             this.Title = "Std";
 
             var vm = new HomeViewModel(this);
-            vm.Load();
+            //vm.Load();
 
             this.ViewModel = vm;
+
+            this.NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s,e) => {
+                this.SetEditing(!this.Editing, true);
+            });
 
             // define the template selectors here if we need to
         }
@@ -77,6 +93,15 @@ namespace Sample.TableViews
 
         public void Close(IViewModel viewModel)
         {
+        }
+
+        public class HomeTableViewSource : TableViewSource
+        {
+            
+            public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
+            {
+                return UITableViewCellEditingStyle.Insert;
+            }
         }
     }
 

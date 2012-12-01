@@ -18,25 +18,19 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-
-
-// todo: hook in editing to the tableview - viewmodel
-
-
-
-
 namespace MonoKit.Controls
 {
     using System;
+    using System.Collections.Generic;
     using MonoKit.ViewModels;
     using MonoTouch.Foundation;
     using MonoTouch.UIKit;
 
     public class TableViewSource : UITableViewSource
     {
-        public TableViewSource(TableViewController owner)
+        public TableViewSource()
         {
-            this.Owner = owner;
+            this.TemplateSelectors = new List<IDataTemplateSelector>();
             this.Root = new SectionRoot();
         }
         
@@ -44,17 +38,11 @@ namespace MonoKit.Controls
         {
             Console.WriteLine("~TableViewSource");
         }
-        
+
         protected override void Dispose(bool disposing)
         {
             Console.WriteLine("Dispose.TableViewSource {0}", disposing);
             base.Dispose(disposing);
-        }
-
-        public TableViewController Owner
-        {
-            get;
-            private set;
         }
 
         public ISectionRoot Root 
@@ -62,10 +50,22 @@ namespace MonoKit.Controls
             get; 
             private set; 
         } 
+        
+        protected List<IDataTemplateSelector> TemplateSelectors
+        {
+            get;
+            private set;
+        }
 
         public void Clear()
         {
             this.Root.Sections.Clear();
+        }
+        
+        public void ApplyTemplateSelectors(IList<IDataTemplateSelector> templates)
+        {
+            this.TemplateSelectors.Clear();
+            this.TemplateSelectors.AddRange(templates);
         }
 
         public override int NumberOfSections(UITableView tableView)
@@ -184,8 +184,6 @@ namespace MonoKit.Controls
 
                 template.InitializeView(templateCell);
 
-                // todo: attach behaviours, or do it in initialize? creation I think would be best
-
                 template.BindViewModel(viewModel, templateCell);
 
                 return templateCell;
@@ -213,58 +211,9 @@ namespace MonoKit.Controls
                 row.Execute();
             }
         }
-        
-        public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
-        {
-//            var item = this.Items[indexPath.Row];
-//            
-//            var edit = item as IEdit;
-//            if (edit != null)
-//            {
-//                return edit.GetCanEdit();                
-//            }
-//            
-//            return true;
 
-
-            return false;
-        }
-        
-        public override bool CanMoveRow(UITableView tableView, NSIndexPath indexPath)
-        {
-            return false;
-        }
-        
-        public override void MoveRow(UITableView tableView, NSIndexPath sourceIndexPath, NSIndexPath destinationIndexPath)
-        {
-        }
-        
-        public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
-        {
-//            var section = this.Sections [indexPath.Section];
-//            // todo: EditRow should return something to indicate that we need to add a row.
-//            section.EditRow(editingStyle, indexPath);
-//            
-//            switch (editingStyle)
-//            {
-//                case UITableViewCellEditingStyle.Delete:
-//                    this.TableView.DeleteRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Bottom);
-//                    break;
-//                case UITableViewCellEditingStyle.Insert:
-//                    break;
-//            }
-        }
-        
         public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
         {
-            //if (Root.NeedColorUpdate)
-            //{
-            //    var section = Root.Sections[indexPath.Section];
-            //    var element = section.Elements[indexPath.Row];
-            //    var colorized = element as IColorizeBackground;
-            //    if (colorized != null)
-            //        colorized.WillDisplay(tableView, cell, indexPath);
-            //}
         }
 
         public Type QueryGetCellType(int section, int row)
@@ -292,7 +241,7 @@ namespace MonoKit.Controls
             IDataTemplateSelector semiMatch = null;
 
             // keep looping even if we find one, match on last
-            foreach (var template in this.Owner.TemplateSelectors)
+            foreach (var template in this.TemplateSelectors)
             {
                 switch (template.AppliesToViewModel(viewModel))
                 {
@@ -307,27 +256,6 @@ namespace MonoKit.Controls
             }
             
             return exactMatch ?? semiMatch;
-        }
-    }
-    
-    public class SizingTableViewSource : TableViewSource
-    {
-        public SizingTableViewSource(TableViewController owner) : base(owner)
-        {
-        }
-
-        public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
-        {
-            // GetHeightForRow is called prior to GetCell, so we need to know the height of the view for the element 
-            // before we get to construct the view itself.  
-            var viewModel = this.GetViewModelForIndexPath(indexPath);
-            var template = this.GetTemplate(viewModel);
-            if (template != null)
-            {
-                return template.CalculateHeight(viewModel);
-            }
-
-            return -1;
         }
     }
 }

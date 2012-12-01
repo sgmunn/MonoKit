@@ -22,14 +22,19 @@ namespace MonoKit.ViewModels.Elements
 {
     using System;
 
-    public abstract class SimpleElement : ViewModelBase
+    public class SimpleElement : ViewModelBase
     {
         private string text;
 
         public SimpleElement()
         {
         }
-        
+
+        public SimpleElement(string text)
+        {
+            this.Text = text;
+        }
+
         public string Text
         {
             get

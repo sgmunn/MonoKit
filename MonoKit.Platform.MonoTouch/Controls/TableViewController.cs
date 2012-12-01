@@ -29,12 +29,16 @@ namespace MonoKit.Controls
     using MonoKit.ViewModels.Elements;
     using MonoKit.DataBinding;
     using MonoKit.Reactive;
-    using MonoKit.Runtime;
     using MonoTouch.Foundation;
     using MonoTouch.UIKit;
 
+    // next up:
+    //  tidy up home controller demo
+    //  start thinking about a collection view source
+    //  
 
-    // todo: bind to property changes of things like headers ???????
+
+
 
     public class TableViewController : UITableViewController
     {
@@ -47,7 +51,7 @@ namespace MonoKit.Controls
         public TableViewController()
         {
             this.Lifetime = new CompositeDisposable();
-            this.Source = new TableViewSource(this);
+            this.Source = new TableViewSource();
             this.TemplateSelectors = new List<IDataTemplateSelector>();
             this.RegisterDefaultTemplates();
         }
@@ -58,7 +62,7 @@ namespace MonoKit.Controls
         public TableViewController(UITableViewStyle tableStyle) : base(tableStyle)
         {
             this.Lifetime = new CompositeDisposable();
-            this.Source = new TableViewSource(this);
+            this.Source = new TableViewSource();
             this.TemplateSelectors = new List<IDataTemplateSelector>();
             this.RegisterDefaultTemplates();
         }
@@ -66,10 +70,10 @@ namespace MonoKit.Controls
         /// <summary>
         /// Initializes a new instance of the <see cref="MonoKit.Controls.TableViewController"/> class.
         /// </summary>
-        public TableViewController(UITableViewStyle tableStyle, bool variableHeightRows) : base(tableStyle)
+        public TableViewController(UITableViewStyle tableStyle, TableViewSource source) : base(tableStyle)
         {
             this.Lifetime = new CompositeDisposable();
-            this.Source = variableHeightRows ? new SizingTableViewSource(this) : new TableViewSource(this);
+            this.Source = source;
             this.TemplateSelectors = new List<IDataTemplateSelector>();
             this.RegisterDefaultTemplates();
         }
@@ -150,6 +154,7 @@ namespace MonoKit.Controls
         {
             base.ViewDidLoad();
             this.TableView.Source = this.Source;
+            this.Source.ApplyTemplateSelectors(this.TemplateSelectors);
         }
 
         public override void ViewWillAppear(bool animated)
@@ -185,11 +190,10 @@ namespace MonoKit.Controls
 
         public void ApplyTemplateSelectors(IList<IDataTemplateSelector> templates)
         {
-            // todo: tweak this and check the templates for anything that defines a height func, then
-            // we can automatically create a sizing source and we don't have to remember to do that bit
-            // if we change the source we'll need to make sure we clear the current source of any data
             this.TemplateSelectors.Clear();
             this.TemplateSelectors.AddRange(templates);
+
+            this.Source.ApplyTemplateSelectors(templates);
 
             if (this.TableView != null && this.hasViewAppeared)
             {
@@ -476,12 +480,19 @@ namespace MonoKit.Controls
                         view.AddBinding(view, "InputValue", vm, "Value");
                     });
 
-            // behaviours -- base template selector or view construction ??
-            // probably easiest if view construction which mirros xaml
+            this.RegisterTemplate("DateInputTableViewCell")
+                .Creates((id) => new DateInputTableViewCell(UITableViewCellStyle.Default, id))
+                    .WhenBinding<LabelledDateTimeInputElement, DateInputTableViewCell>((vm, view) => {
+                        view.AddBinding(view, "Text", vm, "Text");
+                        view.AddBinding(view, "InputValue", vm, "Value");
+                    });
 
-
-            // animation - need additional properties, or just override the tableviewcontroller should you need it
-
+            this.RegisterTemplate("DecimalInputTableViewCell")
+                .Creates((id) => new DecimalInputTableViewCell(UITableViewCellStyle.Default, id))
+                    .WhenBinding<LabelledDecimalInputElement, DecimalInputTableViewCell>((vm, view) => {
+                        view.AddBinding(view, "Text", vm, "Text");
+                        view.AddBinding(view, "InputValue", vm, "Value");
+                    });
         }
     }
 }

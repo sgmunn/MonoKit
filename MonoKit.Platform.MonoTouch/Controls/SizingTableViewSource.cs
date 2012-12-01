@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="IDataTemplateSelector.cs" company="sgmunn">
+//  <copyright file="SizingTableViewSource.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,26 +18,27 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.ViewModels
+namespace MonoKit.Controls
 {
     using System;
+    using MonoKit.ViewModels;
+    using MonoTouch.Foundation;
+    using MonoTouch.UIKit;
     
-    public enum TemplateMatch
+    public class SizingTableViewSource : TableViewSource
     {
-        None,
-        Assignable,
-        Exact
-    }
+        public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+        {
+            // GetHeightForRow is called prior to GetCell, so we need to know the height of the view for the element 
+            // before we get to construct the view itself.  
+            var viewModel = this.GetViewModelForIndexPath(indexPath);
+            var template = this.GetTemplate(viewModel);
+            if (template != null)
+            {
+                return template.CalculateHeight(viewModel);
+            }
 
-    public interface IDataTemplateSelector
-    {
-        string ReuseIdentifier { get; }
-        Type ViewType { get; }
-        TemplateMatch AppliesToViewModel(object viewModel);
-        object CreateView();
-        void InitializeView(object view);
-        void BindViewModel(object viewModel, object view);
-        float CalculateHeight(object viewModel);
-        object this [string attribute] { get; }
+            return -1;
+        }
     }
 }

@@ -37,6 +37,14 @@ namespace MonoKit.Controls
             this.ConfigureCell();
         }
         
+        public UISwitch Switch
+        {
+            get
+            {
+                return this.boolSwitch;
+            }
+        }   
+
         public bool IsChecked
         {
             get
