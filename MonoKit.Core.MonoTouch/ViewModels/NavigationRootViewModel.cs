@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="RootViewModel.cs" company="sgmunn">
+//  <copyright file="NavigationRootViewModel.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,70 +21,31 @@
 namespace MonoKit.ViewModels
 {
     using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-
-    public class RootViewModel : ViewModelBase, ISectionRoot, ITitle
+    
+    public class NavigationRootViewModel : RootViewModel, INavigate
     {
-        private string title;
-
-        public RootViewModel()
+        public NavigationRootViewModel(INavigationService navigation)
         {
-            this.Sections = new ObservableCollection<ISection>();
+            this.NavigationService = navigation;
         }
-
-        ~RootViewModel()
-        {
-            Console.WriteLine("~RootViewModel {0}", this.GetType().Name);
-        }
-
-        public string Title
-        {
-            get
-            {
-                return this.title;
-            }
-
-            set
-            {
-                if (value != this.title)
-                {
-                    this.title = value;
-                    this.NotifyPropertyChanged("Title");
-                }
-            }
-        }
-
-        public IList<ISection> Sections 
+        
+        public INavigationService NavigationService 
         { 
-            get; 
-            private set; 
+            get;
+            set;
         }
 
-        public ISection this[int section] 
-        { 
-            get
+        public override void Execute()
+        {
+            if (this.NavigationService != null)
             {
-                return this.Sections[section];
+                this.NavigationService.NavigateTo(this);
             }
         }
 
-        public override string ToString()
+        public override bool GetCanExecute()
         {
-            return this.Title;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            if (disposing)
-            {
-                foreach (var section in this.Sections.OfType<IDisposable>())
-                {
-                    section.Dispose();
-                }
-            }
+            return this.NavigationService != null;
         }
     }
 }

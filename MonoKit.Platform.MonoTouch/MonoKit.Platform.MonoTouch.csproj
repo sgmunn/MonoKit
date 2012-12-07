@@ -68,6 +68,7 @@
     <Compile Include="Controls\SizingTableViewSource.cs" />
     <Compile Include="Controls\CollectionViewController.cs" />
     <Compile Include="Controls\CollectionViewCell.cs" />
+    <Compile Include="Controls\SectionItemsCollectionChangedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controls\" />

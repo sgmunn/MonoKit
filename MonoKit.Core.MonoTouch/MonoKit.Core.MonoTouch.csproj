@@ -171,5 +171,9 @@
     <Compile Include="Runtime\IResolver.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="DataBinding\Behaviour.cs" />
+    <Compile Include="ViewModels\ITitle.cs" />
+    <Compile Include="ViewModels\NavigationRootViewModel.cs" />
+    <Compile Include="ViewModels\NavigatingViewModel.cs" />
+    <Compile Include="ViewModels\INavigate.cs" />
   </ItemGroup>
 </Project>

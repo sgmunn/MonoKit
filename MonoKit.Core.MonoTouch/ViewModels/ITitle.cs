@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="Section.cs" company="sgmunn">
+//  <copyright file="ITitle.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,42 +21,9 @@
 namespace MonoKit.ViewModels
 {
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
 
-    /// <summary>
-    /// Default implementation of an ISection
-    /// </summary>
-    public sealed class Section : ISection
+    public interface ITitle
     {
-        public Section()
-        {
-            this.Items = new List<object>();
-        }
-
-        public Section(ISection source)
-        {
-            this.Header = source.Header;
-            this.Footer = source.Footer;
-            this.Items = new List<object>();
-            foreach (var item in source.Items)
-            {
-                this.Items.Add(item);
-            }
-        }
-
-        public object Header { get; set; }
-        
-        public object Footer { get; set; }
-        
-        public IList Items { get; private set; }
-        
-        public object this[int index] 
-        { 
-            get
-            {
-                return this.Items[index];
-            }
-        }
+        string Title { get; }
     }
 }

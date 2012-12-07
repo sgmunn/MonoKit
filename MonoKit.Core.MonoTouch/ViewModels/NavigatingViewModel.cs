@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="RootViewModel.cs" company="sgmunn">
+//  <copyright file="NavigatingViewModel.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,73 +18,62 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
+
 namespace MonoKit.ViewModels
 {
     using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
 
-    public class RootViewModel : ViewModelBase, ISectionRoot, ITitle
+    public class NavigatingViewModel : ViewModelBase, ICommand, INavigate
     {
+        private readonly Func<IViewModel> creator;
+
         private string title;
-
-        public RootViewModel()
+        
+        public NavigatingViewModel(string title, Func<IViewModel> creator)
         {
-            this.Sections = new ObservableCollection<ISection>();
-        }
-
-        ~RootViewModel()
-        {
-            Console.WriteLine("~RootViewModel {0}", this.GetType().Name);
-        }
-
-        public string Title
-        {
-            get
+            if (creator == null)
             {
-                return this.title;
+                throw new ArgumentNullException("creator");
+            }
+            
+            this.creator = creator;
+            this.title = title;
+        }
+
+        public NavigatingViewModel(INavigationService navigation, string title, Func<IViewModel> creator)
+        {
+            if (creator == null)
+            {
+                throw new ArgumentNullException("creator");
             }
 
-            set
-            {
-                if (value != this.title)
-                {
-                    this.title = value;
-                    this.NotifyPropertyChanged("Title");
-                }
-            }
+            this.NavigationService = navigation;
+            this.creator = creator;
+            this.title = title;
         }
 
-        public IList<ISection> Sections 
+        public INavigationService NavigationService 
         { 
-            get; 
-            private set; 
+            get;
+            set;
         }
 
-        public ISection this[int section] 
-        { 
-            get
+        public override void Execute()
+        {
+            if (this.NavigationService != null)
             {
-                return this.Sections[section];
+                this.NavigationService.NavigateTo(this.creator());
             }
+        }
+
+        public override bool GetCanExecute()
+        {
+            return this.NavigationService != null;
         }
 
         public override string ToString()
         {
-            return this.Title;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            if (disposing)
-            {
-                foreach (var section in this.Sections.OfType<IDisposable>())
-                {
-                    section.Dispose();
-                }
-            }
+            return this.title;
         }
     }
 }

@@ -89,6 +89,7 @@
     <Compile Include="AppDelegate.cs" />
     <Compile Include="HomeController.cs" />
     <Compile Include="HomeViewModel.cs" />
+    <Compile Include="TableViewSamples.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -45,15 +45,11 @@ namespace Sample.TableViews
         {
             var section1 = new SectionViewModel()
             {
-                Header = "TableView",
+                Header = "Samples",
                 Items = 
                 {
-                    new SimpleElement("TableView Samples") { 
-                        Command = new DelegateCommand(() => this.navigation.NavigateTo(new HomeViewModelX(this.navigation))) 
-                    },
-                    new SimpleElement("CollectionView Samples") { 
-                        Command = new DelegateCommand(() => this.navigation.NavigateTo(new CollectionViewSampleViewModel())) 
-                    },
+                    new NavigatingViewModel(this.navigation, "TableView", () => new TableViewSamples(this.navigation)),
+                    new NavigatingViewModel(this.navigation, "CollectionView", () => new CollectionViewSampleViewModel(this.navigation)),
                 }
             };
 
@@ -63,8 +59,11 @@ namespace Sample.TableViews
 
     public class CollectionViewSampleViewModel : RootViewModel
     {
-        public CollectionViewSampleViewModel()
+        private readonly INavigationService navigation;
+
+        public CollectionViewSampleViewModel(INavigationService navigation)
         {
+            this.navigation = navigation;
             this.Load();
         }
 
@@ -77,6 +76,9 @@ namespace Sample.TableViews
                 {
                     new SimpleElement("Add") { 
                         Command = new DelegateCommand(() => this.Sections[0].Items.Add("Added")) 
+                    },
+                    new SimpleElement("Add") { 
+                        Command = new DelegateCommand(() => ((List<object>)this.Sections[0].Items).AddRange(new []{"Added", "" })) 
                     },
                     new SimpleElement("Remove") { 
                         Command = new DelegateCommand(() => this.Sections[0].Items.RemoveAt(this.Sections[0].Items.Count-1)) 
@@ -128,7 +130,8 @@ namespace Sample.TableViews
         {
             if (this.doAdd)
             {
-                this.parent.Sections[0].Items.Add("new item");
+                this.parent.Sections.Add(new SectionViewModel() { Header = "xxx"});
+                this.parent.Sections[1].Items.Add("new item");
             }
             else
             {
@@ -142,85 +145,6 @@ namespace Sample.TableViews
         }
     }
 
-    public class HomeViewModelX : RootViewModel
-    {
-        private readonly INavigationService navigation;
-
-        public HomeViewModelX(INavigationService navigation)
-        {
-            this.navigation = navigation;
-            this.Load();
-        }
-
-        private void Load()
-        {
-            var section1 = new SectionViewModel()
-            {
-                Header = "Section 1",
-                //Footer = new LabelledCheckbox() { Text = "Footer", Value = true },
-                Items = 
-                {
-                    new ButtonViewModel(this, true),
-                    new ButtonViewModel(this, false),
-                    "item A 1",
-                    new LabelledStringInputElement() { Text = "Input 1",  },
-                    123,
-                    new LabelledStringInputElement() { Text = "Input 2",  },
-                    new LabelledDateTimeInputElement() { Text = "",  },
-                    new LabelledDecimalInputElement() { Text = "Amt",  },
-                    new LabelledCheckboxElement() { Text = "Checkbox", Value = false },
-                    new LabelledBooleanElement() { Text = "Boolean", Value = false },
-                }
-            };
-            
-            
-            
-            this.Sections.Add(section1);
-            this.Sections.Add(new SectionViewModel() { Footer = "section 2" });
-            this.Sections.Add(new SectionViewModel() { Header = "Section 3" });
-
-
-
-            // this root model is where we would push another tvc
-            // is this a built-in thing or something that you wire up
-            // subSection.Command = this.NavigateTo();
-            // i think in this case I prefer to wire up the command myself
-            // that means that ICommand needs to execute a delegate
-            // IDelegateCommand - delegate Command;
-
-
-
-
-            var subSection = new RootViewModel()
-            {
-                Title = "Sub-Section",
-                Sections = {
-                    new SectionViewModel()
-                    {
-                        Header = "hello",
-                        Items = {
-                            "world",
-                            new RandomObject(),
-                        }
-                    }
-                },
-            };
-
-            subSection.Command = new DelegateCommand(() => this.navigation.NavigateTo(subSection));
-
-            subSection.Sections[0].Items.Add(new ButtonViewModel(subSection, true));
-            
-            this[1].Items.Add(subSection);
-            
-
-            for (int i = 0; i < 100; i++)
-            {
-                this.Sections[2].Items.Add("item B "+i.ToString());
-            }
-        }
-
-    
-    }
     
     public class ButtonViewModel1 : ViewModelBase, ICommand
     {

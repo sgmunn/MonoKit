@@ -1,5 +1,5 @@
 //  --------------------------------------------------------------------------------------------------------------------
-//  <copyright file="Section.cs" company="sgmunn">
+//  <copyright file="SectionItemsCollectionChangedEventArgs.cs" company="sgmunn">
 //    (c) sgmunn 2012  
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,45 +18,28 @@
 //  </copyright>
 //  --------------------------------------------------------------------------------------------------------------------
 
-namespace MonoKit.ViewModels
+namespace MonoKit.Controls
 {
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using MonoKit.ViewModels;
 
     /// <summary>
-    /// Default implementation of an ISection
-    /// </summary>
-    public sealed class Section : ISection
+    /// A wrapper for an NotifyCollectionChangedEventArgs event that passes in the proxy of the sender.
+    /// This maps our Source.Root[] to the sender of the event so that tables and collections can update the 
+    /// correct section when items are added or removed from the view model
+    /// </summary> 
+    public class SectionItemsCollectionChangedEventArgs : NotifyCollectionChangedEventArgs
     {
-        public Section()
+        public SectionItemsCollectionChangedEventArgs(ISection section, NotifyCollectionChangedEventArgs args) 
+            : base(NotifyCollectionChangedAction.Reset)
         {
-            this.Items = new List<object>();
+            this.Section = section;
+            this.InnerArgs = args;
         }
 
-        public Section(ISection source)
-        {
-            this.Header = source.Header;
-            this.Footer = source.Footer;
-            this.Items = new List<object>();
-            foreach (var item in source.Items)
-            {
-                this.Items.Add(item);
-            }
-        }
+        public ISection Section { get; private set; }
 
-        public object Header { get; set; }
-        
-        public object Footer { get; set; }
-        
-        public IList Items { get; private set; }
-        
-        public object this[int index] 
-        { 
-            get
-            {
-                return this.Items[index];
-            }
-        }
+        public NotifyCollectionChangedEventArgs InnerArgs { get; private set; }
     }
 }

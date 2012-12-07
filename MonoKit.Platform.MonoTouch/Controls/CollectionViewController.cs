@@ -41,29 +41,12 @@ namespace MonoKit.Controls
     // need to test with tableviews.  set up in a similar manner and test adding / removing 
 
 
-    public class SectionItemsCollectionChangedEventArgs : NotifyCollectionChangedEventArgs
-    {
-        public SectionItemsCollectionChangedEventArgs(ISection section, NotifyCollectionChangedEventArgs args) 
-            : base(NotifyCollectionChangedAction.Reset)
-        {
-            this.Section = section;
-            this.InnerArgs = args;
-        }
-
-        public ISection Section { get; private set; }
-
-        public NotifyCollectionChangedEventArgs InnerArgs { get; private set; }
-    }
 
     public class CollectionViewController : UICollectionViewController
     {
         public static readonly string SupplementalViewKey = "SupplementalViewKey";
 
         private IViewModel viewModel;
-        
-        private bool isTableSourceDirectlyBoundToViewModel;
-        
-        private bool hasViewAppeared;
 
         public CollectionViewController() : base(new UICollectionViewFlowLayout() {HeaderReferenceSize = new SizeF(100, 20), FooterReferenceSize = new SizeF(100, 20)})
         {
@@ -161,7 +144,6 @@ namespace MonoKit.Controls
 
         public override void ViewWillAppear(bool animated)
         {
-            this.hasViewAppeared = true;
             this.SubscribeToViewModelChanges();
 
             this.RegisterTemplatesWithView();
@@ -182,7 +164,6 @@ namespace MonoKit.Controls
                 lifetime.Lifetime.Clear();
             }
         }
-
         
         public override int NumberOfSections(UICollectionView collectionView)
         {
@@ -439,7 +420,12 @@ namespace MonoKit.Controls
             // copy data from view model to local source
             foreach (var section in root.Sections)
             {
-                var viewSection = new Section();
+                var viewSection = new Section()
+                {
+                    Header = section.Header,
+                    Footer = section.Footer,
+                };
+
                 this.Root.Sections.Add(viewSection);
 
                 foreach (var item in section.Items)
